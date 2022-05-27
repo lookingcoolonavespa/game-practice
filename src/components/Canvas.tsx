@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import usePlatform from '../utils/hooks/usePlatform';
 import usePlayer from '../utils/hooks/usePlayer';
 
 export default function Canvas() {
@@ -6,9 +7,18 @@ export default function Canvas() {
 
   const {
     position: playerPosition,
+    width: playerWidth,
+    height: playerHeight,
     draw: drawPlayer,
     update: updatePlayer
   } = usePlayer();
+
+  const {
+    draw: drawPlatform,
+    position: platformPosition,
+    width: platformWidth,
+    height: platformHeight
+  } = usePlatform();
 
   useEffect(
     function draw() {
@@ -18,6 +28,7 @@ export default function Canvas() {
 
       c.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
+      drawPlatform(c);
       drawPlayer(c);
     },
     [playerPosition]

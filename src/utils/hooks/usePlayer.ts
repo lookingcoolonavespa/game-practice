@@ -95,5 +95,5 @@ export default function usePlayer() {
     });
   }
 
-  return { position, draw, update };
+  return { position, width, height, draw, update };
 }
