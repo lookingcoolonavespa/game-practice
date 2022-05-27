@@ -6,6 +6,12 @@ export default function Player() {
   const height = 50;
   const width = 50;
 
+  const keyPressRef = useRef({
+    up: false,
+    left: false,
+    right: false
+  });
+
   const [position, setPosition] = useState({
     x: 100,
     y: 100
@@ -17,6 +23,48 @@ export default function Player() {
     x: 0,
     y: 0
   });
+
+  useEffect(function addArrowEvents() {
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
+    const arrowDirections: {
+      ArrowLeft: 'left';
+      ArrowRight: 'right';
+      ArrowUp: 'up';
+    } = {
+      ArrowLeft: 'left',
+      ArrowRight: 'right',
+      ArrowUp: 'up'
+    };
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (!Object.keys(arrowDirections).includes(e.key)) return;
+
+      const arrowKey = e.key as keyof typeof arrowDirections;
+
+      const direction = arrowDirections[arrowKey];
+
+      keyPressRef.current[direction] = true;
+    }
+
+    function handleKeyUp(e: KeyboardEvent) {
+      if (!Object.keys(arrowDirections).includes(e.key)) return;
+
+      const arrowKey = e.key as keyof typeof arrowDirections;
+
+      if (arrowKey === 'ArrowLeft' || arrowKey === 'ArrowRight')
+        velocity.current.x = 0;
+
+      const direction = arrowDirections[arrowKey];
+      keyPressRef.current[direction] = false;
+    }
+  }, []);
 
   useEffect(
     function draw() {
@@ -37,17 +85,32 @@ export default function Player() {
     setPosition((prev) => {
       if (!canvasRef.current) return prev;
 
+      if (keyPressRef.current.right) velocity.current.x = 10;
+      if (keyPressRef.current.left) velocity.current.x = -10;
+      if (
+        keyPressRef.current.up &&
+        prev.y + height === canvasRef.current.height
+      ) {
+        velocity.current.y = -30;
+      }
+      // deal with y position
       if (prev.y + height + velocity.current.y <= canvasRef.current.height) {
         velocity.current.y += gravity;
-        return { ...prev, y: prev.y + velocity.current.y };
+        return {
+          x: prev.x + velocity.current.x,
+          y: prev.y + velocity.current.y
+        };
       } else {
         velocity.current.y = 0;
-        return prev;
+        return {
+          x: prev.x + velocity.current.x,
+          y: canvasRef.current.height - height
+        };
       }
     });
   };
 
-  useEffect(function update() {
+  useEffect(function runAnime() {
     requestAnimationFrame(animate);
   }, []);
 
