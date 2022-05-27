@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 
-export default function Player() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
+export default function usePlayer() {
   const height = 50;
   const width = 50;
 
@@ -66,35 +64,22 @@ export default function Player() {
     }
   }, []);
 
-  useEffect(
-    function draw() {
-      if (!canvasRef.current) return;
-      const c = canvasRef.current?.getContext('2d');
-      if (!c) return;
+  function draw(c: CanvasRenderingContext2D) {
+    c.fillStyle = 'red';
+    c.fillRect(position.x, position.y, width, height);
+  }
 
-      c.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-
-      c.fillStyle = 'red';
-      c.fillRect(position.x, position.y, width, height);
-    },
-    [position]
-  );
-
-  const animate = () => {
-    requestAnimationFrame(animate);
+  function update(canvas: HTMLCanvasElement | null) {
     setPosition((prev) => {
-      if (!canvasRef.current) return prev;
+      if (!canvas) return prev;
 
       if (keyPressRef.current.right) velocity.current.x = 10;
       if (keyPressRef.current.left) velocity.current.x = -10;
-      if (
-        keyPressRef.current.up &&
-        prev.y + height === canvasRef.current.height
-      ) {
+      if (keyPressRef.current.up && prev.y + height === canvas.height) {
         velocity.current.y = -30;
       }
       // deal with y position
-      if (prev.y + height + velocity.current.y <= canvasRef.current.height) {
+      if (prev.y + height + velocity.current.y <= canvas.height) {
         velocity.current.y += gravity;
         return {
           x: prev.x + velocity.current.x,
@@ -104,21 +89,11 @@ export default function Player() {
         velocity.current.y = 0;
         return {
           x: prev.x + velocity.current.x,
-          y: canvasRef.current.height - height
+          y: canvas.height - height
         };
       }
     });
-  };
+  }
 
-  useEffect(function runAnime() {
-    requestAnimationFrame(animate);
-  }, []);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      height={window.innerHeight}
-      width={window.innerWidth}
-    ></canvas>
-  );
+  return { position, draw, update };
 }
