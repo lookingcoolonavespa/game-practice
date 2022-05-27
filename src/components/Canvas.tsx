@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import usePlatform from '../utils/hooks/usePlatform';
+import Platform from '../utils/Platform';
 import usePlayer from '../utils/hooks/usePlayer';
 
 export default function Canvas() {
@@ -10,7 +10,7 @@ export default function Canvas() {
     position: platformPosition,
     width: platformWidth,
     height: platformHeight
-  } = usePlatform();
+  } = Platform();
 
   const {
     position: playerPosition,
@@ -44,6 +44,23 @@ export default function Canvas() {
   useEffect(function runAnime() {
     requestAnimationFrame(animate);
   }, []);
+
+  // useEffect(() => {
+  //   checkCollision();
+  // });
+
+  // function checkCollision() {
+  //   const collideX =
+  //     playerPosition.x + playerWidth >= platformPosition.x &&
+  //     playerPosition.x <= platformPosition.x + platformWidth;
+  //   const collideY =
+  //     playerPosition.y <= platformPosition.y + platformHeight &&
+  //     playerPosition.y + playerHeight >= platformPosition.y;
+
+  //   if (collideX && collideY) {
+  //     killPlayerVelocity('y');
+  //   }
+  // }
 
   return (
     <canvas

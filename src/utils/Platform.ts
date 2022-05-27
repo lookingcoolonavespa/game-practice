@@ -1,13 +1,11 @@
-import { useState, useEffect, useRef } from 'react';
-
-export default function usePlatform() {
-  const height = 200;
+export default function Platform() {
+  const height = 20;
   const width = 200;
 
-  const [position] = useState({
+  const position = {
     x: 400,
     y: 700
-  });
+  };
 
   function draw(c: CanvasRenderingContext2D) {
     c.fillStyle = 'black';
