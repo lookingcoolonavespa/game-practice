@@ -1,26 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import usePlatform from '../utils/hooks/usePlatform';
-import usePlayer from '../utils/hooks/usePlayer';
+import useGame from '../utils/hooks/useGame';
 
 export default function Canvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const {
-    draw: drawPlatform,
-    position: platformPosition,
-    setPosition: setPlatformPosition,
-    width: platformWidth,
-    height: platformHeight
-  } = usePlatform();
-
-  const {
-    position: playerPosition,
-    draw: drawPlayer,
-    update: updatePlayer
-  } = usePlayer(platformPosition, setPlatformPosition, {
-    height: platformHeight,
-    width: platformWidth
-  });
+  const { drawPlayer, drawPlatform, update, playerPosition } = useGame();
 
   useEffect(
     function draw() {
@@ -39,7 +23,7 @@ export default function Canvas() {
   const animate = () => {
     requestAnimationFrame(animate);
 
-    updatePlayer(canvasRef.current);
+    update(canvasRef.current);
   };
 
   useEffect(function runAnime() {
