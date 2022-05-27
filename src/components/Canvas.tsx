@@ -6,19 +6,20 @@ export default function Canvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const {
-    position: playerPosition,
-    width: playerWidth,
-    height: playerHeight,
-    draw: drawPlayer,
-    update: updatePlayer
-  } = usePlayer();
-
-  const {
     draw: drawPlatform,
     position: platformPosition,
     width: platformWidth,
     height: platformHeight
   } = usePlatform();
+
+  const {
+    position: playerPosition,
+    draw: drawPlayer,
+    update: updatePlayer
+  } = usePlayer(platformPosition, {
+    height: platformHeight,
+    width: platformWidth
+  });
 
   useEffect(
     function draw() {

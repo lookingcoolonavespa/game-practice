@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 
-export default function usePlayer() {
+export default function usePlayer(
+  platformPosition: { x: number; y: number },
+  platformSize: { height: number; width: number }
+) {
   const height = 50;
   const width = 50;
 
@@ -73,6 +76,8 @@ export default function usePlayer() {
     setPosition((prev) => {
       if (!canvas) return prev;
 
+      checkCollision();
+
       if (keyPressRef.current.right) velocity.current.x = 10;
       if (keyPressRef.current.left) velocity.current.x = -10;
       if (keyPressRef.current.up && prev.y + height === canvas.height) {
@@ -91,6 +96,29 @@ export default function usePlayer() {
           x: prev.x + velocity.current.x,
           y: canvas.height - height
         };
+      }
+
+      function checkCollision() {
+        // if right side of player hits leftside of platform or if left side of player hits right side of platform
+        const rightSideOfPlayer = prev.x + width;
+        const leftSideOfPlatform = platformPosition.x;
+
+        const leftSideOfPlayer = prev.x;
+        const rightSideOfPlatform = platformPosition.x + platformSize.width;
+
+        const topOfPlayer = prev.y;
+        const bottomOfPlatform = platformPosition.y + platformSize.height;
+
+        const bottomOfPlayer = prev.y + height;
+        const topOfPlatform = platformPosition.y;
+
+        if (
+          rightSideOfPlayer >= leftSideOfPlatform &&
+          leftSideOfPlayer <= rightSideOfPlatform &&
+          topOfPlayer <= bottomOfPlatform &&
+          bottomOfPlayer >= topOfPlatform
+        )
+          console.log('collision');
       }
     });
   }

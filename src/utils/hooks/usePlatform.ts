@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 
 export default function usePlatform() {
-  const height = 20;
+  const height = 200;
   const width = 200;
 
   const [position] = useState({
     x: 400,
-    y: 800
+    y: 700
   });
 
   function draw(c: CanvasRenderingContext2D) {
