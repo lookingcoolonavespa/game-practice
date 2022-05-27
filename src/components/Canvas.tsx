@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import Platform from '../utils/Platform';
+import usePlatform from '../utils/hooks/usePlatform';
 import usePlayer from '../utils/hooks/usePlayer';
 
 export default function Canvas() {
@@ -8,15 +8,16 @@ export default function Canvas() {
   const {
     draw: drawPlatform,
     position: platformPosition,
+    setPosition: setPlatformPosition,
     width: platformWidth,
     height: platformHeight
-  } = Platform();
+  } = usePlatform();
 
   const {
     position: playerPosition,
     draw: drawPlayer,
     update: updatePlayer
-  } = usePlayer(platformPosition, {
+  } = usePlayer(platformPosition, setPlatformPosition, {
     height: platformHeight,
     width: platformWidth
   });

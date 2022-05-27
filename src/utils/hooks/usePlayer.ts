@@ -1,7 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, SetStateAction } from 'react';
 
 export default function usePlayer(
   platformPosition: { x: number; y: number },
+  setPlatformPosition: React.Dispatch<
+    SetStateAction<{
+      x: number;
+      y: number;
+    }>
+  >,
   platformSize: { height: number; width: number }
 ) {
   const height = 50;
@@ -10,7 +16,8 @@ export default function usePlayer(
   const keyPressRef = useRef({
     up: false,
     left: false,
-    right: false
+    right: false,
+    down: false
   });
 
   const [position, setPosition] = useState({
@@ -26,6 +33,7 @@ export default function usePlayer(
   });
 
   const jumpNumberRef = useRef(0);
+  const sameJumpRef = useRef(false);
 
   useEffect(function addArrowEvents() {
     window.addEventListener('keydown', handleKeyDown);
@@ -35,10 +43,12 @@ export default function usePlayer(
       ArrowLeft: 'left';
       ArrowRight: 'right';
       ArrowUp: 'up';
+      ArrowDown: 'down';
     } = {
       ArrowLeft: 'left',
       ArrowRight: 'right',
-      ArrowUp: 'up'
+      ArrowUp: 'up',
+      ArrowDown: 'down'
     };
 
     return () => {
@@ -53,14 +63,11 @@ export default function usePlayer(
 
       const direction = arrowDirections[arrowKey];
 
+      if (direction === 'up') {
+        if (e.repeat) sameJumpRef.current = true;
+        else jumpNumberRef.current++;
+      }
       keyPressRef.current[direction] = true;
-
-      if (direction === 'up') jumpNumberRef.current++;
-      console.log(jumpNumberRef.current);
-
-      // first arrowup keydown set jump = 1
-      // second arrowup keydown set jump = 2
-      // reset jump to 0 when jump is finished
     }
 
     function handleKeyUp(e: KeyboardEvent) {
@@ -81,12 +88,14 @@ export default function usePlayer(
   function update(canvas: HTMLCanvasElement | null) {
     setPosition((prev) => {
       if (!canvas) return prev;
-      // if (velocity.current.y === 0) jumpNumberRef.current = 0;
+
+      const collision = checkCollision();
+
       // deal with y position
       if (
         // in air
         prev.y + height + velocity.current.y < canvas.height &&
-        !checkCollision()
+        !collision
       ) {
         runKeyPress();
         velocity.current.y += gravity;
@@ -97,12 +106,15 @@ export default function usePlayer(
         };
       } else if (
         // on platform
-        checkCollision()
+        collision
       ) {
         velocity.current.y = 0;
-        runKeyPress();
-        if (checkCollision()) jumpNumberRef.current = 0;
+        sameJumpRef.current = false;
 
+        runKeyPress();
+        if (checkCollision()) {
+          jumpNumberRef.current = 0; // need to make sure player is on platform after keyPress
+        }
         return {
           x: prev.x + velocity.current.x,
           y: prev.y + velocity.current.y
@@ -110,9 +122,12 @@ export default function usePlayer(
       } else {
         // on the ground
         velocity.current.y = 0;
+        sameJumpRef.current = false;
+
         runKeyPress();
-        if (!(prev.y + height + velocity.current.y < canvas.height))
+        if (!(prev.y + height + velocity.current.y < canvas.height)) {
           jumpNumberRef.current = 0;
+        }
 
         return {
           x: prev.x + velocity.current.x,
@@ -132,15 +147,29 @@ export default function usePlayer(
 
       function runKeyPress() {
         if (!canvas) return;
-        if (keyPressRef.current.right) velocity.current.x = 10;
-        if (keyPressRef.current.left) velocity.current.x = -10;
+        if (keyPressRef.current.right) {
+          if (prev.x + velocity.current.x >= 800) {
+            velocity.current.x = 0;
+            setPlatformPosition((prev) => ({ ...prev, x: prev.x - 10 }));
+          } else velocity.current.x = 10;
+        }
+        if (keyPressRef.current.left) {
+          if (prev.x + velocity.current.x <= 100) {
+            velocity.current.x = 0;
+            setPlatformPosition((prev) => ({ ...prev, x: prev.x + 10 }));
+          } else velocity.current.x = -10;
+        }
         if (!keyPressRef.current.left && !keyPressRef.current.right)
           velocity.current.x = 0;
+
         if (keyPressRef.current.up) {
           if (jumpNumberRef.current <= 2) {
-            velocity.current.y = -30;
+            if (!sameJumpRef.current) velocity.current.y = -30;
             keyPressRef.current.up = false;
           }
+        }
+        if (keyPressRef.current.down) {
+          velocity.current.y = 5;
         }
       }
     });
