@@ -4,12 +4,16 @@ import platform3 from '../assets/Environments/Platforms/Platform03.png';
 import platform4 from '../assets/Environments/Platforms/Platform04.png';
 import platform5 from '../assets/Environments/Platforms/Platform05.png';
 
-function Platform(position: { x: number; y: number }, imageSrc: 'string') {
+function Platform(
+  position: { x: number; y: number },
+  size: { height: number; width: number },
+  imageSrc: 'string'
+) {
   const image = new Image();
   image.src = imageSrc;
 
-  const height = image.height;
-  const width = image.width;
+  const height = size.height;
+  const width = size.width;
 
   function updatePosition(updated: { x: number; y: number }) {
     position = updated;
@@ -21,27 +25,34 @@ function Platform(position: { x: number; y: number }, imageSrc: 'string') {
 
   return {
     draw,
-    get position() {
-      return position;
+    get x() {
+      return position.x;
+    },
+    get y() {
+      return position.y;
     },
     updatePosition,
-    width,
-    height
+    get width() {
+      return width;
+    },
+    get height() {
+      return height;
+    }
   };
 }
 
 export function Platform1(position: { x: number; y: number }) {
-  return Platform(position, platform1);
+  return Platform(position, { height: 47, width: 99 }, platform1);
 }
 export function Platform2(position: { x: number; y: number }) {
-  return Platform(position, platform2);
+  return Platform(position, { height: 36, width: 90 }, platform2);
 }
 export function Platform3(position: { x: number; y: number }) {
-  return Platform(position, platform3);
+  return Platform(position, { height: 47, width: 137 }, platform3);
 }
 export function Platform4(position: { x: number; y: number }) {
-  return Platform(position, platform4);
+  return Platform(position, { height: 172, width: 69 }, platform4);
 }
 export function Platform5(position: { x: number; y: number }) {
-  return Platform(position, platform5);
+  return Platform(position, { height: 64, width: 64 }, platform5);
 }

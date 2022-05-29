@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { XY } from '../../types/interfaces';
 import {
   Platform1,
   Platform2,
@@ -6,11 +7,11 @@ import {
   Platform4,
   Platform5
 } from '../Platform';
-
-interface Position {
-  x: number;
-  y: number;
-}
+import checkCollision, {
+  checkCollideTop,
+  checkCollideSide,
+  checkCollideBottom
+} from '../checkCollision';
 
 const platforms = [
   Platform1({ x: 200, y: 700 }),
@@ -99,12 +100,22 @@ export default function useGame() {
       playerSize.height
     );
   }
-
+  console.log(playerPosition.y);
   function update(canvas: HTMLCanvasElement | null) {
-    setPlayerPosition((prev): Position => {
+    setPlayerPosition((prev): XY => {
       if (!canvas) return prev;
 
-      const collision = checkCollision();
+      const collision = platforms.some((p) =>
+        checkCollideTop(p, {
+          x: prev.x,
+          y: prev.y,
+          velocity: velocity.current,
+          width: playerSize.width,
+          height: playerSize.height
+        })
+      );
+
+      // need to deal with collision top, collision side, in the air, on the ground
 
       // deal with y playerPosition
       if (
@@ -114,10 +125,21 @@ export default function useGame() {
       ) {
         // this block needs to be first otherwise player wouldnt fall to the ground, they would teleport
         velocity.current.y = 0;
+
         sameJumpRef.current = false;
 
         runKeyPress();
-        if (checkCollision()) {
+        if (
+          platforms.some((p) =>
+            checkCollideTop(p, {
+              x: prev.x,
+              y: prev.y,
+              velocity: velocity.current,
+              width: playerSize.width,
+              height: playerSize.height
+            })
+          )
+        ) {
           jumpNumberRef.current = 0; // need to make sure player is on platform after keyPress
         }
         return {
@@ -130,6 +152,18 @@ export default function useGame() {
         canvas.height
       ) {
         runKeyPress();
+        const player = {
+          x: prev.x,
+          y: prev.y,
+          velocity: velocity.current,
+          width: playerSize.width,
+          height: playerSize.height
+        };
+        if (platforms.some((p) => checkCollideSide(p, player)))
+          velocity.current.x = 0;
+        if (platforms.some((p) => checkCollideBottom(p, player)))
+          velocity.current.y = 0;
+
         velocity.current.y += gravity;
 
         return {
@@ -154,57 +188,42 @@ export default function useGame() {
         };
       }
 
-      function checkCollision() {
-        for (const platform of platforms) {
-          const collideY =
-            prev.y + playerSize.height <= platform.position.y &&
-            prev.y + playerSize.height + velocity.current.y >=
-              platform.position.y;
-          const collideX =
-            platform.position.x <= prev.x + playerSize.width &&
-            prev.x <= platform.position.x + platform.width;
-          if (collideX && collideY) return true;
-        }
-      }
-
       function runKeyPress() {
         if (!canvas) return;
-        if (keyPressRef.current.right) {
-          if (prev.x + velocity.current.x >= 800) {
-            velocity.current.x = 0;
-            platforms.forEach((platform) => {
-              platform.updatePosition({
-                ...platform.position,
-                x: platform.position.x - 10
-              });
-            });
-          } else velocity.current.x = 10;
-        }
 
-        if (keyPressRef.current.left) {
-          if (prev.x + velocity.current.x <= 100) {
-            velocity.current.x = 0;
-            platforms.forEach((platform) => {
-              platform.updatePosition({
-                ...platform.position,
-                x: platform.position.x + 10
-              });
-            });
-          } else velocity.current.x = -10;
-        }
+        const boundaryRight = 800;
+        const boundaryLeft = 100;
 
+        if (keyPressRef.current.right) velocity.current.x = 10;
+        if (keyPressRef.current.left) velocity.current.x = -10;
         if (!keyPressRef.current.left && !keyPressRef.current.right)
           velocity.current.x = 0;
 
-        if (keyPressRef.current.up) {
-          if (jumpNumberRef.current <= 2) {
-            if (!sameJumpRef.current) velocity.current.y = -30;
-            keyPressRef.current.up = false;
-          }
+        if (
+          (keyPressRef.current.right &&
+            prev.x + velocity.current.x >= boundaryRight) ||
+          (keyPressRef.current.left &&
+            prev.x + velocity.current.x <= boundaryLeft)
+        ) {
+          const platformXVelocity =
+            keyPressRef.current.right &&
+            prev.x + velocity.current.x >= boundaryRight
+              ? -10
+              : 10;
+
+          velocity.current.x = 0;
+
+          platforms.forEach((platform) => {
+            platform.updatePosition({
+              y: platform.y,
+              x: platform.x + platformXVelocity
+            });
+          });
         }
 
-        if (keyPressRef.current.down) {
-          // velocity.current.y = 5;
+        if (keyPressRef.current.up && jumpNumberRef.current <= 2) {
+          if (!sameJumpRef.current) velocity.current.y = -30;
+          keyPressRef.current.up = false;
         }
       }
     });
