@@ -4,7 +4,7 @@ import useGame from '../utils/hooks/useGame';
 export default function Canvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const { drawPlayer, drawPlatform, update, playerPosition } = useGame();
+  const { drawPlayer, drawPlatforms, update, playerPosition } = useGame();
 
   useEffect(
     function draw() {
@@ -14,7 +14,7 @@ export default function Canvas() {
 
       c.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
-      drawPlatform(c);
+      drawPlatforms(c);
       drawPlayer(c);
     },
     [playerPosition]
@@ -29,23 +29,6 @@ export default function Canvas() {
   useEffect(function runAnime() {
     requestAnimationFrame(animate);
   }, []);
-
-  // useEffect(() => {
-  //   checkCollision();
-  // });
-
-  // function checkCollision() {
-  //   const collideX =
-  //     playerPosition.x + playerWidth >= platformPosition.x &&
-  //     playerPosition.x <= platformPosition.x + platformWidth;
-  //   const collideY =
-  //     playerPosition.y <= platformPosition.y + platformHeight &&
-  //     playerPosition.y + playerHeight >= platformPosition.y;
-
-  //   if (collideX && collideY) {
-  //     killPlayerVelocity('y');
-  //   }
-  // }
 
   return (
     <canvas

@@ -1,20 +1,26 @@
-export default function Platform() {
-  const height = 20;
-  const width = 200;
+import platform1 from '../assets/Environments/Platforms/Platform01.png';
 
-  const position = {
-    x: 400,
-    y: 700
-  };
+export default function Platform(position: { x: number; y: number }) {
+  const image = new Image();
+  image.src = platform1;
+
+  const height = image.height;
+  const width = image.width;
+
+  function updatePosition(updated: { x: number; y: number }) {
+    position = updated;
+  }
 
   function draw(c: CanvasRenderingContext2D) {
-    c.fillStyle = 'black';
-    c.fillRect(position.x, position.y, width, height);
+    c.drawImage(image, position.x, position.y);
   }
 
   return {
     draw,
-    position,
+    get position() {
+      return position;
+    },
+    updatePosition,
     width,
     height
   };

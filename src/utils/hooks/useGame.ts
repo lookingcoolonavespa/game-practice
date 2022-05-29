@@ -1,23 +1,17 @@
-import { useState, useReducer, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import Platform from '../Platform';
 
 interface Position {
   x: number;
   y: number;
 }
 
-interface State {
-  playerPosition: Position;
-  platformPosition: Position;
-}
+const platforms = [Platform({ x: 200, y: 700 }), Platform({ x: 800, y: 700 })];
 
 export default function useGame() {
   const playerSize = {
     height: 50,
     width: 50
-  };
-  const platformSize = {
-    height: 20,
-    width: 200
   };
 
   const keyPressRef = useRef({
@@ -37,129 +31,10 @@ export default function useGame() {
   const jumpNumberRef = useRef(0);
   const sameJumpRef = useRef(false);
 
-  const [{ playerPosition, platformPosition }, dispatch] = useReducer(
-    (state: State, canvas: HTMLCanvasElement | null): State => {
-      if (!canvas) return state;
-
-      let { playerPosition, platformPosition } = state;
-
-      const collision = checkCollision();
-
-      // deal with y playerPosition
-      if (
-        // in air
-        playerPosition.y + playerSize.height + velocity.current.y <
-          canvas.height &&
-        !collision
-      ) {
-        runKeyPress();
-        velocity.current.y += gravity;
-
-        return {
-          playerPosition: {
-            x: playerPosition.x + velocity.current.x,
-            y: playerPosition.y + velocity.current.y
-          },
-          platformPosition
-        };
-      } else if (
-        // on platform
-        collision
-      ) {
-        velocity.current.y = 0;
-        sameJumpRef.current = false;
-
-        runKeyPress();
-        if (checkCollision()) {
-          jumpNumberRef.current = 0; // need to make sure player is on platform after keyPress
-        }
-        return {
-          playerPosition: {
-            x: playerPosition.x + velocity.current.x,
-            y: playerPosition.y + velocity.current.y
-          },
-          platformPosition
-        };
-      } else {
-        // on the ground
-        velocity.current.y = 0;
-        sameJumpRef.current = false;
-
-        runKeyPress();
-        if (
-          !(
-            playerPosition.y + playerSize.height + velocity.current.y <
-            canvas.height
-          )
-        ) {
-          jumpNumberRef.current = 0;
-        }
-
-        return {
-          playerPosition: {
-            x: playerPosition.x + velocity.current.x,
-            y: canvas.height - playerSize.height
-          },
-          platformPosition
-        };
-      }
-
-      function checkCollision() {
-        const collideY =
-          playerPosition.y + playerSize.height <= platformPosition.y &&
-          playerPosition.y + playerSize.height + velocity.current.y >=
-            platformPosition.y;
-        const collideX =
-          platformPosition.x <= playerPosition.x + playerSize.width &&
-          playerPosition.x <= platformPosition.x + platformSize.width;
-        if (collideX && collideY) return true;
-      }
-
-      function runKeyPress() {
-        if (!canvas) return;
-        if (keyPressRef.current.right) {
-          if (playerPosition.x + velocity.current.x >= 800) {
-            velocity.current.x = 0;
-            platformPosition = {
-              ...platformPosition,
-              x: platformPosition.x - 10
-            };
-          } else velocity.current.x = 10;
-        }
-        if (keyPressRef.current.left) {
-          if (playerPosition.x + velocity.current.x <= 100) {
-            velocity.current.x = 0;
-            platformPosition = {
-              ...platformPosition,
-              x: platformPosition.x + 10
-            };
-          } else velocity.current.x = -10;
-        }
-        if (!keyPressRef.current.left && !keyPressRef.current.right)
-          velocity.current.x = 0;
-
-        if (keyPressRef.current.up) {
-          if (jumpNumberRef.current <= 2) {
-            if (!sameJumpRef.current) velocity.current.y = -30;
-            keyPressRef.current.up = false;
-          }
-        }
-        if (keyPressRef.current.down) {
-          velocity.current.y = 5;
-        }
-      }
-    },
-    {
-      playerPosition: {
-        x: 100,
-        y: 100
-      },
-      platformPosition: {
-        x: 400,
-        y: 700
-      }
-    }
-  );
+  const [playerPosition, setPlayerPosition] = useState({
+    x: 100,
+    y: 100
+  });
 
   useEffect(function addArrowEvents() {
     window.addEventListener('keydown', handleKeyDown);
@@ -216,19 +91,121 @@ export default function useGame() {
     );
   }
 
-  function drawPlatform(c: CanvasRenderingContext2D) {
-    c.fillStyle = 'black';
-    c.fillRect(
-      platformPosition.x,
-      platformPosition.y,
-      platformSize.width,
-      platformSize.height
-    );
-  }
-
   function update(canvas: HTMLCanvasElement | null) {
-    dispatch(canvas);
+    setPlayerPosition((prev): Position => {
+      if (!canvas) return prev;
+
+      const collision = checkCollision();
+
+      // deal with y playerPosition
+      if (
+        // on platform
+        collision &&
+        !keyPressRef.current.down
+      ) {
+        velocity.current.y = 0;
+        sameJumpRef.current = false;
+
+        runKeyPress();
+        if (checkCollision()) {
+          jumpNumberRef.current = 0; // need to make sure player is on platform after keyPress
+        }
+        return {
+          x: prev.x + velocity.current.x,
+          y: prev.y + velocity.current.y
+        };
+      } else if (
+        // in air
+        prev.y + playerSize.height + velocity.current.y <
+        canvas.height
+      ) {
+        runKeyPress();
+        velocity.current.y += gravity;
+
+        return {
+          x: prev.x + velocity.current.x,
+          y: prev.y + velocity.current.y
+        };
+      } else {
+        // on the ground
+        velocity.current.y = 0;
+        sameJumpRef.current = false;
+
+        runKeyPress();
+        if (
+          !(prev.y + playerSize.height + velocity.current.y < canvas.height)
+        ) {
+          jumpNumberRef.current = 0;
+        }
+
+        return {
+          x: prev.x + velocity.current.x,
+          y: canvas.height - playerSize.height
+        };
+      }
+
+      function checkCollision() {
+        for (const platform of platforms) {
+          const collideY =
+            prev.y + playerSize.height <= platform.position.y &&
+            prev.y + playerSize.height + velocity.current.y >=
+              platform.position.y;
+          const collideX =
+            platform.position.x <= prev.x + playerSize.width &&
+            prev.x <= platform.position.x + platform.width;
+          if (collideX && collideY) return true;
+        }
+      }
+
+      function runKeyPress() {
+        if (!canvas) return;
+        if (keyPressRef.current.right) {
+          if (prev.x + velocity.current.x >= 800) {
+            velocity.current.x = 0;
+            platforms.forEach((platform) => {
+              platform.updatePosition({
+                ...platform.position,
+                x: platform.position.x - 10
+              });
+            });
+          } else velocity.current.x = 10;
+        }
+
+        if (keyPressRef.current.left) {
+          if (prev.x + velocity.current.x <= 100) {
+            velocity.current.x = 0;
+            platforms.forEach((platform) => {
+              platform.updatePosition({
+                ...platform.position,
+                x: platform.position.x + 10
+              });
+            });
+          } else velocity.current.x = -10;
+        }
+
+        if (!keyPressRef.current.left && !keyPressRef.current.right)
+          velocity.current.x = 0;
+
+        if (keyPressRef.current.up) {
+          if (jumpNumberRef.current <= 2) {
+            if (!sameJumpRef.current) velocity.current.y = -30;
+            keyPressRef.current.up = false;
+          }
+        }
+
+        if (keyPressRef.current.down) {
+          // velocity.current.y = 5;
+        }
+      }
+    });
   }
 
-  return { playerPosition, drawPlayer, drawPlatform, update };
+  return {
+    playerPosition,
+    drawPlayer,
+    update,
+    drawPlatforms: (c: CanvasRenderingContext2D) => {
+      platforms.forEach((p) => p.draw(c));
+    }
+  };
 }
