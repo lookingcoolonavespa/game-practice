@@ -38,11 +38,11 @@ export function checkCollideSide(platform: PlatformInterface, player: Player) {
   const collideLeft =
     // right of player is to left of platform's left side, but with velocity is inside platform
     player.x + player.width <= platform.x &&
-    player.x + player.width + player.velocity.x > platform.x;
+    player.x + player.width + player.velocity.x >= platform.x;
   const collideRight =
     // left of player is to right of platform's right side, but with velocity is inside platform
     player.x >= platform.x + platform.width &&
-    player.x + player.velocity.x < platform.x + platform.width;
+    player.x + player.velocity.x <= platform.x + platform.width;
   return collideY && (collideLeft || collideRight);
 }
 

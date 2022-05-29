@@ -100,7 +100,6 @@ export default function useGame() {
       playerSize.height
     );
   }
-  console.log(playerPosition.y);
   function update(canvas: HTMLCanvasElement | null) {
     setPlayerPosition((prev): XY => {
       if (!canvas) return prev;
@@ -159,10 +158,10 @@ export default function useGame() {
           width: playerSize.width,
           height: playerSize.height
         };
-        if (platforms.some((p) => checkCollideSide(p, player)))
-          velocity.current.x = 0;
-        if (platforms.some((p) => checkCollideBottom(p, player)))
-          velocity.current.y = 0;
+        while (platforms.some((p) => checkCollideSide(p, player)))
+          velocity.current.x /= 2; // so player actually collides with platform instead of stopping with a gap in between the two
+        while (platforms.some((p) => checkCollideBottom(p, player)))
+          velocity.current.y /= 2;
 
         velocity.current.y += gravity;
 
@@ -194,8 +193,8 @@ export default function useGame() {
         const boundaryRight = 800;
         const boundaryLeft = 100;
 
-        if (keyPressRef.current.right) velocity.current.x = 10;
-        if (keyPressRef.current.left) velocity.current.x = -10;
+        if (keyPressRef.current.right) velocity.current.x = 20;
+        if (keyPressRef.current.left) velocity.current.x = -20;
         if (!keyPressRef.current.left && !keyPressRef.current.right)
           velocity.current.x = 0;
 
@@ -208,8 +207,8 @@ export default function useGame() {
           const platformXVelocity =
             keyPressRef.current.right &&
             prev.x + velocity.current.x >= boundaryRight
-              ? -10
-              : 10;
+              ? -20
+              : 20;
 
           velocity.current.x = 0;
 
@@ -222,7 +221,7 @@ export default function useGame() {
         }
 
         if (keyPressRef.current.up && jumpNumberRef.current <= 2) {
-          if (!sameJumpRef.current) velocity.current.y = -30;
+          if (!sameJumpRef.current) velocity.current.y = -20;
           keyPressRef.current.up = false;
         }
       }
