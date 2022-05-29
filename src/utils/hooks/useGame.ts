@@ -1,12 +1,21 @@
 import { useState, useEffect, useRef } from 'react';
-import Platform from '../Platform';
+import {
+  Platform1,
+  Platform2,
+  Platform3,
+  Platform4,
+  Platform5
+} from '../Platform';
 
 interface Position {
   x: number;
   y: number;
 }
 
-const platforms = [Platform({ x: 200, y: 700 }), Platform({ x: 800, y: 700 })];
+const platforms = [
+  Platform1({ x: 200, y: 700 }),
+  Platform4({ x: 800, y: 700 })
+];
 
 export default function useGame() {
   const playerSize = {
@@ -103,6 +112,7 @@ export default function useGame() {
         collision &&
         !keyPressRef.current.down
       ) {
+        // this block needs to be first otherwise player wouldnt fall to the ground, they would teleport
         velocity.current.y = 0;
         sameJumpRef.current = false;
 
