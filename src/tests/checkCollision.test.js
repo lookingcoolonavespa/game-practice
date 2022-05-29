@@ -1,14 +1,10 @@
 /* eslint-disable no-undef */
 import checkCollision from '../utils/checkCollision';
+import { Platform4 } from '../utils/Platform';
 
 describe('checkCollision works', () => {
   test('from the left', () => {
-    const platform = {
-      height: 172,
-      width: 69,
-      x: 300,
-      y: 700
-    };
+    const platform = Platform4({ x: 300, y: 700 });
     // bottom of platform is 872
     const player = {
       width: 50,
@@ -25,12 +21,8 @@ describe('checkCollision works', () => {
   });
 
   test('from the right', () => {
-    const platform = {
-      height: 172,
-      width: 69,
-      x: 300,
-      y: 700
-    };
+    const platform = Platform4({ x: 300, y: 700 });
+
     // right of platform is 369
     // bottom of platform is 872
     const player = {

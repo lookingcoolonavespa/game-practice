@@ -43,7 +43,11 @@ export function checkCollideSide(platform: PlatformInterface, player: Player) {
     // left of player is to right of platform's right side, but with velocity is inside platform
     player.x >= platform.x + platform.width &&
     player.x + player.velocity.x <= platform.x + platform.width;
-  return collideY && (collideLeft || collideRight);
+  return collideY && collideLeft
+    ? 'left'
+    : collideY && collideRight
+    ? 'right'
+    : null;
 }
 
 export function checkCollideBottom(
@@ -58,4 +62,15 @@ export function checkCollideBottom(
     platform.x <= player.x + player.width &&
     player.x <= platform.x + platform.width;
   return collideY && insidePlatformDiameter;
+}
+
+export function getDepthOfCollision(
+  platform: PlatformInterface,
+  player: Player,
+  collision: 'left' | 'right'
+) {
+  // coming in from the left, looking for the difference between right side of player and left side of platfrom
+  return collision === 'left'
+    ? platform.x - player.x + player.width
+    : platform.x + platform.width - player.x;
 }

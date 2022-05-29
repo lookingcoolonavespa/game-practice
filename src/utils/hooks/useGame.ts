@@ -10,14 +10,15 @@ import {
 import checkCollision, {
   checkCollideTop,
   checkCollideSide,
-  checkCollideBottom
+  checkCollideBottom,
+  getDepthOfCollision
 } from '../checkCollision';
 
 const platforms = [
   Platform1({ x: 200, y: 700 }),
   Platform4({ x: 800, y: 700 })
 ];
-
+console.log(platforms.map((p) => p.x));
 export default function useGame() {
   const playerSize = {
     height: 50,
@@ -158,8 +159,13 @@ export default function useGame() {
           width: playerSize.width,
           height: playerSize.height
         };
-        while (platforms.some((p) => checkCollideSide(p, player)))
-          velocity.current.x /= 2; // so player actually collides with platform instead of stopping with a gap in between the two
+
+        while (platforms.some((p) => checkCollideSide(p, player))) {
+          velocity.current.x /= 2;
+        } // so player actually collides with platform instead of stopping with a gap in between the two
+        // if collide side, find the depth of collision and move the player position accordingly
+        // if player hits left side of platform, needs to be negative, positive for right
+
         while (platforms.some((p) => checkCollideBottom(p, player)))
           velocity.current.y /= 2;
 
