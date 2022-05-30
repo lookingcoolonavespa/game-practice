@@ -31,7 +31,7 @@ export function checkCollideSide(
   const collideY =
     // top of player is above bottom of platform and bottom is below top of platform
     player.y <= platform.y + platform.height &&
-    player.y + player.height >= platform.y;
+    player.y + player.height > platform.y;
   const collideLeft =
     // right of player is to left of platform's left side, but with velocity is inside platform
     player.velocity.x
@@ -43,15 +43,6 @@ export function checkCollideSide(
       : false;
   const collideRight =
     // left of player is to right of platform's right side, but with velocity is inside platform
-<<<<<<< HEAD
-    player.x >= platform.x + platform.width &&
-    player.x + player.velocity.x <= platform.x + platform.width;
-  return collideY && collideLeft
-    ? 'left'
-    : collideY && collideRight
-    ? 'right'
-    : null;
-=======
     player.velocity.x
       ? player.x >= platform.x + platform.width &&
         player.x + player.velocity.x <= platform.x + platform.width
@@ -60,7 +51,6 @@ export function checkCollideSide(
         player.x <= platform.x + platform.width + platform.velocityX
       : false;
   return collideY && (collideLeft || collideRight);
->>>>>>> platform
 }
 
 export function checkCollideBottom(

@@ -17,7 +17,8 @@ export default function Canvas() {
       c.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
       c.fillStyle = 'black';
-      c.fillRect(-100, 0, 100, canvasRef.current.height);
+      c.fillRect(0, 0, canvasRef.current.width, 160);
+
       drawPlatforms(c);
       drawPlayer(c);
     },

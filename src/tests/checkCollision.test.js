@@ -22,7 +22,6 @@ describe('checkCollision works', () => {
 
   test('from the right', () => {
     const platform = Platform4({ x: 300, y: 700 });
-
     // right of platform is 369
     // bottom of platform is 872
     const player = {
