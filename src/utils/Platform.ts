@@ -15,28 +15,17 @@ function Platform(
   const height = size.height;
   const width = size.width;
 
-  function updatePosition(updated: { x: number; y: number }) {
-    position = updated;
-  }
-
-  function draw(c: CanvasRenderingContext2D) {
-    c.drawImage(image, position.x, position.y);
-  }
-
   return {
-    draw,
-    get x() {
-      return position.x;
-    },
-    get y() {
-      return position.y;
-    },
-    updatePosition,
+    x: position.x,
+    y: position.y,
     get width() {
       return width;
     },
     get height() {
       return height;
+    },
+    get image() {
+      return image;
     }
   };
 }

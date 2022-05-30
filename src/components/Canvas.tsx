@@ -4,7 +4,9 @@ import useGame from '../utils/hooks/useGame';
 export default function Canvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const { drawPlayer, drawPlatforms, update, playerPosition } = useGame();
+  const { drawPlayer, drawPlatforms, update, playerPosition } = useGame(
+    canvasRef.current
+  );
 
   useEffect(
     function draw() {
@@ -14,6 +16,8 @@ export default function Canvas() {
 
       c.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
+      c.fillStyle = 'black';
+      c.fillRect(-100, 0, 100, canvasRef.current.height);
       drawPlatforms(c);
       drawPlayer(c);
     },
