@@ -13,7 +13,7 @@ import {
   checkCollideBottom
 } from '../checkCollision';
 
-export default function useGame() {
+export default function useGame(canvas: HTMLCanvasElement | null) {
   const playerSize = {
     height: 50,
     width: 50
@@ -35,6 +35,52 @@ export default function useGame() {
 
   const jumpNumberRef = useRef(0);
   const sameJumpRef = useRef(false);
+
+  useEffect(
+    function addFloorAndLeftWall() {
+      if (!canvas) return;
+      const platform = Platform3({ x: -5, y: canvas.height - 42 });
+
+      const floor = [
+        platform,
+        Platform3({ x: -5, y: canvas.height - 42 }),
+        Platform3({ x: -5, y: canvas.height - 42 })
+      ].map((p, i) => {
+        if (i === 0) return p;
+
+        return { ...p, x: p.x * (i + 1) + platform.width * i };
+      });
+
+      setState((prev) => ({
+        ...prev,
+        platforms: [...prev.platforms, ...floor]
+      }));
+    },
+    [canvas]
+  );
+
+  useEffect(
+    function addLeftWall() {
+      if (!canvas) return;
+      const platform = Platform4({ x: -5, y: 800 });
+
+      const wall = [
+        platform,
+        Platform4({ x: -5, y: canvas.height - 42 }),
+        Platform4({ x: -5, y: canvas.height - 42 })
+      ].map((p, i) => {
+        if (i === 0) return p;
+
+        return { ...p, x: p.x * (i + 1) + platform.width * i };
+      });
+
+      setState((prev) => ({
+        ...prev,
+        platforms: [...prev.platforms, ...wall]
+      }));
+    },
+    [canvas]
+  );
 
   const [state, setState] = useState({
     playerPosition: {
@@ -125,7 +171,41 @@ export default function useGame() {
             })
           )
         ) {
-          jumpNumberRef.current = 0; // need to make sure player is on platform after keyPress
+          jumpNumberRef.current = 0; // dont want to reset jump number in air
+        }
+        while (
+          platforms.some((p) => {
+            const collision = checkCollideSide(
+              { ...p, velocityX: platformXVelocity },
+              {
+                x: playerPosition.x,
+                y: playerPosition.y,
+                velocity: velocity.current,
+                width: playerSize.width,
+                height: playerSize.height
+              }
+            );
+            if (collision) {
+              console.log(p, playerPosition, velocity.current.x);
+            }
+            return collision;
+          })
+          // so player actually collides with platform instead of stopping with a gap in between the two
+        ) {
+          console.log('colliding');
+          if (velocity.current.x) {
+            if (
+              (velocity.current.x > 0 && velocity.current.x < 1) ||
+              (velocity.current.x < 0 && velocity.current.x > -1)
+            )
+              velocity.current.x = 0;
+            else velocity.current.x /= 2;
+          } else {
+            if (platformXVelocity < 1) platformXVelocity = 0;
+            else platformXVelocity /= 2;
+          }
+
+          // if player isnt moving, then the platform is
         }
         return {
           platforms: platforms.map((platform) => ({
@@ -197,6 +277,32 @@ export default function useGame() {
           )
         ) {
           jumpNumberRef.current = 0;
+        }
+
+        while (
+          platforms.some((p) =>
+            checkCollideSide(
+              { ...p, velocityX: platformXVelocity },
+              {
+                x: playerPosition.x,
+                y: playerPosition.y,
+                velocity: velocity.current,
+                width: playerSize.width,
+                height: playerSize.height
+              }
+            )
+          )
+          // so player actually collides with platform instead of stopping with a gap in between the two
+        ) {
+          if (velocity.current.x) {
+            if (velocity.current.x < 1) velocity.current.x = 0;
+            else velocity.current.x /= 2;
+          } else {
+            if (platformXVelocity < 1) platformXVelocity = 0;
+            else platformXVelocity /= 2;
+          }
+
+          // if player isnt moving, then the platform is
         }
 
         return {

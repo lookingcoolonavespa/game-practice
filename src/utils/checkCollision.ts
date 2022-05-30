@@ -29,22 +29,27 @@ export function checkCollideSide(
   player: Player
 ) {
   const collideY =
-    // top of player is above bottom of platform and below top of platform
-    player.y <= platform.y + platform.height && player.y >= platform.y;
+    // top of player is above bottom of platform and bottom is below top of platform
+    player.y <= platform.y + platform.height &&
+    player.y + player.height >= platform.y;
   const collideLeft =
     // right of player is to left of platform's left side, but with velocity is inside platform
     player.velocity.x
       ? player.x + player.width <= platform.x &&
         player.x + player.width + player.velocity.x >= platform.x
-      : player.x + player.width <= platform.x &&
-        player.x + player.width >= platform.x + platform.velocityX;
+      : platform.velocityX
+      ? player.x + player.width <= platform.x &&
+        player.x + player.width >= platform.x + platform.velocityX
+      : false;
   const collideRight =
     // left of player is to right of platform's right side, but with velocity is inside platform
     player.velocity.x
       ? player.x >= platform.x + platform.width &&
         player.x + player.velocity.x <= platform.x + platform.width
-      : player.x >= platform.x + platform.width &&
-        player.x <= platform.x + platform.width + platform.velocityX;
+      : platform.velocityX
+      ? player.x >= platform.x + platform.width &&
+        player.x <= platform.x + platform.width + platform.velocityX
+      : false;
   return collideY && (collideLeft || collideRight);
 }
 
