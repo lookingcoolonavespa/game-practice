@@ -8,17 +8,6 @@ interface Player {
   velocity: XY;
 }
 
-export default function checkCollision(
-  platforms: PlatformInterface[],
-  player: Player
-) {
-  for (const platform of platforms) {
-    const side = checkCollideSide(platform, player);
-    const top = checkCollideTop(platform, player);
-    if (side || top) return true;
-  }
-}
-
 export function checkCollideTop(platform: PlatformInterface, player: Player) {
   const collideY = // bottom of player is above platform but with velocity is inside
     player.y + player.height <= platform.y &&
@@ -31,18 +20,31 @@ export function checkCollideTop(platform: PlatformInterface, player: Player) {
   return insidePlatformDiameter && collideY;
 }
 
-export function checkCollideSide(platform: PlatformInterface, player: Player) {
+interface PlatformAndVelocity extends PlatformInterface {
+  velocityX: number;
+}
+
+export function checkCollideSide(
+  platform: PlatformAndVelocity,
+  player: Player
+) {
   const collideY =
     // top of player is above bottom of platform and below top of platform
     player.y <= platform.y + platform.height && player.y >= platform.y;
   const collideLeft =
     // right of player is to left of platform's left side, but with velocity is inside platform
-    player.x + player.width <= platform.x &&
-    player.x + player.width + player.velocity.x >= platform.x;
+    player.velocity.x
+      ? player.x + player.width <= platform.x &&
+        player.x + player.width + player.velocity.x >= platform.x
+      : player.x + player.width <= platform.x &&
+        player.x + player.width >= platform.x + platform.velocityX;
   const collideRight =
     // left of player is to right of platform's right side, but with velocity is inside platform
-    player.x >= platform.x + platform.width &&
-    player.x + player.velocity.x <= platform.x + platform.width;
+    player.velocity.x
+      ? player.x >= platform.x + platform.width &&
+        player.x + player.velocity.x <= platform.x + platform.width
+      : player.x >= platform.x + platform.width &&
+        player.x <= platform.x + platform.width + platform.velocityX;
   return collideY && (collideLeft || collideRight);
 }
 

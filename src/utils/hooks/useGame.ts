@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { XY } from '../../types/interfaces';
+import { PlatformInterface, XY } from '../../types/interfaces';
 import {
   Platform1,
   Platform2,
@@ -7,16 +7,11 @@ import {
   Platform4,
   Platform5
 } from '../Platform';
-import checkCollision, {
+import {
   checkCollideTop,
   checkCollideSide,
   checkCollideBottom
 } from '../checkCollision';
-
-const platforms = [
-  Platform1({ x: 200, y: 700 }),
-  Platform4({ x: 800, y: 700 })
-];
 
 export default function useGame() {
   const playerSize = {
@@ -41,9 +36,12 @@ export default function useGame() {
   const jumpNumberRef = useRef(0);
   const sameJumpRef = useRef(false);
 
-  const [playerPosition, setPlayerPosition] = useState({
-    x: 100,
-    y: 100
+  const [state, setState] = useState({
+    playerPosition: {
+      x: 100,
+      y: 100
+    },
+    platforms: [Platform1({ x: 200, y: 700 }), Platform4({ x: 800, y: 700 })]
   });
 
   useEffect(function addArrowEvents() {
@@ -91,37 +89,25 @@ export default function useGame() {
     }
   }, []);
 
-  function drawPlayer(c: CanvasRenderingContext2D) {
-    c.fillStyle = 'red';
-    c.fillRect(
-      playerPosition.x,
-      playerPosition.y,
-      playerSize.width,
-      playerSize.height
-    );
-  }
   function update(canvas: HTMLCanvasElement | null) {
-    setPlayerPosition((prev): XY => {
+    setState((prev): { playerPosition: XY; platforms: PlatformInterface[] } => {
       if (!canvas) return prev;
 
-      const collision = platforms.some((p) =>
+      const { playerPosition, platforms } = prev;
+      let platformXVelocity = 0;
+
+      const onPlatform = platforms.some((p) =>
         checkCollideTop(p, {
-          x: prev.x,
-          y: prev.y,
+          x: playerPosition.x,
+          y: playerPosition.y,
           velocity: velocity.current,
           width: playerSize.width,
           height: playerSize.height
         })
       );
 
-      // need to deal with collision top, collision side, in the air, on the ground
-
       // deal with y playerPosition
-      if (
-        // on platform
-        collision &&
-        !keyPressRef.current.down
-      ) {
+      if (onPlatform && !keyPressRef.current.down) {
         // this block needs to be first otherwise player wouldnt fall to the ground, they would teleport
         velocity.current.y = 0;
 
@@ -131,8 +117,8 @@ export default function useGame() {
         if (
           platforms.some((p) =>
             checkCollideTop(p, {
-              x: prev.x,
-              y: prev.y,
+              x: playerPosition.x,
+              y: playerPosition.y,
               velocity: velocity.current,
               width: playerSize.width,
               height: playerSize.height
@@ -142,32 +128,61 @@ export default function useGame() {
           jumpNumberRef.current = 0; // need to make sure player is on platform after keyPress
         }
         return {
-          x: prev.x + velocity.current.x,
-          y: prev.y + velocity.current.y
+          platforms: platforms.map((platform) => ({
+            ...platform,
+            x: platform.x + platformXVelocity
+          })),
+          playerPosition: {
+            x: playerPosition.x + velocity.current.x,
+            y: playerPosition.y + velocity.current.y
+          }
         };
       } else if (
         // in air
-        prev.y + playerSize.height + velocity.current.y <
+        playerPosition.y + playerSize.height + velocity.current.y <
         canvas.height
       ) {
         runKeyPress();
+
         const player = {
-          x: prev.x,
-          y: prev.y,
+          x: playerPosition.x,
+          y: playerPosition.y,
           velocity: velocity.current,
           width: playerSize.width,
           height: playerSize.height
         };
-        while (platforms.some((p) => checkCollideSide(p, player)))
-          velocity.current.x /= 2; // so player actually collides with platform instead of stopping with a gap in between the two
-        while (platforms.some((p) => checkCollideBottom(p, player)))
+        while (
+          platforms.some((p) =>
+            checkCollideSide({ ...p, velocityX: platformXVelocity }, player)
+          )
+          // so player actually collides with platform instead of stopping with a gap in between the two
+        ) {
+          if (velocity.current.x) {
+            if (velocity.current.x < 1) velocity.current.x = 0;
+            else velocity.current.x /= 2;
+          } else {
+            if (platformXVelocity < 1) platformXVelocity = 0;
+            else platformXVelocity /= 2;
+          }
+
+          // if player isnt moving, then the platform is
+        }
+
+        while (platforms.some((p) => checkCollideBottom(p, player))) {
           velocity.current.y /= 2;
+        }
 
         velocity.current.y += gravity;
 
         return {
-          x: prev.x + velocity.current.x,
-          y: prev.y + velocity.current.y
+          platforms: platforms.map((platform) => ({
+            ...platform,
+            x: platform.x + platformXVelocity
+          })),
+          playerPosition: {
+            x: playerPosition.x + velocity.current.x,
+            y: playerPosition.y + velocity.current.y
+          }
         };
       } else {
         // on the ground
@@ -176,14 +191,23 @@ export default function useGame() {
 
         runKeyPress();
         if (
-          !(prev.y + playerSize.height + velocity.current.y < canvas.height)
+          !(
+            playerPosition.y + playerSize.height + velocity.current.y <
+            canvas.height
+          )
         ) {
           jumpNumberRef.current = 0;
         }
 
         return {
-          x: prev.x + velocity.current.x,
-          y: canvas.height - playerSize.height
+          platforms: platforms.map((platform) => ({
+            ...platform,
+            x: platform.x + platformXVelocity
+          })),
+          playerPosition: {
+            x: playerPosition.x + velocity.current.x,
+            y: canvas.height - playerSize.height
+          }
         };
       }
 
@@ -200,24 +224,17 @@ export default function useGame() {
 
         if (
           (keyPressRef.current.right &&
-            prev.x + velocity.current.x >= boundaryRight) ||
+            playerPosition.x + velocity.current.x >= boundaryRight) ||
           (keyPressRef.current.left &&
-            prev.x + velocity.current.x <= boundaryLeft)
+            playerPosition.x + velocity.current.x <= boundaryLeft)
         ) {
-          const platformXVelocity =
+          platformXVelocity =
             keyPressRef.current.right &&
-            prev.x + velocity.current.x >= boundaryRight
+            playerPosition.x + velocity.current.x >= boundaryRight
               ? -20
               : 20;
 
           velocity.current.x = 0;
-
-          platforms.forEach((platform) => {
-            platform.updatePosition({
-              y: platform.y,
-              x: platform.x + platformXVelocity
-            });
-          });
         }
 
         if (keyPressRef.current.up && jumpNumberRef.current <= 2) {
@@ -229,11 +246,19 @@ export default function useGame() {
   }
 
   return {
-    playerPosition,
-    drawPlayer,
+    playerPosition: state.playerPosition,
     update,
+    drawPlayer: (c: CanvasRenderingContext2D) => {
+      c.fillStyle = 'red';
+      c.fillRect(
+        state.playerPosition.x,
+        state.playerPosition.y,
+        playerSize.width,
+        playerSize.height
+      );
+    },
     drawPlatforms: (c: CanvasRenderingContext2D) => {
-      platforms.forEach((p) => p.draw(c));
+      state.platforms.forEach((p) => c.drawImage(p.image, p.x, p.y));
     }
   };
 }
