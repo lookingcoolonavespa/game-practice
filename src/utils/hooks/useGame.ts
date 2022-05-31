@@ -41,7 +41,7 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
 
   const playerSize = {
     height: 50,
-    width: 50
+    width: 59
   };
 
   const keyPressRef = useRef({
@@ -224,7 +224,9 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
           velocity.current.y /= 2;
         }
 
-        onPlatform = platforms.some((p) => checkCollideTop(p, player));
+        onPlatform = platforms.some((p) =>
+          checkCollideTop({ ...p, x: p.x + platformXVelocity }, player)
+        );
         if (
           // in air
           playerPosition.y + playerSize.height + velocity.current.y <
@@ -257,7 +259,7 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
           const speed = 5;
           const jumpHeight = 20;
 
-          const boundaryRight = 800;
+          const boundaryRight = canvas.width / 2 - playerSize.width;
           const boundaryLeft = 100;
 
           if (keyPressRef.current.right) velocity.current.x = speed;
@@ -298,7 +300,7 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
         state.currSprite[currIdx],
         state.playerPosition.x,
         state.playerPosition.y,
-        playerSize.width,
+        59,
         playerSize.height
       );
     },

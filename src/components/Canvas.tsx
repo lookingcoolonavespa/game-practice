@@ -46,8 +46,12 @@ export default function Canvas() {
   }, []);
 
   useEffect(() => {
-    if (newGame) window.addEventListener('keydown', startNewGame);
-    return () => window.removeEventListener('keydown', startNewGame);
+    if (newGame) window.addEventListener('keydown', handleKeyDown);
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Enter') startNewGame();
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [newGame]);
 
   return (
