@@ -9,6 +9,10 @@ export interface PlatformInterface extends XY {
   readonly image: HTMLImageElement;
 }
 
+export interface FloorInterface extends PlatformInterface {
+  draw: (c: CanvasRenderingContext2D) => void;
+}
+
 export interface Size {
   width: number;
   height: number;

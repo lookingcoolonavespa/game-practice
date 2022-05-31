@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { PlatformInterface, XY } from '../../types/interfaces';
+import { FloorInterface, PlatformInterface, XY } from '../../types/interfaces';
 import {
+  FloorPlatform,
   Platform1,
   Platform2,
   Platform3,
@@ -10,12 +11,25 @@ import {
 import {
   checkCollideTop,
   checkCollideSide,
-  checkCollideBottom,
-  getDepthOfCollision
+  checkCollideBottom
 } from '../checkCollision';
 import { getPlatformsToFillUpAxis } from '../misc';
 
+const initValues = {
+  playerPosition: {
+    x: 100,
+    y: 100
+  },
+  platforms: [Platform1({ x: 300, y: 700 }), Platform4({ x: 800, y: 700 })]
+};
+
 export default function useGame(canvas: HTMLCanvasElement | null) {
+  const [state, setState] = useState<{
+    playerPosition: XY;
+    platforms: (PlatformInterface | FloorInterface)[];
+  }>(initValues);
+  const [newGame, setNewGame] = useState(false);
+
   const playerSize = {
     height: 50,
     width: 50
@@ -40,31 +54,21 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
 
   useEffect(
     function addFloor() {
-      if (!canvas) return;
+      if (!canvas || newGame) return;
 
-      const floor = Array(3)
-        .fill(Platform4({ x: -5, y: canvas.height - 168 }))
-        .map((platform, i) => {
-          if (i === 0) return platform;
-
-          return { ...platform, x: platform.x * (i + 1) + platform.width * i };
-        });
-      const floorAboveFloor = floor.map((platform) => ({
-        ...platform,
-        y: canvas.height - 82
-      }));
+      const floor = FloorPlatform({ x: -10, y: canvas.height - 168 }, 800);
 
       setState((prev) => ({
         ...prev,
-        platforms: [...prev.platforms, ...floor, ...floorAboveFloor]
+        platforms: [...prev.platforms, floor]
       }));
     },
-    [canvas]
+    [canvas, newGame]
   );
 
   useEffect(
     function addLeftWall() {
-      if (!canvas) return;
+      if (!canvas || newGame) return;
 
       const wall = getPlatformsToFillUpAxis(
         Platform4,
@@ -79,16 +83,8 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
         platforms: [...prev.platforms, ...wall, ...wallBehindWall]
       }));
     },
-    [canvas]
+    [canvas, newGame]
   );
-
-  const [state, setState] = useState({
-    playerPosition: {
-      x: 100,
-      y: 100
-    },
-    platforms: [Platform1({ x: 200, y: 700 }), Platform4({ x: 800, y: 700 })]
-  });
 
   useEffect(function addArrowEvents() {
     window.addEventListener('keydown', handleKeyDown);
@@ -140,6 +136,12 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
       if (!canvas) return prev;
 
       const { playerPosition, platforms } = prev;
+
+      if (playerPosition.y > canvas.height) {
+        setNewGame(true);
+        return prev;
+      }
+
       let platformXVelocity = 0;
 
       let onPlatform = platforms.some((p) =>
@@ -155,9 +157,8 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
       // deal with y playerPosition
       if (
         // on platform or on ground
-        (onPlatform && !keyPressRef.current.down) ||
-        playerPosition.y + playerSize.height + velocity.current.y >=
-          canvas.height
+        onPlatform &&
+        !keyPressRef.current.down
       ) {
         velocity.current.y = 0;
 
@@ -257,8 +258,9 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
   }
 
   return {
-    playerPosition: state.playerPosition,
+    newGame,
     update,
+    playerPosition: state.playerPosition,
     drawPlayer: (c: CanvasRenderingContext2D) => {
       c.fillStyle = 'red';
       c.fillRect(
@@ -269,7 +271,14 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
       );
     },
     drawPlatforms: (c: CanvasRenderingContext2D) => {
-      state.platforms.forEach((p) => c.drawImage(p.image, p.x, p.y));
+      state.platforms.forEach((p) => {
+        if ('draw' in p) p.draw(c);
+        else c.drawImage(p.image, p.x, p.y);
+      });
+    },
+    startNewGame: () => {
+      setState(initValues);
+      setNewGame(false);
     }
   };
 }
