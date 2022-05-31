@@ -23,4 +23,5 @@ export interface BulletInterface extends XY {
   velocityX: number;
   readonly width: number;
   readonly height: number;
+  readonly startX: number;
 }

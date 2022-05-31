@@ -14,6 +14,9 @@ export default function Bullet(position: XY) {
     },
     get height() {
       return height;
+    },
+    get startX() {
+      return position.x;
     }
   };
 }

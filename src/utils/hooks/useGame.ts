@@ -75,6 +75,7 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
   const sameJumpRef = useRef(false);
 
   const shotAvailableRef = useRef(true);
+  const shotFiredRef = useRef(0);
 
   useEffect(
     function addFloor() {
@@ -173,7 +174,6 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
 
       frameCount++;
       if (frameCount === 12) {
-        shotAvailableRef.current = true;
         if (currIdx === playerSprites[currAction].length - 1) currIdx = 0;
         currIdx++;
         playerBullets.forEach((b) => {
@@ -182,6 +182,9 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
         });
         frameCount = 0;
       }
+
+      if (Date.now() - shotFiredRef.current >= 500)
+        shotAvailableRef.current = true;
 
       if (playerPosition.y > canvas.height) {
         setNewGame(true);
@@ -261,10 +264,14 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
       if (velocity.current.x || platformXVelocity) currAction = 'run';
       else currAction = 'idle';
 
-      playerBullets = playerBullets.map((b) => ({
-        ...b,
-        x: b.x + b.velocityX
-      }));
+      playerBullets = playerBullets
+        .filter((b) => {
+          return Math.abs(b.x - b.startX) < 700;
+        })
+        .map((b) => ({
+          ...b,
+          x: b.x + b.velocityX
+        }));
 
       return {
         ...prev,
@@ -313,11 +320,12 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
 
         if (space && shotAvailableRef.current) {
           shotAvailableRef.current = false;
-          console.log('firing');
+          shotFiredRef.current = Date.now();
+
           playerBullets.push(
             Bullet({
               x: playerPosition.x + playerSize.width,
-              y: playerPosition.y + 15
+              y: playerPosition.y + 18
             })
           );
         }
