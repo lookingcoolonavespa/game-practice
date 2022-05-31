@@ -17,7 +17,6 @@ export function checkCollideTop(platform: PlatformInterface, player: Player) {
     platform.x <= player.x + player.width &&
     player.x <= platform.x + platform.width;
 
-  console.log(player.x, platform.x + platform.width);
   return insidePlatformDiameter && collideY;
 }
 

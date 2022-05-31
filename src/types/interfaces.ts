@@ -17,3 +17,10 @@ export interface Size {
   width: number;
   height: number;
 }
+
+export interface BulletInterface extends XY {
+  spriteIdx: number;
+  velocityX: number;
+  readonly width: number;
+  readonly height: number;
+}

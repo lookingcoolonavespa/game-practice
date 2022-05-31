@@ -1,5 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { FloorInterface, PlatformInterface, XY } from '../../types/interfaces';
+import {
+  BulletInterface,
+  FloorInterface,
+  PlatformInterface,
+  XY
+} from '../../types/interfaces';
 import {
   FloorPlatform,
   Platform1,
@@ -15,40 +20,48 @@ import {
 } from '../checkCollision';
 import { getPlatformsToFillUpAxis } from '../misc';
 
-import playerSprites from '../playerSpirtes';
+import playerSprites from '../sprites/playerSpirtes';
+import gunSprites from '../sprites/gunSprites';
+import Bullet from '../Bullet';
+import bulletSprites from '../sprites/bulletSprites';
+
+interface GameState {
+  playerPosition: XY;
+  playerBullets: BulletInterface[];
+  platforms: (PlatformInterface | FloorInterface)[];
+  currAction: keyof typeof playerSprites;
+}
 
 let currIdx = 0;
 let frameCount = 0;
 
-const initValues = {
+const initValues: GameState = {
   playerPosition: {
     x: 100,
     y: 100
   },
+  playerBullets: [],
   platforms: [
     // Platform1({ x: 300, y: 700 }), Platform4({ x: 800, y: 700 })
   ],
-  currSprite: playerSprites.idle
+  currAction: 'idle'
 };
 
 export default function useGame(canvas: HTMLCanvasElement | null) {
-  const [state, setState] = useState<{
-    playerPosition: XY;
-    platforms: (PlatformInterface | FloorInterface)[];
-    currSprite: HTMLImageElement[];
-  }>(initValues);
+  const [state, setState] = useState<GameState>(initValues);
   const [newGame, setNewGame] = useState(false);
 
   const playerSize = {
     height: 50,
-    width: 59
+    width: 45
   };
 
   const keyPressRef = useRef({
     up: false,
     left: false,
     right: false,
-    down: false
+    down: false,
+    space: false
   });
 
   const gravity = 0.5;
@@ -60,6 +73,8 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
 
   const jumpNumberRef = useRef(0);
   const sameJumpRef = useRef(false);
+
+  const shotAvailableRef = useRef(true);
 
   useEffect(
     function addFloor() {
@@ -98,20 +113,24 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
     [canvas, newGame]
   );
 
-  useEffect(function addArrowEvents() {
+  useEffect(function addControls() {
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
 
-    const arrowDirections: {
-      ArrowLeft: 'left';
-      ArrowRight: 'right';
-      ArrowUp: 'up';
-      ArrowDown: 'down';
-    } = {
+    interface Controls {
+      ArrowLeft: string;
+      ArrowRight: string;
+      ArrowUp: string;
+      ArrowDown: string;
+      Space: string;
+    }
+
+    const controls: Controls = {
       ArrowLeft: 'left',
       ArrowRight: 'right',
       ArrowUp: 'up',
-      ArrowDown: 'down'
+      ArrowDown: 'down',
+      Space: 'space'
     };
 
     return () => {
@@ -120,175 +139,190 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
     };
 
     function handleKeyDown(e: KeyboardEvent) {
-      if (!Object.keys(arrowDirections).includes(e.key)) return;
+      let key = e.key as keyof typeof controls;
+      if (e.key === ' ') key = 'Space';
+      if (!Object.keys(controls).includes(key)) return;
 
-      const arrowKey = e.key as keyof typeof arrowDirections;
+      const keyNormalized = controls[key] as keyof typeof keyPressRef.current;
 
-      const direction = arrowDirections[arrowKey];
-
-      if (direction === 'up') {
-        if (e.repeat) sameJumpRef.current = true;
-        else jumpNumberRef.current++;
+      if (key.includes('Arrow')) {
+        if (keyNormalized === 'up') {
+          if (e.repeat) sameJumpRef.current = true;
+          else jumpNumberRef.current++;
+        }
       }
-      keyPressRef.current[direction] = true;
+      return (keyPressRef.current[keyNormalized] = true);
     }
 
     function handleKeyUp(e: KeyboardEvent) {
-      if (!Object.keys(arrowDirections).includes(e.key)) return;
+      let key = e.key as keyof typeof controls;
+      if (e.key === ' ') key = 'Space';
+      if (!Object.keys(controls).includes(key)) return;
 
-      const arrowKey = e.key as keyof typeof arrowDirections;
+      const keyNormalized = controls[key] as keyof typeof keyPressRef.current;
 
-      const direction = arrowDirections[arrowKey];
-      keyPressRef.current[direction] = false;
+      keyPressRef.current[keyNormalized] = false;
     }
   }, []);
 
   function update(canvas: HTMLCanvasElement | null) {
-    setState(
-      (
-        prev
-      ): {
-        playerPosition: XY;
-        platforms: PlatformInterface[];
-        currSprite: HTMLImageElement[];
-      } => {
-        if (!canvas) return prev;
+    setState((prev) => {
+      if (!canvas) return prev;
 
-        let { playerPosition, platforms, currSprite } = prev;
+      let { playerPosition, platforms, currAction, playerBullets } = prev;
 
-        frameCount++;
-        if (frameCount === 12) {
-          if (currIdx === currSprite.length - 1) currIdx = 0;
-          currIdx++;
-          frameCount = 0;
-        }
+      frameCount++;
+      if (frameCount === 12) {
+        shotAvailableRef.current = true;
+        if (currIdx === playerSprites[currAction].length - 1) currIdx = 0;
+        currIdx++;
+        playerBullets.forEach((b) => {
+          if (b.spriteIdx === bulletSprites.idle.length - 1) b.spriteIdx = 0;
+          b.spriteIdx++;
+        });
+        frameCount = 0;
+      }
 
-        if (playerPosition.y > canvas.height) {
-          setNewGame(true);
-          return prev;
-        }
+      if (playerPosition.y > canvas.height) {
+        setNewGame(true);
+        return prev;
+      }
 
-        let platformXVelocity = 0;
+      let platformXVelocity = 0;
 
-        let onPlatform = platforms.some((p) =>
-          checkCollideTop(p, {
-            x: playerPosition.x,
-            y: playerPosition.y,
-            velocity: velocity.current,
-            width: playerSize.width,
-            height: playerSize.height
-          })
-        );
-
-        // deal with y playerPosition
-        if (
-          // on platform or on ground
-          onPlatform &&
-          !keyPressRef.current.down
-        ) {
-          velocity.current.y = 0;
-
-          sameJumpRef.current = false;
-        }
-
-        runKeyPress();
-
-        // check for collision
-        const player = {
+      let onPlatform = platforms.some((p) =>
+        checkCollideTop(p, {
           x: playerPosition.x,
           y: playerPosition.y,
           velocity: velocity.current,
           width: playerSize.width,
           height: playerSize.height
-        };
-        while (
-          platforms.some((p) =>
-            checkCollideSide(
-              { ...p, velocityX: platformXVelocity },
-              player
-              // so player actually collides with platform instead of stopping with a gap in between the two
-            )
+        })
+      );
+
+      // deal with y playerPosition
+      if (
+        // on platform or on ground
+        onPlatform &&
+        !keyPressRef.current.down
+      ) {
+        velocity.current.y = 0;
+
+        sameJumpRef.current = false;
+      }
+
+      runKeyPress();
+
+      // check for collision
+      const player = {
+        x: playerPosition.x,
+        y: playerPosition.y,
+        velocity: velocity.current,
+        width: playerSize.width,
+        height: playerSize.height
+      };
+      while (
+        platforms.some((p) =>
+          checkCollideSide(
+            { ...p, velocityX: platformXVelocity },
+            player
+            // so player actually collides with platform instead of stopping with a gap in between the two
           )
-        ) {
-          // if player isnt moving, then the platform is
-          if (velocity.current.x) {
-            if (velocity.current.x < 1) velocity.current.x = 0;
-            else velocity.current.x /= 2;
-          } else {
-            if (platformXVelocity < 1) platformXVelocity = 0;
-            else platformXVelocity /= 2;
-          }
-        }
-
-        while (platforms.some((p) => checkCollideBottom(p, player))) {
-          velocity.current.y /= 2;
-        }
-
-        onPlatform = platforms.some((p) =>
-          checkCollideTop({ ...p, x: p.x + platformXVelocity }, player)
-        );
-        if (
-          // in air
-          playerPosition.y + playerSize.height + velocity.current.y <
-            canvas.height &&
-          !onPlatform
-        ) {
-          velocity.current.y += gravity;
+        )
+      ) {
+        // if player isnt moving, then the platform is
+        if (velocity.current.x) {
+          if (velocity.current.x < 1) velocity.current.x = 0;
+          else velocity.current.x /= 2;
         } else {
-          jumpNumberRef.current = 0; // dont want to reset jump number in air
-        }
-
-        if (velocity.current.x || platformXVelocity)
-          currSprite = playerSprites.run;
-        else currSprite = playerSprites.idle;
-
-        return {
-          currSprite,
-          platforms: platforms.map((platform) => ({
-            ...platform,
-            x: platform.x + platformXVelocity
-          })),
-          playerPosition: {
-            x: playerPosition.x + velocity.current.x,
-            y: playerPosition.y + velocity.current.y
-          }
-        };
-
-        function runKeyPress() {
-          if (!canvas) return;
-          const speed = 5;
-          const jumpHeight = 20;
-
-          const boundaryRight = canvas.width / 2 - playerSize.width;
-          const boundaryLeft = 100;
-
-          if (keyPressRef.current.right) velocity.current.x = speed;
-          if (keyPressRef.current.left) velocity.current.x = -speed;
-          if (!keyPressRef.current.left && !keyPressRef.current.right)
-            velocity.current.x = 0;
-
-          if (
-            (keyPressRef.current.right &&
-              playerPosition.x + velocity.current.x >= boundaryRight) ||
-            (keyPressRef.current.left &&
-              playerPosition.x + velocity.current.x <= boundaryLeft)
-          ) {
-            platformXVelocity =
-              keyPressRef.current.right &&
-              playerPosition.x + velocity.current.x >= boundaryRight
-                ? -speed
-                : speed;
-
-            velocity.current.x = 0;
-          }
-
-          if (keyPressRef.current.up && jumpNumberRef.current <= 2) {
-            if (!sameJumpRef.current) velocity.current.y = -jumpHeight;
-            keyPressRef.current.up = false;
-          }
+          if (platformXVelocity < 1) platformXVelocity = 0;
+          else platformXVelocity /= 2;
         }
       }
-    );
+
+      while (platforms.some((p) => checkCollideBottom(p, player))) {
+        velocity.current.y /= 2;
+      }
+
+      onPlatform = platforms.some((p) =>
+        checkCollideTop({ ...p, x: p.x + platformXVelocity }, player)
+      );
+      if (
+        // in air
+        playerPosition.y + playerSize.height + velocity.current.y <
+          canvas.height &&
+        !onPlatform
+      ) {
+        velocity.current.y += gravity;
+      } else {
+        jumpNumberRef.current = 0; // dont want to reset jump number in air
+      }
+
+      if (velocity.current.x || platformXVelocity) currAction = 'run';
+      else currAction = 'idle';
+
+      playerBullets = playerBullets.map((b) => ({
+        ...b,
+        x: b.x + b.velocityX
+      }));
+
+      return {
+        ...prev,
+        playerBullets,
+        currAction,
+        platforms: platforms.map((platform) => ({
+          ...platform,
+          x: platform.x + platformXVelocity
+        })),
+        playerPosition: {
+          x: playerPosition.x + velocity.current.x,
+          y: playerPosition.y + velocity.current.y
+        }
+      };
+
+      function runKeyPress() {
+        if (!canvas) return;
+        const speed = 5;
+        const jumpHeight = 20;
+
+        const boundaryRight = canvas.width / 2 - playerSize.width;
+        const boundaryLeft = 100;
+
+        const { up, down, left, right, space } = keyPressRef.current;
+
+        if (right) velocity.current.x = speed;
+        if (left) velocity.current.x = -speed;
+        if (!left && !right) velocity.current.x = 0;
+
+        if (
+          (right && playerPosition.x + velocity.current.x >= boundaryRight) ||
+          (left && playerPosition.x + velocity.current.x <= boundaryLeft)
+        ) {
+          platformXVelocity =
+            right && playerPosition.x + velocity.current.x >= boundaryRight
+              ? -speed
+              : speed;
+
+          velocity.current.x = 0;
+        }
+
+        if (up && jumpNumberRef.current <= 2) {
+          if (!sameJumpRef.current) velocity.current.y = -jumpHeight;
+          keyPressRef.current.up = false;
+        }
+
+        if (space && shotAvailableRef.current) {
+          shotAvailableRef.current = false;
+          console.log('firing');
+          playerBullets.push(
+            Bullet({
+              x: playerPosition.x + playerSize.width,
+              y: playerPosition.y + 15
+            })
+          );
+        }
+      }
+    });
   }
 
   return {
@@ -296,12 +330,34 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
     update,
     playerPosition: state.playerPosition,
     drawPlayer: (c: CanvasRenderingContext2D) => {
+      const { playerPosition, currAction, playerBullets } = state;
+
+      // draw player
       c.drawImage(
-        state.currSprite[currIdx],
-        state.playerPosition.x,
-        state.playerPosition.y,
+        playerSprites[currAction][currIdx],
+        playerPosition.x,
+        playerPosition.y,
         59,
         playerSize.height
+      );
+
+      // draw gun
+      const gunSprite =
+        currAction === 'shoot'
+          ? gunSprites[currAction].sides[currIdx]
+          : gunSprites[currAction][currIdx];
+
+      c.drawImage(
+        gunSprite,
+        playerPosition.x + playerSize.width - 20,
+        playerPosition.y - 13,
+        50,
+        94
+      );
+
+      // draw bullets
+      playerBullets.forEach((b) =>
+        c.drawImage(bulletSprites.idle[b.spriteIdx], b.x, b.y)
       );
     },
     drawPlatforms: (c: CanvasRenderingContext2D) => {

@@ -23,3 +23,9 @@ export function getPlatformsToFillUpAxis(
         : { ...platform, x: platform.x * (i + 1) + platform.width * i };
     });
 }
+
+export function createImage(src: string) {
+  const image = new Image();
+  image.src = src;
+  return image;
+}
