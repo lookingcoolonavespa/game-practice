@@ -58,7 +58,7 @@ export function FloorPlatform(position: XY, width: number) {
       c.drawImage(endImg, this.x + width - 69 - 10, this.y);
 
       c.fillStyle = 'black';
-      c.fillRect(this.x + 69, this.y, width - 69 * 2, 172);
+      c.fillRect(this.x + 59, this.y, width - 69 * 2 + 10, 172);
     }
   };
 }

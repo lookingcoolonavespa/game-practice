@@ -45,6 +45,11 @@ export default function Canvas() {
     requestAnimationFrame(animate);
   }, []);
 
+  useEffect(() => {
+    if (newGame) window.addEventListener('keydown', startNewGame);
+    return () => window.removeEventListener('keydown', startNewGame);
+  }, [newGame]);
+
   return (
     <>
       {newGame && (

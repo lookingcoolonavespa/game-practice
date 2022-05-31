@@ -15,18 +15,27 @@ import {
 } from '../checkCollision';
 import { getPlatformsToFillUpAxis } from '../misc';
 
+import playerSprites from '../playerSpirtes';
+
+let currIdx = 0;
+let frameCount = 0;
+
 const initValues = {
   playerPosition: {
     x: 100,
     y: 100
   },
-  platforms: [Platform1({ x: 300, y: 700 }), Platform4({ x: 800, y: 700 })]
+  platforms: [
+    // Platform1({ x: 300, y: 700 }), Platform4({ x: 800, y: 700 })
+  ],
+  currSprite: playerSprites.idle
 };
 
 export default function useGame(canvas: HTMLCanvasElement | null) {
   const [state, setState] = useState<{
     playerPosition: XY;
     platforms: (PlatformInterface | FloorInterface)[];
+    currSprite: HTMLImageElement[];
   }>(initValues);
   const [newGame, setNewGame] = useState(false);
 
@@ -56,11 +65,14 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
     function addFloor() {
       if (!canvas || newGame) return;
 
-      const floor = FloorPlatform({ x: -10, y: canvas.height - 168 }, 800);
+      const floor = [
+        FloorPlatform({ x: -10, y: canvas.height - 168 }, 800),
+        FloorPlatform({ x: 960, y: canvas.height - 168 }, 800)
+      ];
 
       setState((prev) => ({
         ...prev,
-        platforms: [...prev.platforms, floor]
+        platforms: [...prev.platforms, ...floor]
       }));
     },
     [canvas, newGame]
@@ -132,129 +144,149 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
   }, []);
 
   function update(canvas: HTMLCanvasElement | null) {
-    setState((prev): { playerPosition: XY; platforms: PlatformInterface[] } => {
-      if (!canvas) return prev;
+    setState(
+      (
+        prev
+      ): {
+        playerPosition: XY;
+        platforms: PlatformInterface[];
+        currSprite: HTMLImageElement[];
+      } => {
+        if (!canvas) return prev;
 
-      const { playerPosition, platforms } = prev;
+        let { playerPosition, platforms, currSprite } = prev;
 
-      if (playerPosition.y > canvas.height) {
-        setNewGame(true);
-        return prev;
-      }
+        frameCount++;
+        if (frameCount === 12) {
+          if (currIdx === currSprite.length - 1) currIdx = 0;
+          currIdx++;
+          frameCount = 0;
+        }
 
-      let platformXVelocity = 0;
+        if (playerPosition.y > canvas.height) {
+          setNewGame(true);
+          return prev;
+        }
 
-      let onPlatform = platforms.some((p) =>
-        checkCollideTop(p, {
+        let platformXVelocity = 0;
+
+        let onPlatform = platforms.some((p) =>
+          checkCollideTop(p, {
+            x: playerPosition.x,
+            y: playerPosition.y,
+            velocity: velocity.current,
+            width: playerSize.width,
+            height: playerSize.height
+          })
+        );
+
+        // deal with y playerPosition
+        if (
+          // on platform or on ground
+          onPlatform &&
+          !keyPressRef.current.down
+        ) {
+          velocity.current.y = 0;
+
+          sameJumpRef.current = false;
+        }
+
+        runKeyPress();
+
+        // check for collision
+        const player = {
           x: playerPosition.x,
           y: playerPosition.y,
           velocity: velocity.current,
           width: playerSize.width,
           height: playerSize.height
-        })
-      );
-
-      // deal with y playerPosition
-      if (
-        // on platform or on ground
-        onPlatform &&
-        !keyPressRef.current.down
-      ) {
-        velocity.current.y = 0;
-
-        sameJumpRef.current = false;
-      }
-
-      runKeyPress();
-
-      // check for collision
-      const player = {
-        x: playerPosition.x,
-        y: playerPosition.y,
-        velocity: velocity.current,
-        width: playerSize.width,
-        height: playerSize.height
-      };
-      while (
-        platforms.some((p) =>
-          checkCollideSide(
-            { ...p, velocityX: platformXVelocity },
-            player
-            // so player actually collides with platform instead of stopping with a gap in between the two
+        };
+        while (
+          platforms.some((p) =>
+            checkCollideSide(
+              { ...p, velocityX: platformXVelocity },
+              player
+              // so player actually collides with platform instead of stopping with a gap in between the two
+            )
           )
-        )
-      ) {
-        // if player isnt moving, then the platform is
-        if (velocity.current.x) {
-          if (velocity.current.x < 1) velocity.current.x = 0;
-          else velocity.current.x /= 2;
-        } else {
-          if (platformXVelocity < 1) platformXVelocity = 0;
-          else platformXVelocity /= 2;
-        }
-      }
-
-      while (platforms.some((p) => checkCollideBottom(p, player))) {
-        velocity.current.y /= 2;
-      }
-
-      onPlatform = platforms.some((p) => checkCollideTop(p, player));
-      if (
-        // in air
-        playerPosition.y + playerSize.height + velocity.current.y <
-          canvas.height &&
-        !onPlatform
-      ) {
-        velocity.current.y += gravity;
-      } else {
-        jumpNumberRef.current = 0; // dont want to reset jump number in air
-      }
-
-      return {
-        platforms: platforms.map((platform) => ({
-          ...platform,
-          x: platform.x + platformXVelocity
-        })),
-        playerPosition: {
-          x: playerPosition.x + velocity.current.x,
-          y: playerPosition.y + velocity.current.y
-        }
-      };
-
-      function runKeyPress() {
-        if (!canvas) return;
-        const speed = 10;
-        const jumpHeight = 20;
-
-        const boundaryRight = 800;
-        const boundaryLeft = 100;
-
-        if (keyPressRef.current.right) velocity.current.x = speed;
-        if (keyPressRef.current.left) velocity.current.x = -speed;
-        if (!keyPressRef.current.left && !keyPressRef.current.right)
-          velocity.current.x = 0;
-
-        if (
-          (keyPressRef.current.right &&
-            playerPosition.x + velocity.current.x >= boundaryRight) ||
-          (keyPressRef.current.left &&
-            playerPosition.x + velocity.current.x <= boundaryLeft)
         ) {
-          platformXVelocity =
-            keyPressRef.current.right &&
-            playerPosition.x + velocity.current.x >= boundaryRight
-              ? -speed
-              : speed;
-
-          velocity.current.x = 0;
+          // if player isnt moving, then the platform is
+          if (velocity.current.x) {
+            if (velocity.current.x < 1) velocity.current.x = 0;
+            else velocity.current.x /= 2;
+          } else {
+            if (platformXVelocity < 1) platformXVelocity = 0;
+            else platformXVelocity /= 2;
+          }
         }
 
-        if (keyPressRef.current.up && jumpNumberRef.current <= 2) {
-          if (!sameJumpRef.current) velocity.current.y = -jumpHeight;
-          keyPressRef.current.up = false;
+        while (platforms.some((p) => checkCollideBottom(p, player))) {
+          velocity.current.y /= 2;
+        }
+
+        onPlatform = platforms.some((p) => checkCollideTop(p, player));
+        if (
+          // in air
+          playerPosition.y + playerSize.height + velocity.current.y <
+            canvas.height &&
+          !onPlatform
+        ) {
+          velocity.current.y += gravity;
+        } else {
+          jumpNumberRef.current = 0; // dont want to reset jump number in air
+        }
+
+        if (velocity.current.x || platformXVelocity)
+          currSprite = playerSprites.run;
+        else currSprite = playerSprites.idle;
+
+        return {
+          currSprite,
+          platforms: platforms.map((platform) => ({
+            ...platform,
+            x: platform.x + platformXVelocity
+          })),
+          playerPosition: {
+            x: playerPosition.x + velocity.current.x,
+            y: playerPosition.y + velocity.current.y
+          }
+        };
+
+        function runKeyPress() {
+          if (!canvas) return;
+          const speed = 5;
+          const jumpHeight = 20;
+
+          const boundaryRight = 800;
+          const boundaryLeft = 100;
+
+          if (keyPressRef.current.right) velocity.current.x = speed;
+          if (keyPressRef.current.left) velocity.current.x = -speed;
+          if (!keyPressRef.current.left && !keyPressRef.current.right)
+            velocity.current.x = 0;
+
+          if (
+            (keyPressRef.current.right &&
+              playerPosition.x + velocity.current.x >= boundaryRight) ||
+            (keyPressRef.current.left &&
+              playerPosition.x + velocity.current.x <= boundaryLeft)
+          ) {
+            platformXVelocity =
+              keyPressRef.current.right &&
+              playerPosition.x + velocity.current.x >= boundaryRight
+                ? -speed
+                : speed;
+
+            velocity.current.x = 0;
+          }
+
+          if (keyPressRef.current.up && jumpNumberRef.current <= 2) {
+            if (!sameJumpRef.current) velocity.current.y = -jumpHeight;
+            keyPressRef.current.up = false;
+          }
         }
       }
-    });
+    );
   }
 
   return {
@@ -262,8 +294,8 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
     update,
     playerPosition: state.playerPosition,
     drawPlayer: (c: CanvasRenderingContext2D) => {
-      c.fillStyle = 'red';
-      c.fillRect(
+      c.drawImage(
+        state.currSprite[currIdx],
         state.playerPosition.x,
         state.playerPosition.y,
         playerSize.width,
