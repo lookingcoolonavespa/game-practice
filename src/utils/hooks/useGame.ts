@@ -214,7 +214,7 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
 
       runKeyPress();
 
-      const { onPlatform: onPlatformAfterKeyPress } = getCollisionUpdates({
+      const onPlatformAfterKeyPress = handleCollision({
         x: playerPosition.x,
         y: playerPosition.y,
         velocity: velocity.current,
@@ -277,7 +277,7 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
 
       function runKeyPress() {
         if (!canvas) return;
-        const speed = 5;
+        const speed = 2;
         const jumpHeight = 20;
 
         const boundaryRight = canvas.width / 2 - playerSize.width;
@@ -346,29 +346,35 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
             platforms.some((p) => {
               const platform = { ...p, velocityX: platformXVelocity };
 
+              // problem is platform is moving left so even though enemey velocity is 0, enemy is still colliding with platform
+
               return (
                 checkFallOffPlatform(platform, enemy) ||
                 checkCollideSide(platform, enemy)
               );
             })
           ) {
-            if (velocity.x < 1) velocity.x = 0;
-            else velocity.x /= 2;
+            if (platformXVelocity) {
+              enemy.x += platformXVelocity;
+            } else {
+              if (velocity.x < 1) velocity.x = 0;
+              else velocity.x /= 2;
+            }
 
             newDirection = direction === 'right' ? 'left' : 'right';
-            console.log(newDirection);
           }
           return {
             ...enemy,
             velocity,
+            currAction: velocity.x ? 'run' : 'idle',
             direction: newDirection,
-            x: x + velocity.x,
+            x: x + velocity.x + platformXVelocity,
             y: y + velocity.y
           };
         });
       }
 
-      function getCollisionUpdates(entity: EntityWithVelocity) {
+      function handleCollision(entity: EntityWithVelocity) {
         const { velocity } = entity;
 
         while (
@@ -399,9 +405,7 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
           checkCollideTop({ ...p, x: p.x + platformXVelocity }, entity)
         );
 
-        return {
-          onPlatform
-        };
+        return onPlatform;
       }
     });
   }

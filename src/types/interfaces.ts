@@ -32,7 +32,7 @@ export interface BulletInterface extends Entity {
 }
 
 export interface EnemyInterface extends Entity {
-  currAction: 'idle';
+  currAction: 'idle' | 'run';
   velocity: XY;
   direction: 'left' | 'right';
 }
