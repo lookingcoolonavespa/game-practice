@@ -21,7 +21,8 @@ import {
   checkCollideTop,
   checkCollideSide,
   checkCollideBottom,
-  checkFallOffPlatform
+  checkFallOffPlatform,
+  checkOnPlatform
 } from '../checkCollision';
 import { getPlatformsToFillUpAxis } from '../misc';
 
@@ -48,7 +49,9 @@ const initValues: GameState = {
     y: 100
   },
   playerBullets: [],
-  platforms: [Platform1({ x: 300, y: 200 }), Platform4({ x: 800, y: 700 })],
+  platforms: [
+    // Platform1({ x: 300, y: 200 }), Platform4({ x: 800, y: 700 })
+  ],
   enemies: [GroundEnemy({ x: 500, y: 200 })],
   currAction: 'idle'
 };
@@ -221,7 +224,6 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
         width: playerSize.width,
         height: playerSize.height
       }); // mutates velocity.current
-
       if (
         // in air
         playerPosition.y + playerSize.height + velocity.current.y <
@@ -402,7 +404,7 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
         }
 
         const onPlatform = platforms.some((p) =>
-          checkCollideTop({ ...p, x: p.x + platformXVelocity }, entity)
+          checkOnPlatform({ ...p, x: p.x + platformXVelocity }, entity)
         );
 
         return onPlatform;

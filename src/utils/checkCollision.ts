@@ -1,4 +1,4 @@
-import { EntityWithVelocity, PlatformInterface, XY } from '../types/interfaces';
+import { EntityWithVelocity, PlatformInterface } from '../types/interfaces';
 
 export function checkCollideTop(
   platform: PlatformInterface,
@@ -7,6 +7,21 @@ export function checkCollideTop(
   const collideY = // bottom of entity is above platform but with velocity is inside
     entity.y + entity.height <= platform.y &&
     entity.y + entity.height + entity.velocity.y >= platform.y;
+
+  const insidePlatformDiameter =
+    platform.x <= entity.x + entity.width &&
+    entity.x <= platform.x + platform.width;
+
+  return insidePlatformDiameter && collideY;
+}
+
+export function checkOnPlatform(
+  platform: PlatformInterface,
+  entity: EntityWithVelocity
+) {
+  const collideY =
+    entity.y + entity.height + entity.velocity.y <= platform.y &&
+    entity.y + entity.height + entity.velocity.y > platform.y - 2; // bottom of entity is above platform but with velocity is inside
 
   const insidePlatformDiameter =
     platform.x <= entity.x + entity.width &&
@@ -45,7 +60,10 @@ export function checkCollideSide(
       ? entity.x >= platform.x + platform.width &&
         entity.x <= platform.x + platform.width + platform.velocityX
       : false;
-  return collideY && (collideLeft || collideRight);
+
+  if (!collideY) return '';
+
+  return collideLeft ? 'left' : collideRight ? 'right' : '';
 }
 
 export function checkCollideBottom(
@@ -85,7 +103,9 @@ export function checkFallOffPlatform(
           platform.x + platform.width + platform.velocityX
       : false;
 
-  const onPlatform = checkCollideTop(platform, entity);
+  const onPlatform = checkOnPlatform(platform, entity);
 
-  return onPlatform && (fallLeft || fallRight);
+  if (!onPlatform) return '';
+
+  return fallLeft ? 'left' : fallRight ? 'right' : '';
 }
