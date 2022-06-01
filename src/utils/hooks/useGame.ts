@@ -48,7 +48,7 @@ const initValues: GameState = {
     y: 100
   },
   playerBullets: [],
-  platforms: [Platform1({ x: 300, y: 700 }), Platform4({ x: 800, y: 700 })],
+  platforms: [Platform1({ x: 300, y: 200 }), Platform4({ x: 800, y: 700 })],
   enemies: [GroundEnemy({ x: 500, y: 200 })],
   currAction: 'idle'
 };
@@ -325,8 +325,6 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
         enemies = enemies.map((enemy) => {
           const { x, y, width, height, velocity, direction } = enemy;
 
-          if (!velocity.x) velocity.x = direction === 'right' ? 5 : -5;
-
           if (
             // in air
             y + height + velocity.y <
@@ -340,13 +338,14 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
           );
           if (onPlatform) {
             velocity.y = 0;
-            velocity.x = 5;
+            if (!velocity.x) velocity.x = direction === 'right' ? 1 : -1;
           }
 
           let newDirection = direction;
           while (
             platforms.some((p) => {
               const platform = { ...p, velocityX: platformXVelocity };
+
               return (
                 checkFallOffPlatform(platform, enemy) ||
                 checkCollideSide(platform, enemy)
@@ -357,8 +356,8 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
             else velocity.x /= 2;
 
             newDirection = direction === 'right' ? 'left' : 'right';
+            console.log(newDirection);
           }
-
           return {
             ...enemy,
             velocity,

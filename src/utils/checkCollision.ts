@@ -66,24 +66,26 @@ export function checkFallOffPlatform(
   platform: PlatformAndVelocity,
   entity: EntityWithVelocity
 ) {
-  const collideLeft =
-    // right of entity is to left of platform's left side, but with velocity is inside platform
+  const fallLeft =
+    // left of entity is to right of platform's left side, but with velocity is off platform
     entity.velocity.x
-      ? entity.x + entity.width <= platform.x &&
-        entity.x + entity.width + entity.velocity.x >= platform.x
+      ? entity.x >= platform.x && entity.x + entity.velocity.x <= platform.x
       : platform.velocityX
-      ? entity.x + entity.width <= platform.x &&
-        entity.x + entity.width >= platform.x + platform.velocityX
+      ? entity.x >= platform.x && entity.x <= platform.x + platform.velocityX
       : false;
-  const collideRight =
-    // left of entity is to right of platform's right side, but with velocity is inside platform
+  const fallRight =
+    // right of entity is to left of platform's right side, but with velocity is off platform
     entity.velocity.x
-      ? entity.x >= platform.x + platform.width &&
-        entity.x + entity.velocity.x <= platform.x + platform.width
+      ? entity.x + entity.width <= platform.x + platform.width &&
+        entity.x + entity.width + entity.velocity.x >=
+          platform.x + platform.width
       : platform.velocityX
-      ? entity.x >= platform.x + platform.width &&
-        entity.x <= platform.x + platform.width + platform.velocityX
+      ? entity.x + entity.width <= platform.x + platform.width &&
+        entity.x + entity.width >=
+          platform.x + platform.width + platform.velocityX
       : false;
 
-  return collideLeft || collideRight;
+  const onPlatform = checkCollideTop(platform, entity);
+
+  return onPlatform && (fallLeft || fallRight);
 }
