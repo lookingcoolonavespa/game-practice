@@ -1,4 +1,4 @@
-import { XY } from '../types/interfaces';
+import { XY } from '../../types/interfaces';
 
 export default function Bullet(position: XY) {
   const width = 68;

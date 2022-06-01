@@ -1,9 +1,10 @@
-import platform1 from '../assets/Environments/Platforms/Platform01.png';
-import platform2 from '../assets/Environments/Platforms/Platform02.png';
-import platform3 from '../assets/Environments/Platforms/Platform03.png';
-import platform4 from '../assets/Environments/Platforms/Platform04.png';
-import platform5 from '../assets/Environments/Platforms/Platform05.png';
-import { FloorInterface, Size, XY } from '../types/interfaces';
+import platform1 from '../../assets/Environments/Platforms/Platform01.png';
+import platform2 from '../../assets/Environments/Platforms/Platform02.png';
+import platform3 from '../../assets/Environments/Platforms/Platform03.png';
+import platform4 from '../../assets/Environments/Platforms/Platform04.png';
+import platform5 from '../../assets/Environments/Platforms/Platform05.png';
+import { FloorInterface, Size, XY } from '../../types/interfaces';
+import { createImage } from '../misc';
 
 function Platform(position: XY, size: Size, imageSrc?: 'string') {
   const image = new Image();
@@ -52,13 +53,15 @@ export function FloorPlatform(position: XY, width: number) {
 
   return {
     ...Platform(position, { width, height: 172 }),
-    draw: function (this: FloorInterface, c: CanvasRenderingContext2D) {
-      c.drawImage(beginImg, this.x, this.y);
+    type: 'floor',
+    image: createImage(platform4)
+    // draw: function (this: FloorInterface, c: CanvasRenderingContext2D) {
+    //   c.drawImage(beginImg, this.x, this.y);
 
-      c.drawImage(endImg, this.x + width - 69, this.y);
+    //   c.drawImage(endImg, this.x + width - 69, this.y);
 
-      c.fillStyle = 'black';
-      c.fillRect(this.x + 59, this.y, width - 69 * 2 + 20, 172);
-    }
+    //   c.fillStyle = 'black';
+    //   c.fillRect(this.x + 59, this.y, width - 69 * 2 + 20, 172);
+    // }
   };
 }

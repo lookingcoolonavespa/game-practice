@@ -10,6 +10,7 @@ export default function Canvas() {
     startNewGame,
     drawPlayer,
     drawPlatforms,
+    drawEnemies,
     update,
     playerPosition
   } = useGame(canvasRef.current);
@@ -31,6 +32,7 @@ export default function Canvas() {
 
       drawPlatforms(c);
       drawPlayer(c);
+      drawEnemies(c);
     },
     [playerPosition]
   );

@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import {
   BulletInterface,
+  GroundEnemyInterface,
   FloorInterface,
   PlatformInterface,
-  XY
+  XY,
+  EntityWithVelocity
 } from '../../types/interfaces';
 import {
   FloorPlatform,
@@ -12,24 +14,29 @@ import {
   Platform3,
   Platform4,
   Platform5
-} from '../Platform';
+} from '../Factories/Platform';
+import Bullet from '../Factories/Bullet';
+
 import {
   checkCollideTop,
   checkCollideSide,
-  checkCollideBottom
+  checkCollideBottom,
+  checkFallOffPlatform
 } from '../checkCollision';
 import { getPlatformsToFillUpAxis } from '../misc';
 
 import playerSprites from '../sprites/playerSpirtes';
 import gunSprites from '../sprites/gunSprites';
-import Bullet from '../Bullet';
 import bulletSprites from '../sprites/bulletSprites';
+import enemySprites from '../sprites/enemySprites';
+import Enemy, { GroundEnemy } from '../Factories/Enemy';
 
 interface GameState {
   playerPosition: XY;
   playerBullets: BulletInterface[];
   platforms: (PlatformInterface | FloorInterface)[];
   currAction: keyof typeof playerSprites;
+  enemies: GroundEnemyInterface[];
 }
 
 let currIdx = 0;
@@ -41,9 +48,8 @@ const initValues: GameState = {
     y: 100
   },
   playerBullets: [],
-  platforms: [
-    // Platform1({ x: 300, y: 700 }), Platform4({ x: 800, y: 700 })
-  ],
+  platforms: [Platform1({ x: 300, y: 700 }), Platform4({ x: 800, y: 700 })],
+  enemies: [GroundEnemy({ x: 500, y: 200 })],
   currAction: 'idle'
 };
 
@@ -170,18 +176,10 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
     setState((prev) => {
       if (!canvas) return prev;
 
-      let { playerPosition, platforms, currAction, playerBullets } = prev;
+      let { playerPosition, platforms, currAction, playerBullets, enemies } =
+        prev;
 
-      frameCount++;
-      if (frameCount === 12) {
-        if (currIdx === playerSprites[currAction].length - 1) currIdx = 0;
-        currIdx++;
-        playerBullets.forEach((b) => {
-          if (b.spriteIdx === bulletSprites.idle.length - 1) b.spriteIdx = 0;
-          b.spriteIdx++;
-        });
-        frameCount = 0;
-      }
+      handleSprites(); // change frames etc
 
       if (Date.now() - shotFiredRef.current >= 500)
         shotAvailableRef.current = true;
@@ -193,7 +191,7 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
 
       let platformXVelocity = 0;
 
-      let onPlatform = platforms.some((p) =>
+      const onPlatform = platforms.some((p) =>
         checkCollideTop(p, {
           x: playerPosition.x,
           y: playerPosition.y,
@@ -216,45 +214,19 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
 
       runKeyPress();
 
-      // check for collision
-      const player = {
+      const { onPlatform: onPlatformAfterKeyPress } = getCollisionUpdates({
         x: playerPosition.x,
         y: playerPosition.y,
         velocity: velocity.current,
         width: playerSize.width,
         height: playerSize.height
-      };
-      while (
-        platforms.some((p) =>
-          checkCollideSide(
-            { ...p, velocityX: platformXVelocity },
-            player
-            // so player actually collides with platform instead of stopping with a gap in between the two
-          )
-        )
-      ) {
-        // if player isnt moving, then the platform is
-        if (velocity.current.x) {
-          if (velocity.current.x < 1) velocity.current.x = 0;
-          else velocity.current.x /= 2;
-        } else {
-          if (platformXVelocity < 1) platformXVelocity = 0;
-          else platformXVelocity /= 2;
-        }
-      }
+      }); // mutates velocity.current
 
-      while (platforms.some((p) => checkCollideBottom(p, player))) {
-        velocity.current.y /= 2;
-      }
-
-      onPlatform = platforms.some((p) =>
-        checkCollideTop({ ...p, x: p.x + platformXVelocity }, player)
-      );
       if (
         // in air
         playerPosition.y + playerSize.height + velocity.current.y <
           canvas.height &&
-        !onPlatform
+        !onPlatformAfterKeyPress
       ) {
         velocity.current.y += gravity;
       } else {
@@ -263,6 +235,8 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
 
       if (velocity.current.x || platformXVelocity) currAction = 'run';
       else currAction = 'idle';
+
+      handleEnemyMovement();
 
       playerBullets = playerBullets
         .filter((b) => {
@@ -275,6 +249,7 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
 
       return {
         ...prev,
+        enemies,
         playerBullets,
         currAction,
         platforms: platforms.map((platform) => ({
@@ -286,6 +261,19 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
           y: playerPosition.y + velocity.current.y
         }
       };
+
+      function handleSprites() {
+        frameCount++;
+        if (frameCount === 12) {
+          if (currIdx === playerSprites[currAction].length - 1) currIdx = 0;
+          currIdx++;
+          playerBullets.forEach((b) => {
+            if (b.spriteIdx === bulletSprites.idle.length - 1) b.spriteIdx = 0;
+            b.spriteIdx++;
+          });
+          frameCount = 0;
+        }
+      }
 
       function runKeyPress() {
         if (!canvas) return;
@@ -330,6 +318,92 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
           );
         }
       }
+
+      function handleEnemyMovement() {
+        if (!canvas) return;
+
+        enemies = enemies.map((enemy) => {
+          const { x, y, width, height, velocity, direction } = enemy;
+
+          if (!velocity.x) velocity.x = direction === 'right' ? 5 : -5;
+
+          if (
+            // in air
+            y + height + velocity.y <
+            canvas.height
+          ) {
+            velocity.y += gravity;
+          }
+
+          const onPlatform = platforms.some((p) =>
+            checkCollideTop({ ...p, x: p.x + platformXVelocity }, enemy)
+          );
+          if (onPlatform) {
+            velocity.y = 0;
+            velocity.x = 5;
+          }
+
+          let newDirection = direction;
+          while (
+            platforms.some((p) => {
+              const platform = { ...p, velocityX: platformXVelocity };
+              return (
+                checkFallOffPlatform(platform, enemy) ||
+                checkCollideSide(platform, enemy)
+              );
+            })
+          ) {
+            if (velocity.x < 1) velocity.x = 0;
+            else velocity.x /= 2;
+
+            newDirection = direction === 'right' ? 'left' : 'right';
+          }
+
+          return {
+            ...enemy,
+            velocity,
+            direction: newDirection,
+            x: x + velocity.x,
+            y: y + velocity.y
+          };
+        });
+      }
+
+      function getCollisionUpdates(entity: EntityWithVelocity) {
+        const { velocity } = entity;
+
+        while (
+          platforms.some((p) =>
+            checkCollideSide(
+              { ...p, velocityX: platformXVelocity },
+              entity
+              // so player actually collides with platform instead of stopping with a gap in between the two
+            )
+          )
+        ) {
+          // if player isnt moving, then the platform is
+          if (velocity.x) {
+            if (velocity.x < 1) velocity.x = 0;
+            else velocity.x /= 2;
+          } else {
+            if (platformXVelocity < 1) platformXVelocity = 0;
+            else platformXVelocity /= 2;
+          }
+        }
+
+        while (platforms.some((p) => checkCollideBottom(p, entity))) {
+          if (velocity.y < 1) velocity.y = 0;
+          else velocity.y /= 2;
+        }
+
+        const onPlatform = platforms.some((p) =>
+          checkCollideTop({ ...p, x: p.x + platformXVelocity }, entity)
+        );
+
+        return {
+          onPlatform
+        };
+      }
     });
   }
 
@@ -370,8 +444,25 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
     },
     drawPlatforms: (c: CanvasRenderingContext2D) => {
       state.platforms.forEach((p) => {
-        if ('draw' in p) p.draw(c);
-        else c.drawImage(p.image, p.x, p.y);
+        if ('type' in p) {
+          c.drawImage(p.image, p.x, p.y);
+
+          c.drawImage(p.image, p.x + p.width - 69, p.y);
+
+          c.fillStyle = 'black';
+          c.fillRect(p.x + 59, p.y, p.width - 69 * 2 + 20, 172);
+        } else c.drawImage(p.image, p.x, p.y);
+      });
+    },
+    drawEnemies: (c: CanvasRenderingContext2D) => {
+      state.enemies.forEach((enemy) => {
+        c.drawImage(
+          enemySprites[enemy.currAction][currIdx],
+          enemy.x,
+          enemy.y,
+          128,
+          128
+        );
       });
     },
     startNewGame: () => {
