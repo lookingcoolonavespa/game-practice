@@ -1,5 +1,7 @@
 import { EntityWithVelocity, PlatformInterface } from '../types/interfaces';
 
+// update turnStart when client receives update for chess app
+
 export function checkCollideTop(
   platform: PlatformInterface,
   entity: EntityWithVelocity

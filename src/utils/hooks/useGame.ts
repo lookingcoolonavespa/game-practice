@@ -159,6 +159,7 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
         if (keyNormalized === 'up') {
           if (e.repeat) sameJumpRef.current = true;
           else jumpNumberRef.current++;
+          console.log('in event handler', sameJumpRef.current);
         }
       }
       return (keyPressRef.current[keyNormalized] = true);
@@ -182,6 +183,18 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
       let { playerPosition, platforms, currAction, playerBullets, enemies } =
         prev;
 
+      function handleSprites() {
+        frameCount++;
+        if (frameCount === 12) {
+          if (currIdx === playerSprites[currAction].length - 1) currIdx = 0;
+          currIdx++;
+          playerBullets.forEach((b) => {
+            if (b.spriteIdx === bulletSprites.idle.length - 1) b.spriteIdx = 0;
+            b.spriteIdx++;
+          });
+          frameCount = 0;
+        }
+      }
       handleSprites(); // change frames etc
 
       if (Date.now() - shotFiredRef.current >= 500)
@@ -194,87 +207,25 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
 
       let platformXVelocity = 0;
 
-      const onPlatform = platforms.some((p) =>
-        checkCollideTop(p, {
+      const onPlatform = platforms.some((p) => {
+        const player = {
           x: playerPosition.x,
           y: playerPosition.y,
           velocity: velocity.current,
           width: playerSize.width,
           height: playerSize.height
-        })
-      );
+        };
+        return checkCollideTop(p, player) || checkOnPlatform(p, player);
+      });
 
       // deal with y playerPosition
       if (
         // on platform or on ground
-        onPlatform &&
-        !keyPressRef.current.down
+        onPlatform
       ) {
         velocity.current.y = 0;
 
         sameJumpRef.current = false;
-      }
-
-      runKeyPress();
-
-      const onPlatformAfterKeyPress = handleCollision({
-        x: playerPosition.x,
-        y: playerPosition.y,
-        velocity: velocity.current,
-        width: playerSize.width,
-        height: playerSize.height
-      }); // mutates velocity.current
-      if (
-        // in air
-        playerPosition.y + playerSize.height + velocity.current.y <
-          canvas.height &&
-        !onPlatformAfterKeyPress
-      ) {
-        velocity.current.y += gravity;
-      } else {
-        jumpNumberRef.current = 0; // dont want to reset jump number in air
-      }
-
-      if (velocity.current.x || platformXVelocity) currAction = 'run';
-      else currAction = 'idle';
-
-      handleEnemyMovement();
-
-      playerBullets = playerBullets
-        .filter((b) => {
-          return Math.abs(b.x - b.startX) < 700;
-        })
-        .map((b) => ({
-          ...b,
-          x: b.x + b.velocityX
-        }));
-
-      return {
-        ...prev,
-        enemies,
-        playerBullets,
-        currAction,
-        platforms: platforms.map((platform) => ({
-          ...platform,
-          x: platform.x + platformXVelocity
-        })),
-        playerPosition: {
-          x: playerPosition.x + velocity.current.x,
-          y: playerPosition.y + velocity.current.y
-        }
-      };
-
-      function handleSprites() {
-        frameCount++;
-        if (frameCount === 12) {
-          if (currIdx === playerSprites[currAction].length - 1) currIdx = 0;
-          currIdx++;
-          playerBullets.forEach((b) => {
-            if (b.spriteIdx === bulletSprites.idle.length - 1) b.spriteIdx = 0;
-            b.spriteIdx++;
-          });
-          frameCount = 0;
-        }
       }
 
       function runKeyPress() {
@@ -302,6 +253,7 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
 
           velocity.current.x = 0;
         }
+        console.log('before check', sameJumpRef.current);
 
         if (up && jumpNumberRef.current <= 2) {
           if (!sameJumpRef.current) velocity.current.y = -jumpHeight;
@@ -320,6 +272,60 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
           );
         }
       }
+      runKeyPress();
+
+      function handleCollision(entity: EntityWithVelocity) {
+        const { velocity } = entity;
+
+        while (
+          platforms.some((p) =>
+            checkCollideSide(
+              { ...p, velocityX: platformXVelocity },
+              entity
+              // so player actually collides with platform instead of stopping with a gap in between the two
+            )
+          )
+        ) {
+          // if player isnt moving, then the platform is
+          if (velocity.x) {
+            if (velocity.x < 1) velocity.x = 0;
+            else velocity.x /= 2;
+          } else {
+            if (platformXVelocity < 1) platformXVelocity = 0;
+            else platformXVelocity /= 2;
+          }
+        }
+
+        while (platforms.some((p) => checkCollideBottom(p, entity))) {
+          if (velocity.y < 1) velocity.y = 0;
+          else velocity.y /= 2;
+        }
+
+        const onPlatform = platforms.some((p) =>
+          checkOnPlatform({ ...p, x: p.x + platformXVelocity }, entity)
+        );
+        return onPlatform;
+      }
+      const onPlatformAfterKeyPress = handleCollision({
+        x: playerPosition.x,
+        y: playerPosition.y,
+        velocity: velocity.current,
+        width: playerSize.width,
+        height: playerSize.height
+      }); // mutates velocity.current
+      if (
+        // in air
+        playerPosition.y + playerSize.height + velocity.current.y <
+          canvas.height &&
+        !onPlatformAfterKeyPress
+      ) {
+        velocity.current.y += gravity;
+      } else {
+        jumpNumberRef.current = 0; // dont want to reset jump number in air
+      }
+
+      if (velocity.current.x || platformXVelocity) currAction = 'run';
+      else currAction = 'idle';
 
       function handleEnemyMovement() {
         if (!canvas) return;
@@ -375,40 +381,31 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
           };
         });
       }
+      handleEnemyMovement();
 
-      function handleCollision(entity: EntityWithVelocity) {
-        const { velocity } = entity;
+      playerBullets = playerBullets
+        .filter((b) => {
+          return Math.abs(b.x - b.startX) < 700;
+        })
+        .map((b) => ({
+          ...b,
+          x: b.x + b.velocityX
+        }));
 
-        while (
-          platforms.some((p) =>
-            checkCollideSide(
-              { ...p, velocityX: platformXVelocity },
-              entity
-              // so player actually collides with platform instead of stopping with a gap in between the two
-            )
-          )
-        ) {
-          // if player isnt moving, then the platform is
-          if (velocity.x) {
-            if (velocity.x < 1) velocity.x = 0;
-            else velocity.x /= 2;
-          } else {
-            if (platformXVelocity < 1) platformXVelocity = 0;
-            else platformXVelocity /= 2;
-          }
+      return {
+        ...prev,
+        enemies,
+        playerBullets,
+        currAction,
+        platforms: platforms.map((platform) => ({
+          ...platform,
+          x: platform.x + platformXVelocity
+        })),
+        playerPosition: {
+          x: playerPosition.x + velocity.current.x,
+          y: playerPosition.y + velocity.current.y
         }
-
-        while (platforms.some((p) => checkCollideBottom(p, entity))) {
-          if (velocity.y < 1) velocity.y = 0;
-          else velocity.y /= 2;
-        }
-
-        const onPlatform = platforms.some((p) =>
-          checkOnPlatform({ ...p, x: p.x + platformXVelocity }, entity)
-        );
-
-        return onPlatform;
-      }
+      };
     });
   }
 
