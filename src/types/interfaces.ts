@@ -1,6 +1,7 @@
+import { Action } from './types';
 export interface XY {
-  x: number;
-  y: number;
+  readonly x: number;
+  readonly y: number;
 }
 
 interface Entity extends XY {
@@ -39,4 +40,18 @@ export interface EnemyInterface extends Entity {
 
 export interface GroundEnemyInterface extends EnemyInterface {
   type: 'ground';
+}
+
+export interface PlayerInterface extends EntityWithVelocity {
+  bullets: BulletInterface[];
+  readonly currAction: Action;
+  updatePosition: () => void;
+  updateVelocity: (axis: 'x' | 'y', amount: number) => void;
+  updateAction: (action: Action) => void;
+}
+
+export interface GameState {
+  player: PlayerInterface;
+  platforms: (PlatformInterface | FloorInterface)[];
+  enemies: GroundEnemyInterface[];
 }
