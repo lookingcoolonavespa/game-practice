@@ -1,5 +1,8 @@
 import { BulletInterface, PlayerInterface } from '../../types/interfaces';
 import { Action } from '../../types/types';
+import playerSprites from '../sprites/playerSprites';
+import bulletSprites from '../sprites/bulletSprites';
+import gunSprites from '../sprites/gunSprites';
 
 export default function Player(): PlayerInterface {
   let x = 100;
@@ -44,6 +47,23 @@ export default function Player(): PlayerInterface {
     },
     updateAction(action: Action) {
       currAction = action;
+    },
+    draw: (c: CanvasRenderingContext2D, currIdx: number) => {
+      // draw player
+      c.drawImage(playerSprites[currAction][currIdx], x, y, 59, height);
+
+      // draw gun
+      const gunSprite =
+        currAction === 'shoot'
+          ? gunSprites[currAction].sides[currIdx]
+          : gunSprites[currAction][currIdx];
+
+      c.drawImage(gunSprite, x + width - 20, y - 13, 50, 94);
+
+      // draw bullets
+      bullets.forEach((b) =>
+        c.drawImage(bulletSprites.idle[b.spriteIdx], b.x, b.y)
+      );
     }
   };
 }

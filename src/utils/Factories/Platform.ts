@@ -3,19 +3,30 @@ import platform2 from '../../assets/Environments/Platforms/Platform02.png';
 import platform3 from '../../assets/Environments/Platforms/Platform03.png';
 import platform4 from '../../assets/Environments/Platforms/Platform04.png';
 import platform5 from '../../assets/Environments/Platforms/Platform05.png';
-import { FloorInterface, Size, XY } from '../../types/interfaces';
+import { FloorInterface, Size, XY } from '../../../types/interfaces';
 import { createImage } from '../misc';
 
 function Platform(position: XY, size: Size, imageSrc?: 'string') {
   const image = new Image();
   if (imageSrc) image.src = imageSrc;
 
+  let { x, y } = position;
+
   const height = size.height;
   const width = size.width;
 
+  let velocityX = 0;
+
   return {
-    x: position.x,
-    y: position.y,
+    get x() {
+      return x;
+    },
+    get y() {
+      return y;
+    },
+    get velocityX() {
+      return velocityX;
+    },
     get width() {
       return width;
     },
@@ -24,6 +35,12 @@ function Platform(position: XY, size: Size, imageSrc?: 'string') {
     },
     get image() {
       return image;
+    },
+    updateXPosition: () => {
+      x += velocityX;
+    },
+    updateVelocityX: (num: number) => {
+      velocityX = num;
     }
   };
 }

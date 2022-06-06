@@ -10,11 +10,13 @@ interface Entity extends XY {
 }
 
 export interface EntityWithVelocity extends Entity {
-  velocity: XY;
+  readonly velocity: XY;
 }
 
 export interface PlatformInterface extends Entity {
   readonly image: HTMLImageElement;
+  updateXPosition: () => void;
+  updateVelocityX: (num: number) => void;
 }
 
 export interface FloorInterface extends PlatformInterface {
@@ -27,15 +29,15 @@ export interface Size {
 }
 
 export interface BulletInterface extends Entity {
-  spriteIdx: number;
-  velocityX: number;
+  readonly spriteIdx: number;
+  readonly velocityX: number;
   readonly startX: number;
 }
 
 export interface EnemyInterface extends Entity {
-  currAction: 'idle' | 'run';
-  velocity: XY;
-  direction: 'left' | 'right';
+  readonly currAction: 'idle' | 'run';
+  readonly velocity: XY;
+  readonly direction: 'left' | 'right';
 }
 
 export interface GroundEnemyInterface extends EnemyInterface {
@@ -48,10 +50,14 @@ export interface PlayerInterface extends EntityWithVelocity {
   updatePosition: () => void;
   updateVelocity: (axis: 'x' | 'y', amount: number) => void;
   updateAction: (action: Action) => void;
+  draw: (c: CanvasRenderingContext2D, currIdx: number) => void;
 }
 
-export interface GameState {
+export interface LevelInterface {
+  readonly platforms: (PlatformInterface | FloorInterface)[];
+  readonly enemies: GroundEnemyInterface[];
+}
+
+export interface GameStateInterface extends LevelInterface {
   player: PlayerInterface;
-  platforms: (PlatformInterface | FloorInterface)[];
-  enemies: GroundEnemyInterface[];
 }
