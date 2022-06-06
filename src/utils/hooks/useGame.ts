@@ -253,7 +253,6 @@ export default function useGame(canvas: HTMLCanvasElement | null) {
 
           velocity.current.x = 0;
         }
-        console.log('before check', sameJumpRef.current);
 
         if (up && jumpNumberRef.current <= 2) {
           if (!sameJumpRef.current) velocity.current.y = -jumpHeight;
