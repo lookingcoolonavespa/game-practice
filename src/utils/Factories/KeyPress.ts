@@ -1,6 +1,6 @@
 import { KeyPressInterface } from '../../types/interfaces';
 import { KeyPressType } from '../../types/types';
-import DeltaTimeout from './DeltaTimeout';
+import DeltaTimer from './DeltaTimer';
 
 export default function KeyPress(): KeyPressInterface {
   const keyPress: KeyPressType = {
@@ -24,7 +24,7 @@ export default function KeyPress(): KeyPressInterface {
     setTimer: (cb: () => void, delay: number) => {
       if (keyPress.up.timer) return;
 
-      keyPress.up.timer = DeltaTimeout(cb, delay);
+      keyPress.up.timer = DeltaTimer(cb, delay);
       keyPress.up.timer.start();
     },
 

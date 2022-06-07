@@ -39,8 +39,12 @@ function handleKeyDown(e: KeyboardEvent) {
   keyPress.setPressed(keyNormalized);
 
   if (keyNormalized === 'up') {
-    keyPress.setTimer(() => player.setSameJump(true), 50); // e.repeat triggers late on the first jump
-    if (e.repeat) player.setSameJump(true);
+    if (!keyPress.up.timer)
+      keyPress.setTimer(() => {
+        console.log('timer went off');
+        player.setSameJump(true);
+      }, 10);
+    // e.repeat triggers late on the first jump
     else player.setJumpNumber(player.jumpNumber + 1);
   }
 }
@@ -101,6 +105,7 @@ export function update() {
     player.updateVelocity('y', player.velocity.y + gravity);
   } else {
     player.setJumpNumber(0);
+    console.log('reset');
     player.setSameJump(false);
   }
 
@@ -110,9 +115,8 @@ export function update() {
   /* handle key press */
   const { up, left, right } = keyPress;
   if (up.pressed) {
-    console.log(player.sameJump, player.jumpNumber);
     if (!player.sameJump && player.jumpNumber <= 2) {
-      player.updateVelocity('y', -15);
+      player.updateVelocity('y', -20);
     }
   }
   if (right.pressed) player.updateVelocity('x', speed);
