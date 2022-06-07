@@ -48,9 +48,13 @@ export interface GroundEnemyInterface extends EnemyInterface {
 export interface PlayerInterface extends EntityWithVelocity {
   bullets: BulletInterface[];
   readonly currAction: Action;
+  readonly sameJump: boolean;
+  readonly jumpNumber: number;
   updatePosition: () => void;
   updateVelocity: (axis: 'x' | 'y', amount: number) => void;
   updateAction: (action: Action) => void;
+  setSameJump: (val: boolean) => void;
+  setJumpNumber: (num: number) => void;
   increaseSpriteIdx: () => void;
   resetSpriteIdx: () => void;
   draw: (c: CanvasRenderingContext2D) => void;

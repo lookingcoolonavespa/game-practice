@@ -7,6 +7,7 @@ import GameState from './utils/Factories/GameState';
 import levels from './utils/levels';
 import { checkCollideTop, checkOnPlatform } from './utils/checkCollision';
 import { gravity, speed } from './utils/constants';
+import DeltaTimer from './utils/Factories/DeltaTimer';
 
 const canvas = document.querySelector('canvas') as HTMLCanvasElement;
 canvas.height = window.innerHeight;
@@ -16,59 +17,86 @@ window.addEventListener('resize', () => {
   canvas.width = window.innerWidth;
 });
 
+const levelOne = levels.one(canvas.height);
+const { player, platforms, enemies }: GameStateInterface = GameState(levelOne);
+
 const keyPress = {
   up: false,
   left: false,
   right: false
 };
+(function handleKeyPress() {
+  const interval = 10;
 
-window.addEventListener('keydown', handleKeyDown);
-window.addEventListener('keyup', handleKeyUp);
+  window.addEventListener('keydown', handleKeyDown);
+  window.addEventListener('keyup', handleKeyUp);
 
-interface Controls {
-  ArrowLeft: string;
-  ArrowRight: string;
-  ArrowUp: string;
-  ArrowDown: string;
-  Space: string;
-}
+  interface Controls {
+    ArrowLeft: string;
+    ArrowRight: string;
+    ArrowUp: string;
+    ArrowDown: string;
+    Space: string;
+  }
 
-const controls: Controls = {
-  ArrowLeft: 'left',
-  ArrowRight: 'right',
-  ArrowUp: 'up',
-  ArrowDown: 'down',
-  Space: 'space'
-};
+  const controls: Controls = {
+    ArrowLeft: 'left',
+    ArrowRight: 'right',
+    ArrowUp: 'up',
+    ArrowDown: 'down',
+    Space: 'space'
+  };
 
-function handleKeyDown(e: KeyboardEvent) {
-  let key = e.key as keyof typeof controls;
-  if (e.key === ' ') key = 'Space';
-  if (!Object.keys(controls).includes(key)) return;
+  function handleKeyDown(e: KeyboardEvent) {
+    let key = e.key as keyof typeof controls;
+    if (e.key === ' ') key = 'Space';
+    if (!Object.keys(controls).includes(key)) return;
 
-  const keyNormalized = controls[key] as keyof typeof keyPress;
+    const keyNormalized = controls[key] as keyof typeof keyPress;
 
-  // if (key.includes('Arrow')) {
-  //   if (keyNormalized === 'up') {
-  //     if (e.repeat) sameJumpRef.current = true;
-  //     else jumpNumberRef.current++;
-  //   }
-  // }
-  keyPress[keyNormalized] = true;
-}
+    if (key.includes('Arrow') && keyNormalized === 'up') {
+      if (e.repeat) player.setSameJump(true);
+      else player.setJumpNumber(player.jumpNumber + 1);
+    }
 
-function handleKeyUp(e: KeyboardEvent) {
-  let key = e.key as keyof typeof controls;
-  if (e.key === ' ') key = 'Space';
-  if (!Object.keys(controls).includes(key)) return;
+    const keyVal = keyPress[keyNormalized];
 
-  const keyNormalized = controls[key] as keyof typeof keyPress;
+    if (keyVal) {
+      if (!keyVal.start) key.start = key.timer.start();
+      key.pressed = true;
+    } else {
+      const timer = DeltaTimer((time) => {
+        if (key.pressed) {
+          const event = new CustomEvent('keyRepeat', {
+            time: time - key.start
+          });
+          window.dispatchEvent(event);
+        } else {
+          key.start = 0;
+          timer.stop();
+        }
+      }, interval);
 
-  keyPress[keyNormalized] = false;
-}
+      keyPress[keyNormalized] = {
+        pressed: true,
+        timer: timer,
+        start: timer.start()
+      };
+    }
+  }
 
-const levelOne = levels.one(canvas.height);
-const { player, platforms, enemies }: GameStateInterface = GameState(levelOne);
+  function handleKeyUp(e: KeyboardEvent) {
+    let key = e.key as keyof typeof controls;
+    if (e.key === ' ') key = 'Space';
+    if (!Object.keys(controls).includes(key)) return;
+
+    const keyNormalized = controls[key] as keyof typeof keyPress;
+
+    keyPress[keyNormalized] = false;
+  }
+
+  return keyPress;
+})();
 
 export function draw() {
   const c = canvas.getContext('2d');
@@ -108,7 +136,12 @@ export function update() {
   /* end handle sprites */
 
   const onPlatform = platforms.some((p) => checkOnPlatform(p, player));
-  if (!onPlatform) player.updateVelocity('y', player.velocity.y + gravity);
+  if (!onPlatform) {
+    player.updateVelocity('y', player.velocity.y + gravity);
+  } else {
+    player.setJumpNumber(0);
+    player.setSameJump(false);
+  }
 
   if (platforms.some((p) => checkCollideTop(p, player)))
     player.updateVelocity('y', 0);
@@ -116,7 +149,10 @@ export function update() {
   /* handle key press */
   const { up, left, right } = keyPress;
 
-  if (up) player.updateVelocity('y', -30);
+  if (up) {
+    if (!player.sameJump && player.jumpNumber <= 2)
+      player.updateVelocity('y', -30);
+  }
   if (right) player.updateVelocity('x', speed);
   if (left) player.updateVelocity('x', -speed);
   if (left || right) player.updateAction('run');
@@ -128,11 +164,3 @@ export function update() {
 
   player.updatePosition();
 }
-
-function animate() {
-  update();
-  draw();
-  requestAnimationFrame(animate);
-}
-
-requestAnimationFrame(animate);

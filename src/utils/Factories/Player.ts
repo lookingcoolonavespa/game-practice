@@ -5,17 +5,23 @@ import bulletSprites from '../sprites/bulletSprites';
 import gunSprites from '../sprites/gunSprites';
 
 export default function Player(): PlayerInterface {
+  const height = 50;
+  const width = 45;
+
   let x = 100;
   let y = 100;
+
   const velocity = {
     x: 0,
     y: 0
   };
-  const height = 50;
-  const width = 45;
-  const bullets: BulletInterface[] = [];
-  let currAction: Action = 'idle';
 
+  let sameJump = false;
+  let jumpNumber = 0;
+
+  const bullets: BulletInterface[] = [];
+
+  let currAction: Action = 'idle';
   let spriteIdx = 0;
 
   return {
@@ -34,6 +40,12 @@ export default function Player(): PlayerInterface {
     get width() {
       return width;
     },
+    get sameJump() {
+      return sameJump;
+    },
+    get jumpNumber() {
+      return jumpNumber;
+    },
     get bullets() {
       return bullets;
     },
@@ -49,7 +61,6 @@ export default function Player(): PlayerInterface {
     },
     updateAction(action: Action) {
       currAction = action;
-      spriteIdx = 0;
     },
     increaseSpriteIdx() {
       spriteIdx++;
@@ -57,10 +68,16 @@ export default function Player(): PlayerInterface {
     resetSpriteIdx() {
       if (spriteIdx === playerSprites[currAction].length - 1) spriteIdx = 0;
     },
+    setSameJump(val: boolean) {
+      sameJump = val;
+    },
+    setJumpNumber(num: number) {
+      jumpNumber = num;
+    },
     draw: (c: CanvasRenderingContext2D) => {
       // draw player
-      console.log(currAction);
-      c.drawImage(playerSprites[currAction][spriteIdx], x, y, 59, height);
+      const sprite = playerSprites[currAction][spriteIdx];
+      c.drawImage(sprite, x, y, 59, height);
 
       // // draw gun
       // const gunSprite =
