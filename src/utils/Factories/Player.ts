@@ -51,19 +51,20 @@ export default function Player(): PlayerInterface {
     draw: (c: CanvasRenderingContext2D, currIdx: number) => {
       // draw player
       c.drawImage(playerSprites[currAction][currIdx], x, y, 59, height);
+      console.log(playerSprites[currAction][currIdx]);
 
-      // draw gun
-      const gunSprite =
-        currAction === 'shoot'
-          ? gunSprites[currAction].sides[currIdx]
-          : gunSprites[currAction][currIdx];
+      // // draw gun
+      // const gunSprite =
+      //   currAction === 'shoot'
+      //     ? gunSprites[currAction].sides[currIdx]
+      //     : gunSprites[currAction][currIdx];
 
-      c.drawImage(gunSprite, x + width - 20, y - 13, 50, 94);
+      // c.drawImage(gunSprite, x + width - 20, y - 13, 50, 94);
 
-      // draw bullets
-      bullets.forEach((b) =>
-        c.drawImage(bulletSprites.idle[b.spriteIdx], b.x, b.y)
-      );
+      // // draw bullets
+      // bullets.forEach((b) =>
+      //   c.drawImage(bulletSprites.idle[b.spriteIdx], b.x, b.y)
+      // );
     }
   };
 }

@@ -18,7 +18,7 @@ const spritesState = {
 const levelOne = levels.one(canvas.height);
 const gameState: GameStateInterface = GameState(levelOne);
 
-function draw() {
+export function draw() {
   const c = canvas.getContext('2d');
   if (!c) return;
   const { width, height } = canvas;
@@ -28,8 +28,8 @@ function draw() {
   c.fillStyle = '#B33B44';
   c.fillRect(0, 0, width, height);
 
-  c.fillStyle = 'black';
-  c.fillRect(0, 0, width, 160);
+  // c.fillStyle = 'black';
+  // c.fillRect(0, 0, width, 160);
 
   //   drawPlatforms(c);
   gameState.player.draw(c, spritesState.currIdx);

@@ -10,6 +10,7 @@
   },
   "scripts": {
     "start": "npm run start",
+    "dev": "npx webpack server",
     "test": "jest",
     "build": "webpack"
   },
@@ -33,6 +34,7 @@
     "ts-loader": "^9.3.0",
     "typescript": "^4.7.3",
     "webpack": "^5.73.0",
-    "webpack-cli": "^4.9.2"
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.9.2"
   }
 }
