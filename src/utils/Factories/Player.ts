@@ -51,7 +51,6 @@ export default function Player(): PlayerInterface {
     draw: (c: CanvasRenderingContext2D, currIdx: number) => {
       // draw player
       c.drawImage(playerSprites[currAction][currIdx], x, y, 59, height);
-      console.log(playerSprites[currAction][currIdx]);
 
       // // draw gun
       // const gunSprite =

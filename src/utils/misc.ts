@@ -14,13 +14,14 @@ export function getPlatformsToFillUpAxis(
   const noOfPlatformsToFillUpCanvas = Math.ceil(axisLength / platformLength);
 
   return Array(noOfPlatformsToFillUpCanvas)
-    .fill(Platform(startPos))
-    .map((platform, i) => {
-      if (i === 0) return platform;
+    .fill(null)
+    .map((v, i) => {
+      const position = { ...startPos };
+      if (axis == 'y') position.y = startPos.y + basePlatform.height * i;
+      else if (axis === 'x')
+        position.x = startPos.x * (i + 1) + basePlatform.width * i;
 
-      return axis === 'y'
-        ? { ...platform, y: platform.y + platform.height * i }
-        : { ...platform, x: platform.x * (i + 1) + platform.width * i };
+      return Platform(position);
     });
 }
 

@@ -17,6 +17,7 @@ const spritesState = {
 
 const levelOne = levels.one(canvas.height);
 const gameState: GameStateInterface = GameState(levelOne);
+console.log(gameState.platforms);
 
 export function draw() {
   const c = canvas.getContext('2d');
@@ -32,6 +33,7 @@ export function draw() {
   // c.fillRect(0, 0, width, 160);
 
   //   drawPlatforms(c);
+  gameState.platforms.forEach((p) => p.draw(c));
   gameState.player.draw(c, spritesState.currIdx);
   //   drawEnemies(c);
 }

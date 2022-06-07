@@ -41,6 +41,16 @@ function Platform(position: XY, size: Size, imageSrc?: 'string') {
     },
     updateVelocityX: (num: number) => {
       velocityX = num;
+    },
+    draw: function (c: CanvasRenderingContext2D) {
+      if ('type' in this) {
+        c.drawImage(image, x, y);
+
+        c.drawImage(image, x + width - 69, y);
+
+        c.fillStyle = 'black';
+        c.fillRect(x + 59, y, width - 69 * 2 + 20, 172);
+      } else c.drawImage(image, x, y);
     }
   };
 }
