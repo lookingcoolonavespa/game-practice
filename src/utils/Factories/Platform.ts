@@ -3,7 +3,7 @@ import platform2 from '../../assets/Environments/Platforms/Platform02.png';
 import platform3 from '../../assets/Environments/Platforms/Platform03.png';
 import platform4 from '../../assets/Environments/Platforms/Platform04.png';
 import platform5 from '../../assets/Environments/Platforms/Platform05.png';
-import { FloorInterface, Size, XY } from '../../../types/interfaces';
+import { Size, XY } from '../../types/interfaces';
 import { createImage } from '../misc';
 
 function Platform(position: XY, size: Size, imageSrc?: 'string') {
