@@ -1,4 +1,5 @@
-import { Action } from './types';
+import { Action, KeyPressType } from './types';
+
 export interface XY {
   readonly x: number;
   readonly y: number;
@@ -15,18 +16,18 @@ export interface EntityWithVelocity extends Entity {
 
 export interface PlatformInterface extends Entity {
   readonly image: HTMLImageElement;
-  updateXPosition: () => void;
-  updateVelocityX: (num: number) => void;
-  draw: (c: CanvasRenderingContext2D) => void;
+  readonly updateXPosition: () => void;
+  readonly updateVelocityX: (num: number) => void;
+  readonly draw: (c: CanvasRenderingContext2D) => void;
 }
 
 export interface FloorInterface extends PlatformInterface {
-  type: 'floor';
+  readonly type: 'floor';
 }
 
 export interface Size {
-  width: number;
-  height: number;
+  readonly width: number;
+  readonly height: number;
 }
 
 export interface BulletInterface extends Entity {
@@ -42,22 +43,22 @@ export interface EnemyInterface extends Entity {
 }
 
 export interface GroundEnemyInterface extends EnemyInterface {
-  type: 'ground';
+  readonly type: 'ground';
 }
 
 export interface PlayerInterface extends EntityWithVelocity {
-  bullets: BulletInterface[];
+  readonly bullets: BulletInterface[];
   readonly currAction: Action;
   readonly sameJump: boolean;
   readonly jumpNumber: number;
-  updatePosition: () => void;
-  updateVelocity: (axis: 'x' | 'y', amount: number) => void;
-  updateAction: (action: Action) => void;
-  setSameJump: (val: boolean) => void;
-  setJumpNumber: (num: number) => void;
-  increaseSpriteIdx: () => void;
-  resetSpriteIdx: () => void;
-  draw: (c: CanvasRenderingContext2D) => void;
+  readonly updatePosition: () => void;
+  readonly updateVelocity: (axis: 'x' | 'y', amount: number) => void;
+  readonly updateAction: (action: Action) => void;
+  readonly setSameJump: (val: boolean) => void;
+  readonly setJumpNumber: (num: number) => void;
+  readonly increaseSpriteIdx: () => void;
+  readonly resetSpriteIdx: () => void;
+  readonly draw: (c: CanvasRenderingContext2D) => void;
 }
 
 export interface LevelInterface {
@@ -67,4 +68,29 @@ export interface LevelInterface {
 
 export interface GameStateInterface extends LevelInterface {
   player: PlayerInterface;
+}
+
+export interface DeltaTimeoutInterface {
+  readonly start: () => void;
+  readonly stop: () => void;
+}
+
+export interface KeyPressInterface {
+  readonly up: {
+    readonly pressed: boolean;
+    readonly timer: null | DeltaTimeoutInterface;
+  };
+  readonly left: {
+    readonly pressed: boolean;
+  };
+  readonly right: {
+    readonly pressed: boolean;
+  };
+  readonly space: {
+    readonly pressed: boolean;
+  };
+  readonly setPressed: (key: keyof KeyPressType) => void;
+  readonly setReleased: (key: keyof KeyPressType) => void;
+  readonly setTimer: (cb: () => void, delay: number) => void;
+  readonly removeTimer: () => void;
 }
