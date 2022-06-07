@@ -16,6 +16,8 @@ export default function Player(): PlayerInterface {
   const bullets: BulletInterface[] = [];
   let currAction: Action = 'idle';
 
+  let spriteIdx = 0;
+
   return {
     get x() {
       return x;
@@ -47,10 +49,18 @@ export default function Player(): PlayerInterface {
     },
     updateAction(action: Action) {
       currAction = action;
+      spriteIdx = 0;
     },
-    draw: (c: CanvasRenderingContext2D, currIdx: number) => {
+    increaseSpriteIdx() {
+      spriteIdx++;
+    },
+    resetSpriteIdx() {
+      if (spriteIdx === playerSprites[currAction].length - 1) spriteIdx = 0;
+    },
+    draw: (c: CanvasRenderingContext2D) => {
       // draw player
-      c.drawImage(playerSprites[currAction][currIdx], x, y, 59, height);
+      console.log(currAction);
+      c.drawImage(playerSprites[currAction][spriteIdx], x, y, 59, height);
 
       // // draw gun
       // const gunSprite =

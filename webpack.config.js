@@ -14,6 +14,10 @@ module.exports = {
       {
         test: /\.(png|jpe?g|gif|jp2|webp)$/,
         type: 'asset/resource'
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
       }
     ]
   },
@@ -25,7 +29,7 @@ module.exports = {
     port: 3000
   },
   resolve: {
-    extensions: ['.ts', '.js', '.json']
+    extensions: ['.ts', '.js', '.json', 'css']
   },
   output: {
     filename: 'main.js',

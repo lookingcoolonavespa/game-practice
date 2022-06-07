@@ -82,13 +82,5 @@ export function FloorPlatform(position: XY, width: number) {
     ...Platform(position, { width, height: 172 }),
     type: 'floor',
     image: createImage(platform4)
-    // draw: function (this: FloorInterface, c: CanvasRenderingContext2D) {
-    //   c.drawImage(beginImg, this.x, this.y);
-
-    //   c.drawImage(endImg, this.x + width - 69, this.y);
-
-    //   c.fillStyle = 'black';
-    //   c.fillRect(this.x + 59, this.y, width - 69 * 2 + 20, 172);
-    // }
   };
 }

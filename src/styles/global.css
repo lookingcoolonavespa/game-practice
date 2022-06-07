@@ -6,9 +6,7 @@ body {
 }
 
 html,
-body,
-#root,
-.app {
+body {
   height: 100%;
 }
 
@@ -26,4 +24,5 @@ body,
   display: flex;
   justify-content: center;
   align-items: center;
+  display: none;
 }

@@ -10,7 +10,7 @@
   },
   "scripts": {
     "start": "npm run start",
-    "dev": "npx webpack server",
+    "dev": "npx webpack serve",
     "test": "jest",
     "build": "webpack"
   },
@@ -27,10 +27,12 @@
     ]
   },
   "devDependencies": {
+    "css-loader": "^6.7.1",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "^28.1.0",
     "prettier": "^2.6.2",
+    "style-loader": "^3.3.1",
     "ts-loader": "^9.3.0",
     "typescript": "^4.7.3",
     "webpack": "^5.73.0",

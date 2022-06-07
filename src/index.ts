@@ -1,8 +1,12 @@
-import { draw } from './gameLogic';
+import './styles/global.css';
 
-function update() {
-  draw();
-  requestAnimationFrame(update);
-}
+import './gameLogic';
 
-requestAnimationFrame(update);
+// function animate() {
+//   console.log('updating');
+//   update();
+//   draw();
+//   requestAnimationFrame(animate);
+// }
+
+// requestAnimationFrame(animate);

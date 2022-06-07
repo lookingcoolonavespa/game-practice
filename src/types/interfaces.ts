@@ -51,7 +51,9 @@ export interface PlayerInterface extends EntityWithVelocity {
   updatePosition: () => void;
   updateVelocity: (axis: 'x' | 'y', amount: number) => void;
   updateAction: (action: Action) => void;
-  draw: (c: CanvasRenderingContext2D, currIdx: number) => void;
+  increaseSpriteIdx: () => void;
+  resetSpriteIdx: () => void;
+  draw: (c: CanvasRenderingContext2D) => void;
 }
 
 export interface LevelInterface {
