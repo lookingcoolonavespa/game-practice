@@ -15,10 +15,15 @@ export interface EntityWithVelocity extends Entity {
 }
 
 export interface PlatformInterface extends Entity {
+  readonly x: number;
+  readonly y: number;
+  readonly velocityX: number;
+  readonly width: number;
+  readonly height: number;
   readonly image: HTMLImageElement;
-  readonly updateXPosition: () => void;
-  readonly updateVelocityX: (num: number) => void;
-  readonly draw: (c: CanvasRenderingContext2D) => void;
+  updateXPosition: () => void;
+  updateVelocityX: (num: number) => void;
+  draw: (c: CanvasRenderingContext2D) => void;
 }
 
 export interface FloorInterface extends PlatformInterface {

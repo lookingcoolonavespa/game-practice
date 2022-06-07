@@ -2,7 +2,11 @@ import { KeyPressType } from './types/types';
 import { GameStateInterface, KeyPressInterface } from './types/interfaces';
 import GameState from './utils/Factories/GameState';
 import levels from './utils/levels';
-import { checkCollideTop, checkOnPlatform } from './utils/checkCollision';
+import {
+  checkCollideTop,
+  checkOnPlatform,
+  checkCollideSide
+} from './utils/checkCollision';
 import { gravity, speed } from './utils/constants';
 import KeyPress from './utils/Factories/KeyPress';
 
@@ -39,13 +43,13 @@ function handleKeyDown(e: KeyboardEvent) {
   keyPress.setPressed(keyNormalized);
 
   if (keyNormalized === 'up') {
-    if (!keyPress.up.timer)
+    if (!keyPress.up.timer) {
+      player.setSameJump(false);
+      player.setJumpNumber(player.jumpNumber + 1);
       keyPress.setTimer(() => {
-        console.log('timer went off');
         player.setSameJump(true);
-      }, 10);
-    // e.repeat triggers late on the first jump
-    else player.setJumpNumber(player.jumpNumber + 1);
+      }, 20);
+    }
   }
 }
 
@@ -98,23 +102,19 @@ export function update() {
     frameCount = 0;
   }
 
-  /* end handle sprites */
-
   const onPlatform = platforms.some((p) => checkOnPlatform(p, player));
   if (!onPlatform) {
     player.updateVelocity('y', player.velocity.y + gravity);
   } else {
-    player.setJumpNumber(0);
-    console.log('reset');
     player.setSameJump(false);
   }
 
-  if (platforms.some((p) => checkCollideTop(p, player)))
-    player.updateVelocity('y', 0);
+  /* end handle sprites */
 
   /* handle key press */
   const { up, left, right } = keyPress;
   if (up.pressed) {
+    console.log(player.sameJump, player.jumpNumber);
     if (!player.sameJump && player.jumpNumber <= 2) {
       player.updateVelocity('y', -20);
     }
@@ -127,6 +127,18 @@ export function update() {
     player.updateAction('idle');
   }
   /* end of key press */
+
+  if (platforms.some((p) => checkCollideSide(p, player)))
+    player.updateVelocity('x', 0);
+  if (platforms.some((p) => checkCollideTop(p, player)))
+    player.updateVelocity('y', 0);
+
+  const onPlatformAfterKeyPress = platforms.some((p) =>
+    checkOnPlatform(p, player)
+  );
+  if (onPlatformAfterKeyPress) {
+    player.setJumpNumber(0);
+  }
 
   player.updatePosition();
 }
