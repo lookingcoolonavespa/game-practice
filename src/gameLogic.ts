@@ -6,7 +6,8 @@ import {
   checkCollideTop,
   checkOnPlatform,
   checkCollideSide,
-  checkCollideBottom
+  checkCollideBottom,
+  checkFallOffPlatform
 } from './utils/checkCollision';
 import {
   gravity,
@@ -186,14 +187,18 @@ export function update() {
 
   /* handle enemy movement */
   enemies.forEach((enemy) => {
+    const { x, y, velocity, direction } = enemy;
+
     const onPlatform = platforms.some((p) => checkOnPlatform(p, enemy));
     if (!onPlatform) {
-      enemy.updateVelocity('y', enemy.velocity.y + gravity);
-      // if (!velocity.x) velocity.x = direction === 'right' ? 1 : -1;
-    }
+      enemy.updateVelocity('y', velocity.y + gravity);
+    } else if (!velocity.x)
+      enemy.updateVelocity('x', direction === 'right' ? speed : -speed);
+
+    if (enemy.velocity.x) enemy.updateAction('run');
 
     enemies.forEach((e) => {
-      e.setPosition({ x: e.x + platformVelocity, y: e.y });
+      e.setPosition({ x: x + platformVelocity, y: y });
     });
 
     /* handle collision */
@@ -203,6 +208,10 @@ export function update() {
     while (platforms.some((p) => checkCollideTop(p, enemy))) {
       enemy.onCollideWall('y');
     }
+    while (platforms.some((p) => checkFallOffPlatform(p, enemy))) {
+      enemy.onCollideWall('x');
+    }
+
     /* end of collision */
   });
   /* end of enemy */
