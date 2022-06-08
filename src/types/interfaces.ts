@@ -72,7 +72,9 @@ export interface LevelInterface {
 }
 
 export interface GameStateInterface extends LevelInterface {
-  player: PlayerInterface;
+  readonly player: PlayerInterface;
+  readonly active: boolean;
+  readonly setGameOver: () => void;
 }
 
 export interface DeltaTimeoutInterface {

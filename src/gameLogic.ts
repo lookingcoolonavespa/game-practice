@@ -14,7 +14,9 @@ import {
   getBoundaryRight
 } from './utils/constants';
 import KeyPress from './utils/Factories/KeyPress';
+import Modal from './components/Modal';
 
+/* canvas stuff */
 const canvas = document.querySelector('canvas') as HTMLCanvasElement;
 canvas.height = window.innerHeight;
 canvas.width = window.innerWidth;
@@ -24,12 +26,15 @@ window.addEventListener('resize', () => {
   canvas.width = window.innerWidth;
   boundaryRight = getBoundaryRight(canvas.width);
 });
+/* end of canvas stuff */
 
+/* game state stuff */
 const levelOne = levels.one(canvas.height);
-let { player, platforms, enemies }: GameStateInterface = GameState(levelOne);
+let gameState: GameStateInterface = GameState(levelOne);
+/* end of game state */
 
+/* key press stuff */
 const keyPress = KeyPress();
-
 window.addEventListener('keydown', handleKeyDown);
 window.addEventListener('keyup', handleKeyUp);
 
@@ -51,10 +56,10 @@ function handleKeyDown(e: KeyboardEvent) {
 
   if (keyNormalized === 'up') {
     if (!keyPress.up.timer) {
-      player.setSameJump(false); // so users can double jump
-      player.setJumpNumber(player.jumpNumber + 1);
+      gameState.player.setSameJump(false); // so users can double jump
+      gameState.player.setJumpNumber(gameState.player.jumpNumber + 1);
       keyPress.setTimer(() => {
-        player.setSameJump(true);
+        gameState.player.setSameJump(true);
       }, 20);
     }
   }
@@ -73,6 +78,7 @@ function handleKeyUp(e: KeyboardEvent) {
     keyPress.removeTimer();
   }
 }
+/* key press stuff end */
 
 export function draw() {
   const c = canvas.getContext('2d');
@@ -87,6 +93,7 @@ export function draw() {
   // c.fillStyle = 'black';
   // c.fillRect(0, 0, width, 160);
 
+  const { player, platforms, enemies } = gameState;
   //   drawPlatforms(c);
   platforms.forEach((p) => p.draw(c));
   player.draw(c);
@@ -96,6 +103,19 @@ export function draw() {
 let frameCount = 0;
 
 export function update() {
+  /* check game over */
+  if (!gameState.active && !Modal.active) {
+    Modal.startNewGame(() => {
+      gameState = GameState(levelOne);
+    });
+    return;
+  }
+
+  const { player, platforms, enemies } = gameState;
+
+  if (player.y >= canvas.height) {
+    gameState.setGameOver();
+  }
   /* handle sprites */
   frameCount++;
 
