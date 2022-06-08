@@ -53,12 +53,22 @@ function Platform(
     },
     draw: function (c: CanvasRenderingContext2D) {
       if ('type' in this) {
-        c.fillStyle = 'black';
-        c.fillRect(x + 59, y, width - 59 * 2 + 20, 172);
+        switch (this.type) {
+          case 'floor': {
+            c.fillStyle = 'black';
+            c.fillRect(x + 59, y, width - 59 * 2 + 20, 172);
 
-        c.drawImage(image, x, y);
+            c.drawImage(image, x, y);
 
-        c.drawImage(image, x + width - 59, y);
+            c.drawImage(image, x + width - 59, y);
+            break;
+          }
+          case 'wall': {
+            c.drawImage(image, x, y);
+
+            c.fillRect(x - 398, y, 400, 172);
+          }
+        }
       } else c.drawImage(image, x, y);
     }
   };
@@ -91,5 +101,16 @@ export function FloorPlatform(position: XY, width: number): FloorInterface {
 
   return Object.create(platform, {
     type: { value: 'floor', enumerable: true }
+  });
+}
+
+export function WallPlatform(position: XY) {
+  const platform = Platform4(position);
+
+  return Object.create(platform, {
+    type: {
+      value: 'wall',
+      enumerable: true
+    }
   });
 }

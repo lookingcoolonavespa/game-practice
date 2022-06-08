@@ -29,8 +29,7 @@ window.addEventListener('resize', () => {
 /* end of canvas stuff */
 
 /* game state stuff */
-const levelOne = levels.one(canvas.height);
-let gameState: GameStateInterface = GameState(levelOne);
+let gameState: GameStateInterface = GameState(levels.one(canvas.height));
 /* end of game state */
 
 /* key press stuff */
@@ -106,7 +105,7 @@ export function update() {
   /* check game over */
   if (!gameState.active && !Modal.active) {
     Modal.startNewGame(() => {
-      gameState = GameState(levelOne);
+      gameState = GameState(levels.one(canvas.height));
     });
     return;
   }

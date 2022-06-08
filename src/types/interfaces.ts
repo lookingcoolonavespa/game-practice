@@ -24,6 +24,7 @@ export interface PlatformInterface extends Entity {
   readonly updateXPosition: () => void;
   readonly updateVelocityX: (num: number) => void;
   readonly draw: (c: CanvasRenderingContext2D) => void;
+  readonly type?: 'floor' | 'wall';
 }
 
 export interface FloorInterface extends PlatformInterface {

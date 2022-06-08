@@ -4,6 +4,7 @@ import {
   LevelInterface,
   PlatformInterface
 } from '../../types/interfaces';
+import { deepCopyArray } from '../misc';
 import Player from './Player';
 
 export default function GameState(level: LevelInterface): GameStateInterface {

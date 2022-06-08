@@ -29,14 +29,6 @@ export function checkOnPlatform(
     platform.x <= entity.x + entity.width &&
     entity.x <= platform.x + platform.width;
 
-  if (insidePlatformDiameter)
-    console.log(
-      platform.x,
-      platform.width,
-      platform.x + platform.width,
-      entity.x
-    );
-
   return insidePlatformDiameter && collideY;
 }
 
