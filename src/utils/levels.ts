@@ -21,9 +21,9 @@ export default {
       [
         FloorPlatform({ x: -10, y: canvasHeight - 168 }, 800),
         FloorPlatform({ x: 960, y: canvasHeight - 168 }, 800),
-        ...wall,
-        Platform1({ x: 300, y: 600 }),
-        Platform4({ x: 850, y: 600 })
+        ...wall
+        // Platform1({ x: 300, y: 600 }),
+        // Platform4({ x: 850, y: 600 })
       ],
       [GroundEnemy({ x: 500, y: 200 })]
     );

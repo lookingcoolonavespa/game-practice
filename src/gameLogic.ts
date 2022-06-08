@@ -138,6 +138,7 @@ export function update() {
     player.setJumpNumber(0);
   } else player.updateVelocity('y', player.velocity.y + gravity);
 
+  let platformsMoving = false;
   /* handle key press */
   const { up, left, right } = keyPress;
   if (up.pressed) {
@@ -158,9 +159,17 @@ export function update() {
     (right.pressed && player.x + player.velocity.x >= boundaryRight) ||
     (left.pressed && player.x + player.velocity.x <= boundaryLeft)
   ) {
+    platformsMoving = true;
     platforms.forEach((p) => p.updateVelocityX(right.pressed ? -speed : speed));
+    enemies.forEach((e) =>
+      e.setPosition({ x: right.pressed ? e.x - speed : e.x + speed, y: e.y })
+    );
+    console.log('platforms moving');
     player.updateVelocity('x', 0);
-  } else platforms.forEach((p) => p.updateVelocityX(0));
+  } else {
+    platformsMoving = false;
+    platforms.forEach((p) => p.updateVelocityX(0));
+  }
 
   /* end of key press */
 
@@ -178,6 +187,28 @@ export function update() {
   }
   /* end of collision */
 
+  /* handle enemy movement */
+  enemies.forEach((enemy) => {
+    const { x, y, width, height, velocity, direction } = enemy;
+
+    const onPlatform = platforms.some((p) => checkOnPlatform(p, enemy));
+    if (!onPlatform) {
+      enemy.updateVelocity('y', enemy.velocity.y + gravity);
+      // if (!velocity.x) velocity.x = direction === 'right' ? 1 : -1;
+    }
+
+    /* handle collision */
+    while (platforms.some((p) => checkCollideSide(p, enemy))) {
+      enemy.onCollideWall('x');
+    }
+    while (platforms.some((p) => checkCollideTop(p, enemy))) {
+      enemy.onCollideWall('y');
+    }
+    /* end of collision */
+  });
+  /* end of enemy */
+
   platforms.forEach((p) => p.updateXPosition());
   player.updatePosition();
+  enemies.forEach((e) => e.updatePosition());
 }

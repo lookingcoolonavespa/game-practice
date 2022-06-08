@@ -56,6 +56,10 @@ export default function Entity(
       x += velocity.x;
       y += velocity.y;
     },
+    setPosition(position: XY) {
+      x = position.x;
+      y = position.y;
+    },
     updateVelocity(axis: 'x' | 'y', amount: number) {
       velocity[axis] = amount;
     },

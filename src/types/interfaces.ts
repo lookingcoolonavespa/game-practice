@@ -47,6 +47,7 @@ export interface BaseEntityInterface extends EntityWithVelocity {
   readonly currAction: Action;
   readonly spriteIdx: number;
   readonly updatePosition: () => void;
+  readonly setPosition: (position: XY) => void;
   readonly updateVelocity: (axis: 'x' | 'y', amount: number) => void;
   readonly onCollideWall: (axis: 'x' | 'y') => void;
   readonly updateAction: (action: Action) => void;
