@@ -4,29 +4,36 @@ import {
   Size,
   XY
 } from '../../types/interfaces';
+import Entity from './Entity';
+import enemySprites from '../sprites/enemySprites';
 
 export default function Enemy(position: XY, size: Size): EnemyInterface {
-  return {
-    x: position.x,
-    y: position.y,
-    velocity: {
-      x: 0,
-      y: 0
+  const entity = Entity(enemySprites, size, position);
+
+  let direction = 'right';
+
+  return Object.create(entity, {
+    direction: {
+      get: () => direction,
+      enumerable: true
     },
-    direction: 'right',
-    currAction: 'idle',
-    get width() {
-      return size.width;
-    },
-    get height() {
-      return size.height;
+    updateDirection: {
+      value: () => {
+        direction = direction === 'right' ? 'left' : 'right';
+      }
     }
-  };
+  });
 }
 
 export function GroundEnemy(position: XY): GroundEnemyInterface {
-  return {
-    ...Enemy(position, { height: 95, width: 95 }),
-    type: 'ground'
-  };
+  const enemy = Enemy(position, { height: 95, width: 95 });
+  return Object.create(enemy, {
+    type: { value: 'ground', enumerable: true },
+    draw: {
+      value: (c: CanvasRenderingContext2D) => {
+        const { currAction, spriteIdx, x, y } = enemy;
+        c.drawImage(enemySprites[currAction][spriteIdx], x, y, 128, 128);
+      }
+    }
+  });
 }

@@ -1,5 +1,10 @@
 import Level from './Factories/Level';
-import { FloorPlatform, WallPlatform } from './Factories/Platform';
+import {
+  FloorPlatform,
+  WallPlatform,
+  Platform1,
+  Platform4
+} from './Factories/Platform';
 import { GroundEnemy } from './Factories/Enemy';
 import { getPlatformsToFillUpAxis } from './misc';
 
@@ -16,7 +21,9 @@ export default {
       [
         FloorPlatform({ x: -10, y: canvasHeight - 168 }, 800),
         FloorPlatform({ x: 960, y: canvasHeight - 168 }, 800),
-        ...wall
+        ...wall,
+        Platform1({ x: 300, y: 600 }),
+        Platform4({ x: 850, y: 600 })
       ],
       [GroundEnemy({ x: 500, y: 200 })]
     );

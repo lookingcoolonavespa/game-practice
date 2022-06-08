@@ -5,11 +5,13 @@ import levels from './utils/levels';
 import {
   checkCollideTop,
   checkOnPlatform,
-  checkCollideSide
+  checkCollideSide,
+  checkCollideBottom
 } from './utils/checkCollision';
 import {
   gravity,
   speed,
+  jumpHeight,
   boundaryLeft,
   getBoundaryRight
 } from './utils/constants';
@@ -96,7 +98,7 @@ export function draw() {
   //   drawPlatforms(c);
   platforms.forEach((p) => p.draw(c));
   player.draw(c);
-  //   drawEnemies(c);
+  enemies.forEach((e) => e.draw(c));
 }
 
 let frameCount = 0;
@@ -128,20 +130,20 @@ export function update() {
     frameCount = 0;
   }
 
-  const onPlatform = platforms.some((p) => checkOnPlatform(p, player));
-  if (!onPlatform) {
-    player.updateVelocity('y', player.velocity.y + gravity);
-  } else {
-    player.setSameJump(false);
-  }
-
   /* end handle sprites */
+
+  const onPlatform = platforms.some((p) => checkOnPlatform(p, player));
+  if (onPlatform) {
+    player.setSameJump(false);
+    player.setJumpNumber(0);
+  } else player.updateVelocity('y', player.velocity.y + gravity);
 
   /* handle key press */
   const { up, left, right } = keyPress;
   if (up.pressed) {
+    if (!player.jumpNumber) player.setJumpNumber(1); // so users can hold the up key to keep jumping
     if (!player.sameJump && player.jumpNumber <= 2) {
-      player.updateVelocity('y', -20);
+      player.updateVelocity('y', jumpHeight);
     }
   }
   if (right.pressed) player.updateVelocity('x', speed);
@@ -162,22 +164,20 @@ export function update() {
 
   /* end of key press */
 
+  /* handle collision */
   while (platforms.some((p) => checkCollideSide(p, player))) {
-    player.updateVelocity('x', 0);
+    player.onCollideWall('x');
     platforms.forEach((p) => p.updateVelocityX(0));
   }
-  if (platforms.some((p) => checkCollideTop(p, player)))
-    player.updateVelocity('y', 0);
+  while (
+    platforms.some(
+      (p) => checkCollideTop(p, player) || checkCollideBottom(p, player)
+    )
+  ) {
+    player.onCollideWall('y');
+  }
+  /* end of collision */
 
-  platforms.forEach((p, i) => {
-    p.updateXPosition();
-  });
-  const onPlatformAfterKeyPress = platforms.some((p) => {
-    return checkOnPlatform(p, player);
-  });
-  if (onPlatformAfterKeyPress) {
-    player.setJumpNumber(0);
-  } else player.updateVelocity('y', player.velocity.y + gravity);
-
+  platforms.forEach((p) => p.updateXPosition());
   player.updatePosition();
 }

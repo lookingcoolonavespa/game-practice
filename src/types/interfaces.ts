@@ -42,28 +42,31 @@ export interface BulletInterface extends Entity {
   readonly startX: number;
 }
 
-export interface EnemyInterface extends Entity {
-  readonly currAction: 'idle' | 'run';
-  readonly velocity: XY;
+export interface BaseEntityInterface extends EntityWithVelocity {
+  readonly bullets: BulletInterface[];
+  readonly currAction: Action;
+  readonly spriteIdx: number;
+  readonly updatePosition: () => void;
+  readonly updateVelocity: (axis: 'x' | 'y', amount: number) => void;
+  readonly onCollideWall: (axis: 'x' | 'y') => void;
+  readonly updateAction: (action: Action) => void;
+  readonly increaseSpriteIdx: () => void;
+  readonly resetSpriteIdx: () => void;
+}
+export interface EnemyInterface extends BaseEntityInterface {
   readonly direction: 'left' | 'right';
+  readonly draw: (c: CanvasRenderingContext2D) => void;
 }
 
 export interface GroundEnemyInterface extends EnemyInterface {
   readonly type: 'ground';
 }
 
-export interface PlayerInterface extends EntityWithVelocity {
-  readonly bullets: BulletInterface[];
-  readonly currAction: Action;
+export interface PlayerInterface extends BaseEntityInterface {
   readonly sameJump: boolean;
   readonly jumpNumber: number;
-  readonly updatePosition: () => void;
-  readonly updateVelocity: (axis: 'x' | 'y', amount: number) => void;
-  readonly updateAction: (action: Action) => void;
   readonly setSameJump: (val: boolean) => void;
   readonly setJumpNumber: (num: number) => void;
-  readonly increaseSpriteIdx: () => void;
-  readonly resetSpriteIdx: () => void;
   readonly draw: (c: CanvasRenderingContext2D) => void;
 }
 
@@ -101,4 +104,8 @@ export interface KeyPressInterface {
   readonly setReleased: (key: keyof KeyPressType) => void;
   readonly setTimer: (cb: () => void, delay: number) => void;
   readonly removeTimer: () => void;
+}
+
+export interface SpriteCollectionInterface {
+  [key: string]: HTMLImageElement[];
 }

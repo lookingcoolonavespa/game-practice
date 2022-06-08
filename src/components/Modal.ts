@@ -31,6 +31,12 @@ export default (() => {
         cb();
         hide();
       });
+      window.addEventListener('keydown', function runCb(e) {
+        if (e.key !== 'Enter') return;
+        cb();
+        hide();
+        window.removeEventListener('keydown', runCb);
+      });
 
       replaceContent(btn);
     }
