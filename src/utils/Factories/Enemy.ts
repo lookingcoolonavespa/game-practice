@@ -18,8 +18,8 @@ export default function Enemy(position: XY, size: Size): EnemyInterface {
       enumerable: true
     },
     updateDirection: {
-      value: () => {
-        direction = direction === 'right' ? 'left' : 'right';
+      value: (newDirection: 'left' | 'right') => {
+        direction = newDirection;
       }
     }
   });

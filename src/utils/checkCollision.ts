@@ -55,13 +55,8 @@ export function checkCollideSide(
       : false;
   const collideRight =
     // left of entity is to right of platform's right side, but with velocity is inside platform
-    entity.velocity.x
-      ? entity.x >= platform.x + platform.width &&
-        entity.x + entity.velocity.x <= platform.x + platform.width
-      : platform.velocityX
-      ? entity.x >= platform.x + platform.width &&
-        entity.x <= platform.x + platform.width + platform.velocityX
-      : false;
+    entity.x >= platform.x + platform.width &&
+    entity.x + entity.velocity.x <= platform.x + platform.width;
 
   if (!collideY) return '';
 
@@ -95,15 +90,8 @@ export function checkFallOffPlatform(
       : false;
   const fallRight =
     // right of entity is to left of platform's right side, but with velocity is off platform
-    entity.velocity.x
-      ? entity.x + entity.width <= platform.x + platform.width &&
-        entity.x + entity.width + entity.velocity.x >=
-          platform.x + platform.width
-      : platform.velocityX
-      ? entity.x + entity.width <= platform.x + platform.width &&
-        entity.x + entity.width >=
-          platform.x + platform.width + platform.velocityX
-      : false;
+    entity.x + entity.width <= platform.x + platform.width &&
+    entity.x + entity.width + entity.velocity.x >= platform.x + platform.width;
 
   const onPlatform = checkOnPlatform(platform, entity);
 

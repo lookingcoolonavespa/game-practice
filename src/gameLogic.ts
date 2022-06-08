@@ -198,18 +198,26 @@ export function update() {
     if (enemy.velocity.x) enemy.updateAction('run');
 
     enemies.forEach((e) => {
-      e.setPosition({ x: x + platformVelocity, y: y });
+      e.setPosition({ x: e.x + platformVelocity, y: e.y });
     });
 
+    let collideSide: 'left' | 'right' | '' = '';
     /* handle collision */
-    while (platforms.some((p) => checkCollideSide(p, enemy))) {
+    while (platforms.some((p) => (collideSide = checkCollideSide(p, enemy)))) {
       enemy.onCollideWall('x');
+      console.log(collideSide);
+      if (collideSide) enemy.updateDirection(collideSide);
     }
     while (platforms.some((p) => checkCollideTop(p, enemy))) {
       enemy.onCollideWall('y');
     }
-    while (platforms.some((p) => checkFallOffPlatform(p, enemy))) {
+    while (
+      platforms.some((p) => (collideSide = checkFallOffPlatform(p, enemy)))
+    ) {
+      console.log(collideSide);
       enemy.onCollideWall('x');
+      if (collideSide)
+        enemy.updateDirection(collideSide === 'right' ? 'left' : 'right');
     }
 
     /* end of collision */

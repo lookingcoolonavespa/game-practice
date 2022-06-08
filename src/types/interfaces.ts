@@ -56,6 +56,7 @@ export interface BaseEntityInterface extends EntityWithVelocity {
 }
 export interface EnemyInterface extends BaseEntityInterface {
   readonly direction: 'left' | 'right';
+  readonly updateDirection: (newDirection: 'left' | 'right') => void;
   readonly draw: (c: CanvasRenderingContext2D) => void;
 }
 
