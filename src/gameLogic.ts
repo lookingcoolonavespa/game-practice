@@ -139,7 +139,7 @@ export function update() {
     player.setJumpNumber(0);
   } else player.updateVelocity('y', player.velocity.y + gravity);
 
-  let platformVelocity = 0;
+  let platformVelocity = 0; // used to adjust enemy position as platforms move so enemies don;t fall off platforms as you move
   /* handle key press */
   const { up, left, right } = keyPress;
   if (up.pressed) {
@@ -148,22 +148,22 @@ export function update() {
       player.updateVelocity('y', jumpHeight);
     }
   }
-  if (right.pressed) player.updateVelocity('x', speed);
-  if (left.pressed) player.updateVelocity('x', -speed);
-  if (left.pressed || right.pressed) player.updateAction('run');
-  if (!right.pressed && !left.pressed) {
+  if (left.pressed || right.pressed) {
+    player.updateAction('run');
+    player.updateVelocity('x', right.pressed ? speed : -speed);
+
+    // boundary check
+    if (
+      (right.pressed && player.x + player.velocity.x >= boundaryRight) ||
+      (left.pressed && player.x + player.velocity.x <= boundaryLeft)
+    ) {
+      platformVelocity = right.pressed ? -speed : speed;
+      platforms.forEach((p) => p.updateVelocityX(platformVelocity));
+      player.updateVelocity('x', 0);
+    }
+  } else {
     player.updateVelocity('x', 0);
     player.updateAction('idle');
-  }
-  // boundary check
-  if (
-    (right.pressed && player.x + player.velocity.x >= boundaryRight) ||
-    (left.pressed && player.x + player.velocity.x <= boundaryLeft)
-  ) {
-    platformVelocity = right.pressed ? -speed : speed;
-    platforms.forEach((p) => p.updateVelocityX(platformVelocity));
-    player.updateVelocity('x', 0);
-  } else {
     platformVelocity = 0;
     platforms.forEach((p) => p.updateVelocityX(0));
   }
@@ -171,7 +171,7 @@ export function update() {
   /* end of key press */
 
   /* handle collision */
-  while (platforms.some((p) => checkCollideSide(p, player))) {
+  while (platforms.some((p) => checkCollideSide(p, player, true))) {
     player.onCollideWall('x');
     platforms.forEach((p) => p.updateVelocityX(0));
     platformVelocity = 0;
@@ -187,7 +187,7 @@ export function update() {
 
   /* handle enemy movement */
   enemies.forEach((enemy) => {
-    const { x, y, velocity, direction } = enemy;
+    const { velocity, direction } = enemy;
 
     const onPlatform = platforms.some((p) => checkOnPlatform(p, enemy));
     if (!onPlatform) {
@@ -203,21 +203,24 @@ export function update() {
 
     let collideSide: 'left' | 'right' | '' = '';
     /* handle collision */
-    while (platforms.some((p) => (collideSide = checkCollideSide(p, enemy)))) {
+    while (
+      platforms.some((p) => (collideSide = checkCollideSide(p, enemy, false)))
+    ) {
       enemy.onCollideWall('x');
-      console.log(collideSide);
-      if (collideSide) enemy.updateDirection(collideSide);
+      enemy.updateDirection(collideSide as 'left' | 'right');
     }
     while (platforms.some((p) => checkCollideTop(p, enemy))) {
       enemy.onCollideWall('y');
     }
     while (
-      platforms.some((p) => (collideSide = checkFallOffPlatform(p, enemy)))
+      platforms.some(
+        (p) => (collideSide = checkFallOffPlatform(p, enemy, false))
+      )
     ) {
-      console.log(collideSide);
       enemy.onCollideWall('x');
-      if (collideSide)
-        enemy.updateDirection(collideSide === 'right' ? 'left' : 'right');
+      enemy.updateDirection(
+        (collideSide as 'left' | 'right') === 'right' ? 'left' : 'right'
+      );
     }
 
     /* end of collision */
