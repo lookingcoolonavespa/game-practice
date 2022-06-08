@@ -58,10 +58,13 @@ export interface EnemyInterface extends BaseEntityInterface {
   readonly direction: 'left' | 'right';
   readonly updateDirection: (newDirection: 'left' | 'right') => void;
   readonly draw: (c: CanvasRenderingContext2D) => void;
+  readonly speed: number;
 }
 
 export interface GroundEnemyInterface extends EnemyInterface {
   readonly type: 'ground';
+  readonly timer: NodeJS.Timer | null;
+  setIdleTimer: (this: GroundEnemyInterface) => void;
 }
 
 export interface PlayerInterface extends BaseEntityInterface {

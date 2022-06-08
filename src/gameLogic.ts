@@ -124,6 +124,10 @@ export function update() {
   if (frameCount === 3) {
     player.resetSpriteIdx();
     player.increaseSpriteIdx();
+    enemies.forEach((e) => {
+      e.resetSpriteIdx();
+      e.increaseSpriteIdx();
+    });
     // playerBullets.forEach((b) => {
     //   if (b.spriteIdx === bulletSprites.idle.length - 1) b.spriteIdx = 0;
     //   b.spriteIdx++;
@@ -187,15 +191,15 @@ export function update() {
 
   /* handle enemy movement */
   enemies.forEach((enemy) => {
-    const { velocity, direction } = enemy;
+    const { velocity, direction, speed, timer } = enemy;
 
     const onPlatform = platforms.some((p) => checkOnPlatform(p, enemy));
     if (!onPlatform) {
       enemy.updateVelocity('y', velocity.y + gravity);
-    } else if (!velocity.x)
-      enemy.updateVelocity('x', direction === 'right' ? speed : -speed);
+    } else if (!velocity.x && !timer) enemy.setIdleTimer();
 
     if (enemy.velocity.x) enemy.updateAction('run');
+    else enemy.updateAction('idle');
 
     enemies.forEach((e) => {
       e.setPosition({ x: e.x + platformVelocity, y: e.y });

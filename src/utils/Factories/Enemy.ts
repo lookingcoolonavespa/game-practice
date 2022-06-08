@@ -27,12 +27,31 @@ export default function Enemy(position: XY, size: Size): EnemyInterface {
 
 export function GroundEnemy(position: XY): GroundEnemyInterface {
   const enemy = Enemy(position, { height: 95, width: 95 });
+
+  let timer: NodeJS.Timer | null;
+
   return Object.create(enemy, {
     type: { value: 'ground', enumerable: true },
+    speed: { value: 2, enumerable: true },
+    timer: { get: () => timer, enumerable: true },
     draw: {
       value: (c: CanvasRenderingContext2D) => {
         const { currAction, spriteIdx, x, y } = enemy;
         c.drawImage(enemySprites[currAction][spriteIdx], x, y, 128, 128);
+      }
+    },
+    setIdleTimer: {
+      value: function (this: GroundEnemyInterface) {
+        setTimeout(
+          function (this: GroundEnemyInterface) {
+            this.updateVelocity(
+              'x',
+              this.direction === 'right' ? this.speed : -this.speed
+            );
+            timer = null;
+          }.bind(this),
+          1500
+        );
       }
     }
   });
