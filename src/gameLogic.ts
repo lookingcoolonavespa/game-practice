@@ -7,19 +7,26 @@ import {
   checkOnPlatform,
   checkCollideSide
 } from './utils/checkCollision';
-import { gravity, speed } from './utils/constants';
+import {
+  gravity,
+  speed,
+  boundaryLeft,
+  getBoundaryRight
+} from './utils/constants';
 import KeyPress from './utils/Factories/KeyPress';
 
 const canvas = document.querySelector('canvas') as HTMLCanvasElement;
 canvas.height = window.innerHeight;
 canvas.width = window.innerWidth;
+let boundaryRight = getBoundaryRight(canvas.width);
 window.addEventListener('resize', () => {
   canvas.height = window.innerHeight;
   canvas.width = window.innerWidth;
+  boundaryRight = getBoundaryRight(canvas.width);
 });
 
 const levelOne = levels.one(canvas.height);
-const { player, platforms, enemies }: GameStateInterface = GameState(levelOne);
+let { player, platforms, enemies }: GameStateInterface = GameState(levelOne);
 
 const keyPress = KeyPress();
 
@@ -44,7 +51,7 @@ function handleKeyDown(e: KeyboardEvent) {
 
   if (keyNormalized === 'up') {
     if (!keyPress.up.timer) {
-      player.setSameJump(false);
+      player.setSameJump(false); // so users can double jump
       player.setJumpNumber(player.jumpNumber + 1);
       keyPress.setTimer(() => {
         player.setSameJump(true);
@@ -114,7 +121,6 @@ export function update() {
   /* handle key press */
   const { up, left, right } = keyPress;
   if (up.pressed) {
-    console.log(player.sameJump, player.jumpNumber);
     if (!player.sameJump && player.jumpNumber <= 2) {
       player.updateVelocity('y', -20);
     }
@@ -126,19 +132,34 @@ export function update() {
     player.updateVelocity('x', 0);
     player.updateAction('idle');
   }
+  // boundary check
+  if (
+    (right.pressed && player.x + player.velocity.x >= boundaryRight) ||
+    (left.pressed && player.x + player.velocity.x <= boundaryLeft)
+  ) {
+    platforms.forEach((p) => p.updateVelocityX(right.pressed ? -speed : speed));
+    player.updateVelocity('x', 0);
+  } else platforms.forEach((p) => p.updateVelocityX(0));
+
   /* end of key press */
 
-  if (platforms.some((p) => checkCollideSide(p, player)))
+  while (platforms.some((p) => checkCollideSide(p, player))) {
     player.updateVelocity('x', 0);
+    platforms.forEach((p) => p.updateVelocityX(0));
+  }
   if (platforms.some((p) => checkCollideTop(p, player)))
     player.updateVelocity('y', 0);
 
-  const onPlatformAfterKeyPress = platforms.some((p) =>
-    checkOnPlatform(p, player)
-  );
+  platforms.forEach((p, i) => {
+    p.updateXPosition();
+  });
+  console.log(platforms[0].x);
+  const onPlatformAfterKeyPress = platforms.some((p) => {
+    return checkOnPlatform(p, player);
+  });
   if (onPlatformAfterKeyPress) {
     player.setJumpNumber(0);
-  }
+  } else player.updateVelocity('y', player.velocity.y + gravity);
 
   player.updatePosition();
 }

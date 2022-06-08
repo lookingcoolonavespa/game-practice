@@ -21,9 +21,9 @@ export interface PlatformInterface extends Entity {
   readonly width: number;
   readonly height: number;
   readonly image: HTMLImageElement;
-  updateXPosition: () => void;
-  updateVelocityX: (num: number) => void;
-  draw: (c: CanvasRenderingContext2D) => void;
+  readonly updateXPosition: () => void;
+  readonly updateVelocityX: (num: number) => void;
+  readonly draw: (c: CanvasRenderingContext2D) => void;
 }
 
 export interface FloorInterface extends PlatformInterface {

@@ -3,7 +3,12 @@ import platform2 from '../../assets/Environments/Platforms/Platform02.png';
 import platform3 from '../../assets/Environments/Platforms/Platform03.png';
 import platform4 from '../../assets/Environments/Platforms/Platform04.png';
 import platform5 from '../../assets/Environments/Platforms/Platform05.png';
-import { PlatformInterface, Size, XY } from '../../types/interfaces';
+import {
+  FloorInterface,
+  PlatformInterface,
+  Size,
+  XY
+} from '../../types/interfaces';
 import { createImage } from '../misc';
 
 function Platform(
@@ -75,16 +80,17 @@ export function Platform5(position: XY) {
   return Platform(position, { height: 64, width: 64 }, platform5);
 }
 
-export function FloorPlatform(position: XY, width: number) {
+export function FloorPlatform(position: XY, width: number): FloorInterface {
   const beginImg = new Image();
   beginImg.src = platform4;
 
   const endImg = new Image();
   endImg.src = platform4;
 
-  return {
-    ...Platform(position, { width, height: 172 }),
-    type: 'floor',
-    image: createImage(platform4)
-  };
+  const platform = Platform(position, { width, height: 172 });
+
+  return Object.create(platform, {
+    type: { value: 'floor', enumerable: true },
+    image: { value: createImage(platform4), enumerable: true }
+  });
 }
