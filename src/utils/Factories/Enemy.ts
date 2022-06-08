@@ -42,15 +42,18 @@ export function GroundEnemy(position: XY): GroundEnemyInterface {
     },
     setIdleTimer: {
       value: function (this: GroundEnemyInterface) {
-        setTimeout(
+        const start = Date.now();
+        console.log('start', Date.now());
+        timer = setTimeout(
           function (this: GroundEnemyInterface) {
+            console.log('fired', Date.now() - start);
             this.updateVelocity(
               'x',
               this.direction === 'right' ? this.speed : -this.speed
             );
             timer = null;
           }.bind(this),
-          1500
+          2000
         );
       }
     }
