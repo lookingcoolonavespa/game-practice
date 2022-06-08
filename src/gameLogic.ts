@@ -153,7 +153,6 @@ export function update() {
   platforms.forEach((p, i) => {
     p.updateXPosition();
   });
-  console.log(platforms[0].x);
   const onPlatformAfterKeyPress = platforms.some((p) => {
     return checkOnPlatform(p, player);
   });
