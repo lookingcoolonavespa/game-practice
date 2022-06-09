@@ -24,7 +24,9 @@ function Platform(
   const height = size.height;
   const width = size.width;
 
-  let velocityX = 0;
+  const velocity = {
+    x: 0
+  };
 
   return {
     get x() {
@@ -33,8 +35,8 @@ function Platform(
     get y() {
       return y;
     },
-    get velocityX() {
-      return velocityX;
+    get velocity() {
+      return velocity;
     },
     get width() {
       return width;
@@ -46,10 +48,10 @@ function Platform(
       return image;
     },
     updateXPosition: () => {
-      x += velocityX;
+      x += velocity.x;
     },
     updateVelocityX: (num: number) => {
-      velocityX = num;
+      velocity.x = num;
     },
     draw: function (c: CanvasRenderingContext2D) {
       if ('type' in this) {

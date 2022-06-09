@@ -1,4 +1,8 @@
-import { EntityWithVelocity, PlatformInterface } from '../types/interfaces';
+import {
+  EntityWithVelocity,
+  EntityWithVelocityX,
+  PlatformInterface
+} from '../types/interfaces';
 
 // update turnStart when client receives update for chess app
 
@@ -18,7 +22,7 @@ export function checkCollideTop(
 }
 
 export function checkOnPlatform(
-  platform: PlatformInterface,
+  platform: EntityWithVelocityX,
   entity: EntityWithVelocity
 ) {
   const collideY =
@@ -32,13 +36,9 @@ export function checkOnPlatform(
   return insidePlatformDiameter && collideY;
 }
 
-interface PlatformAndVelocity extends PlatformInterface {
-  velocityX: number;
-}
-
 export function checkCollideSide(
-  platform: PlatformAndVelocity,
-  entity: EntityWithVelocity,
+  platform: EntityWithVelocityX,
+  entity: EntityWithVelocityX,
   includePlatformVelocity: boolean // player needs this option bc when boundary is pushed player velocity is 0
 ) {
   const collideY =
@@ -54,18 +54,18 @@ export function checkCollideSide(
       entity.velocity.x
         ? entity.x + entity.width <= platform.x &&
           entity.x + entity.width + entity.velocity.x >= platform.x
-        : platform.velocityX
+        : platform.velocity.x
         ? entity.x + entity.width <= platform.x &&
-          entity.x + entity.width >= platform.x + platform.velocityX
+          entity.x + entity.width >= platform.x + platform.velocity.x
         : false;
     collideRight =
       // left of entity is to right of platform's right side, but with velocity is inside platform
       entity.velocity.x
         ? entity.x >= platform.x + platform.width &&
           entity.x + entity.velocity.x <= platform.x + platform.width
-        : platform.velocityX
+        : platform.velocity.x
         ? entity.x >= platform.x + platform.width &&
-          entity.x <= platform.x + platform.width + platform.velocityX
+          entity.x <= platform.x + platform.width + platform.velocity.x
         : false;
   } else {
     collideLeft =
@@ -99,7 +99,7 @@ export function checkCollideBottom(
 }
 
 export function checkFallOffPlatform(
-  platform: PlatformAndVelocity,
+  platform: EntityWithVelocityX,
   entity: EntityWithVelocity,
   includePlatformVelocity: boolean // player needs this option bc when boundary is pushed player velocity is 0
 ) {
@@ -109,8 +109,8 @@ export function checkFallOffPlatform(
       // left of entity is to right of platform's left side, but with velocity is off platform
       entity.velocity.x
         ? entity.x >= platform.x && entity.x + entity.velocity.x <= platform.x
-        : platform.velocityX
-        ? entity.x >= platform.x && entity.x <= platform.x + platform.velocityX
+        : platform.velocity.x
+        ? entity.x >= platform.x && entity.x <= platform.x + platform.velocity.x
         : false;
     fallRight =
       // right of entity is to left of platform's right side, but with velocity is off platform
@@ -118,10 +118,10 @@ export function checkFallOffPlatform(
         ? entity.x + entity.width <= platform.x + platform.width &&
           entity.x + entity.width + entity.velocity.x >=
             platform.x + platform.width
-        : platform.velocityX
+        : platform.velocity.x
         ? entity.x + entity.width <= platform.x + platform.width &&
           entity.x + entity.width >=
-            platform.x + platform.width + platform.velocityX
+            platform.x + platform.width + platform.velocity.x
         : false;
   } else {
     fallLeft =

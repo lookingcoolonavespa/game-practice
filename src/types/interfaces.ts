@@ -12,12 +12,16 @@ interface Entity extends XY {
   readonly y: number;
 }
 
+export interface EntityWithVelocityX extends Entity {
+  readonly velocity: { readonly x: number };
+}
+
 export interface EntityWithVelocity extends Entity {
   readonly velocity: XY;
 }
 
 export interface PlatformInterface extends Entity {
-  readonly velocityX: number;
+  readonly velocity: { readonly x: number };
   readonly image: HTMLImageElement;
   readonly updateXPosition: () => void;
   readonly updateVelocityX: (num: number) => void;
