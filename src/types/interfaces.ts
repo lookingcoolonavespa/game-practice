@@ -73,7 +73,7 @@ export interface PlayerInterface extends BaseEntityInterface {
   readonly setSameJump: (val: boolean) => void;
   readonly setJumpNumber: (num: number) => void;
   readonly draw: (c: CanvasRenderingContext2D) => void;
-  readonly updateGunAction: (action: string) => void;
+  readonly setShooting: (state: boolean) => void;
 }
 
 export interface LevelInterface {

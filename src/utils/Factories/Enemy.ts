@@ -6,6 +6,7 @@ import {
 } from '../../types/interfaces';
 import Entity from './Entity';
 import enemySprites from '../sprites/enemySprites';
+import Sprite from './Sprite';
 
 export default function Enemy(position: XY, size: Size): EnemyInterface {
   const entity = Entity(size, position);
@@ -30,14 +31,16 @@ export function GroundEnemy(position: XY): GroundEnemyInterface {
 
   let timer: NodeJS.Timer | null;
 
+  const sprite = Sprite(enemySprites);
+
   return Object.create(enemy, {
     type: { value: 'ground', enumerable: true },
     speed: { value: 2, enumerable: true },
     timer: { get: () => timer, enumerable: true },
     draw: {
       value: (c: CanvasRenderingContext2D) => {
-        const { currAction, spriteIdx, x, y } = enemy;
-        c.drawImage(enemySprites[currAction][spriteIdx], x, y, 128, 128);
+        const { x, y } = enemy;
+        c.drawImage(sprite.currSprite, x, y, 128, 128);
       }
     },
     setIdleTimer: {
@@ -53,6 +56,21 @@ export function GroundEnemy(position: XY): GroundEnemyInterface {
           }.bind(this),
           2000
         );
+      }
+    },
+    updateAction: {
+      value: (action: keyof typeof enemySprites) => {
+        sprite.updateAction(action);
+      }
+    },
+    increaseSpriteIdx: {
+      value: () => {
+        sprite.increaseSpriteIdx();
+      }
+    },
+    resetSpriteIdx: {
+      value: () => {
+        sprite.resetSpriteIdx();
       }
     }
   });
