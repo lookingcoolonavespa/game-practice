@@ -91,7 +91,6 @@ export function checkCollideSide(
       break;
     }
   }
-
   if (!collideY) return '';
 
   return collideLeft ? 'left' : collideRight ? 'right' : '';
