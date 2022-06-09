@@ -5,8 +5,8 @@ export default function Bullet(
   position: XY,
   spriteSheet: { [key: string]: HTMLImageElement[] }
 ) {
-  const width = 68;
-  const height = 66;
+  const width = 32;
+  const height = 32;
 
   const startX = position.x;
   let x = position.x;
@@ -78,7 +78,7 @@ export default function Bullet(
       sprite.resetSpriteIdx();
     },
     draw(c: CanvasRenderingContext2D) {
-      c.drawImage(sprite.currSprite, x, y);
+      c.drawImage(sprite.currSprite, x - 2, y - 2);
     }
   };
 }

@@ -80,11 +80,13 @@ export function checkCollideSide(
     case moveStatus.rectOne && moveStatus.rectTwo: {
       collideLeft =
         rectTwo.x + rectTwo.width <= rectOne.x &&
-        rectTwo.x + rectTwo.width >= rectOne.x + rectOne.velocity.x;
+        rectTwo.x + rectTwo.width + rectTwo.velocity.x >=
+          rectOne.x + rectOne.velocity.x;
 
       collideRight =
         rectTwo.x >= rectOne.x + rectOne.width &&
-        rectTwo.x <= rectOne.x + rectOne.width + rectOne.velocity.x;
+        rectTwo.x + rectTwo.velocity.x <=
+          rectOne.x + rectOne.width + rectOne.velocity.x;
 
       break;
     }
@@ -136,6 +138,7 @@ export function checkFallOffPlatform(
     case moveStatus.rectOne && !moveStatus.rectTwo: {
       fallLeft =
         rectTwo.x >= rectOne.x && rectTwo.x <= rectOne.x + rectOne.velocity.x;
+
       fallRight =
         rectTwo.x + rectTwo.width <= rectOne.x + rectOne.width &&
         rectTwo.x + rectTwo.width >=
@@ -143,27 +146,6 @@ export function checkFallOffPlatform(
       break;
     }
   }
-  // if (includerectOneVelocity) {
-  //   fallLeft =
-  //     // left of rectTwo is to right of rectOne's left side, but with velocity is off rectOne
-  //     rectTwo.velocity.x
-  //       ? rectTwo.x >= rectOne.x && rectTwo.x + rectTwo.velocity.x <= rectOne.x
-  //       : rectOne.velocity.x
-  //       ?
-  //       : false;
-  //   fallRight =
-  //     // right of rectTwo is to left of rectOne's right side, but with velocity is off rectOne
-  //     rectTwo.velocity.x
-  //       ? rectTwo.x + rectTwo.width <= rectOne.x + rectOne.width &&
-  //         rectTwo.x + rectTwo.width + rectTwo.velocity.x >=
-  //           rectOne.x + rectOne.width
-  //       : rectOne.velocity.x
-  //       ? rectTwo.x + rectTwo.width <= rectOne.x + rectOne.width &&
-  //         rectTwo.x + rectTwo.width >=
-  //           rectOne.x + rectOne.width + rectOne.velocity.x
-  //       : false;
-  // } else {
-  // }
 
   const onPlatform = checkOnPlatform(rectOne, rectTwo);
 

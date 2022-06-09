@@ -149,6 +149,7 @@ export function update() {
   } else player.updateVelocity('y', player.velocity.y + gravity);
 
   let platformVelocity = 0; // used to adjust enemy position as platforms move so enemies don;t fall off platforms as you move
+
   /* handle key press */
   const { up, left, right, space } = keyPress;
 
@@ -261,16 +262,17 @@ export function update() {
   platforms.forEach((p) => p.updateXPosition());
   player.updatePosition();
   player.updateBullets();
-  player.bullets.forEach((b, i) => {
+  player.bullets.forEach((b) => {
     const enemiesInRange = enemies.filter((e) => {
       return Math.abs(player.x - e.x) <= 600;
     });
 
-    enemiesInRange.forEach((e, j) => {
+    enemiesInRange.forEach((e) => {
       const collision = checkCollideSide(e, b, {
         rectOne: true,
         rectTwo: true
       });
+      console.log(collision);
       if (collision) b.stop();
     });
   });
