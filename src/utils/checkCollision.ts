@@ -110,43 +110,62 @@ export function checkCollideBottom(
 }
 
 export function checkFallOffPlatform(
-  platform: EntityWithVelocityX,
-  entity: EntityWithVelocity,
-  includePlatformVelocity: boolean // player needs this option bc when boundary is pushed player velocity is 0
+  rectOne: EntityWithVelocityX,
+  rectTwo: EntityWithVelocity,
+  moveStatus: {
+    rectOne: boolean;
+    rectTwo: boolean;
+  }
 ) {
   let fallLeft, fallRight;
-  if (includePlatformVelocity) {
-    fallLeft =
-      // left of entity is to right of platform's left side, but with velocity is off platform
-      entity.velocity.x
-        ? entity.x >= platform.x && entity.x + entity.velocity.x <= platform.x
-        : platform.velocity.x
-        ? entity.x >= platform.x && entity.x <= platform.x + platform.velocity.x
-        : false;
-    fallRight =
-      // right of entity is to left of platform's right side, but with velocity is off platform
-      entity.velocity.x
-        ? entity.x + entity.width <= platform.x + platform.width &&
-          entity.x + entity.width + entity.velocity.x >=
-            platform.x + platform.width
-        : platform.velocity.x
-        ? entity.x + entity.width <= platform.x + platform.width &&
-          entity.x + entity.width >=
-            platform.x + platform.width + platform.velocity.x
-        : false;
-  } else {
-    fallLeft =
-      // left of entity is to right of platform's left side, but with velocity is off platform
-      entity.x >= platform.x && entity.x + entity.velocity.x <= platform.x;
 
-    fallRight =
-      // right of entity is to left of platform's right side, but with velocity is off platform
-      entity.x + entity.width <= platform.x + platform.width &&
-      entity.x + entity.width + entity.velocity.x >=
-        platform.x + platform.width;
+  switch (true) {
+    case !moveStatus.rectOne && moveStatus.rectTwo: {
+      fallLeft =
+        // left of rectTwo is to right of rectOne's left side, but with velocity is off rectOne
+        rectTwo.x >= rectOne.x && rectTwo.x + rectTwo.velocity.x <= rectOne.x;
+
+      fallRight =
+        // right of rectTwo is to left of rectOne's right side, but with velocity is off rectOne
+        rectTwo.x + rectTwo.width <= rectOne.x + rectOne.width &&
+        rectTwo.x + rectTwo.width + rectTwo.velocity.x >=
+          rectOne.x + rectOne.width;
+      break;
+    }
+
+    case moveStatus.rectOne && !moveStatus.rectTwo: {
+      fallLeft =
+        rectTwo.x >= rectOne.x && rectTwo.x <= rectOne.x + rectOne.velocity.x;
+      fallRight =
+        rectTwo.x + rectTwo.width <= rectOne.x + rectOne.width &&
+        rectTwo.x + rectTwo.width >=
+          rectOne.x + rectOne.width + rectOne.velocity.x;
+      break;
+    }
   }
+  // if (includerectOneVelocity) {
+  //   fallLeft =
+  //     // left of rectTwo is to right of rectOne's left side, but with velocity is off rectOne
+  //     rectTwo.velocity.x
+  //       ? rectTwo.x >= rectOne.x && rectTwo.x + rectTwo.velocity.x <= rectOne.x
+  //       : rectOne.velocity.x
+  //       ?
+  //       : false;
+  //   fallRight =
+  //     // right of rectTwo is to left of rectOne's right side, but with velocity is off rectOne
+  //     rectTwo.velocity.x
+  //       ? rectTwo.x + rectTwo.width <= rectOne.x + rectOne.width &&
+  //         rectTwo.x + rectTwo.width + rectTwo.velocity.x >=
+  //           rectOne.x + rectOne.width
+  //       : rectOne.velocity.x
+  //       ? rectTwo.x + rectTwo.width <= rectOne.x + rectOne.width &&
+  //         rectTwo.x + rectTwo.width >=
+  //           rectOne.x + rectOne.width + rectOne.velocity.x
+  //       : false;
+  // } else {
+  // }
 
-  const onPlatform = checkOnPlatform(platform, entity);
+  const onPlatform = checkOnPlatform(rectOne, rectTwo);
 
   if (!onPlatform) return '';
 

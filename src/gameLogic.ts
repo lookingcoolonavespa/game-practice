@@ -242,7 +242,11 @@ export function update() {
     }
     while (
       platforms.some(
-        (p) => (collideSide = checkFallOffPlatform(p, enemy, false))
+        (p) =>
+          (collideSide = checkFallOffPlatform(p, enemy, {
+            rectOne: false,
+            rectTwo: true
+          }))
       )
     ) {
       enemy.onCollideWall('x');
