@@ -27,7 +27,7 @@ export default function Enemy(position: XY, size: Size): EnemyInterface {
 }
 
 export function GroundEnemy(position: XY): GroundEnemyInterface {
-  const enemy = Enemy(position, { height: 95, width: 95 });
+  const enemy = Enemy(position, { height: 48, width: 42 });
 
   let timer: NodeJS.Timer | null;
 
@@ -40,7 +40,7 @@ export function GroundEnemy(position: XY): GroundEnemyInterface {
     draw: {
       value: (c: CanvasRenderingContext2D) => {
         const { x, y } = enemy;
-        c.drawImage(sprite.currSprite, x, y, 128, 128);
+        c.drawImage(sprite.currSprite, x - 40, y - 47, 128, 128);
       }
     },
     setIdleTimer: {

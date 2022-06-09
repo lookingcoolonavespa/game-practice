@@ -17,11 +17,19 @@ export default function Bullet(
     y: 0
   };
 
-  let status: 'alive' | 'gone' = 'alive';
+  let status: 'alive' | 'gone' | 'disappearing' = 'alive';
 
   const speed = 5;
 
   const sprite = Sprite(spriteSheet);
+
+  function disappear() {
+    sprite.updateAction('poof');
+    status = 'disappearing';
+    if (sprite.resolveAnimationEnd()) {
+      status = 'gone';
+    }
+  }
 
   return {
     get x() {
@@ -46,14 +54,12 @@ export default function Bullet(
       return status;
     },
     isMaxRange() {
-      return Math.abs(x - startX) >= 500;
+      return Math.abs(x - startX) >= 300;
     },
-    async onMaxRange() {
+    async stop() {
       velocity.x = 0;
       velocity.y = 0;
-      sprite.updateAction('poof');
-      await sprite.resolveAnimationEnd();
-      status = 'gone';
+      disappear();
     },
     setVelocity(axis: 'x' | 'y', direction: 'left' | 'right') {
       velocity[axis] = direction === 'right' ? speed : -speed;

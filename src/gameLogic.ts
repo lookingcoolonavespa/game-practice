@@ -244,13 +244,14 @@ export function update() {
   platforms.forEach((p) => p.updateXPosition());
   player.updatePosition();
   player.updateBullets();
-  player.bullets.forEach((b) => {
+  player.bullets.forEach((b, i) => {
     const enemiesInRange = enemies.filter((e) => {
-      return Math.abs(player.x - e.x) >= 600;
+      return Math.abs(player.x - e.x) <= 600;
     });
 
-    enemiesInRange.forEach((e) => {
-      const collision = checkCollideSide(b, e, true);
+    enemiesInRange.forEach((e, j) => {
+      const collision = checkCollideSide(e, b, true);
+      if (collision) b.stop();
     });
   });
   enemies.forEach((e) => e.updatePosition());

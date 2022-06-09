@@ -40,9 +40,9 @@ export interface Size {
 
 export interface BulletInterface extends Entity {
   readonly velocity: XY;
-  readonly status: 'alive' | 'gone';
+  readonly status: 'alive' | 'gone' | 'disappearing';
   readonly isMaxRange: () => boolean;
-  readonly onMaxRange: () => Promise<void>;
+  readonly stop: () => Promise<void> | void;
   readonly increaseSpriteIdx: () => void;
   readonly resetSpriteIdx: () => void;
   readonly setVelocity: (axis: 'x' | 'y', direction: 'left' | 'right') => void;

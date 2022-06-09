@@ -79,13 +79,13 @@ export default function Entity(size: Size, position: XY) {
       }, 300);
     },
 
-    async updateBullets() {
+    updateBullets() {
       bullets = bullets.filter((b) => {
         b.updatePosition();
 
-        if (b.isMaxRange()) b.onMaxRange();
+        if (b.isMaxRange() || b.status === 'disappearing') b.stop();
 
-        return b.status === 'alive';
+        return b.status !== 'gone';
       });
     }
   };
