@@ -11,7 +11,7 @@ export default function Sprite(sheet: { [key: string]: HTMLImageElement[] }) {
     get currAction() {
       return currAction;
     },
-    updateAction(action: Action, wait?: boolean) {
+    updateAction(action: Action, wait?: boolean, promise?: boolean) {
       if (!wait) {
         if (action !== currAction) this.resetSpriteIdx(true);
         currAction = action;
@@ -24,6 +24,11 @@ export default function Sprite(sheet: { [key: string]: HTMLImageElement[] }) {
     },
     resetSpriteIdx(override?: boolean) {
       if (spriteIdx === sheet[currAction].length - 1 || override) spriteIdx = 0;
+    },
+    resolveAnimationEnd() {
+      return new Promise((resolve) => {
+        if (spriteIdx === sheet[currAction].length - 1) resolve(null);
+      });
     }
   };
 }

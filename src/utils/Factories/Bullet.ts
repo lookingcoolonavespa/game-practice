@@ -17,6 +17,8 @@ export default function Bullet(
     y: 0
   };
 
+  let status: 'alive' | 'gone' = 'alive';
+
   const speed = 5;
 
   const sprite = Sprite(spriteSheet);
@@ -40,11 +42,24 @@ export default function Bullet(
     get currSprite() {
       return sprite.currSprite;
     },
+    get status() {
+      return status;
+    },
     isMaxRange() {
       return Math.abs(x - startX) >= 500;
     },
+    async onMaxRange() {
+      velocity.x = 0;
+      velocity.y = 0;
+      sprite.updateAction('poof');
+      await sprite.resolveAnimationEnd();
+      status = 'gone';
+    },
     setVelocity(axis: 'x' | 'y', direction: 'left' | 'right') {
       velocity[axis] = direction === 'right' ? speed : -speed;
+    },
+    updateAction(action: keyof typeof spriteSheet) {
+      sprite.updateAction(action);
     },
     updatePosition() {
       if (velocity.x) x += velocity.x;

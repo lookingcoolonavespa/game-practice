@@ -14,7 +14,7 @@ export default function Entity(size: Size, position: XY) {
     y: 0
   };
 
-  const bullets: BulletInterface[] = [];
+  let bullets: BulletInterface[] = [];
   let sameShot = false;
 
   let direction: 'right' | 'left' = 'right';
@@ -77,6 +77,16 @@ export default function Entity(size: Size, position: XY) {
       setTimeout(() => {
         sameShot = false;
       }, 300);
+    },
+
+    async updateBullets() {
+      bullets = bullets.filter((b) => {
+        b.updatePosition();
+
+        if (b.isMaxRange()) b.onMaxRange();
+
+        return b.status === 'alive';
+      });
     }
   };
 }

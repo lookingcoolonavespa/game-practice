@@ -36,7 +36,9 @@ export interface Size {
 
 export interface BulletInterface extends Entity {
   readonly velocity: XY;
-  readonly isMaxRange: () => void;
+  readonly status: 'alive' | 'gone';
+  readonly isMaxRange: () => boolean;
+  readonly onMaxRange: () => Promise<void>;
   readonly increaseSpriteIdx: () => void;
   readonly resetSpriteIdx: () => void;
   readonly setVelocity: (axis: 'x' | 'y', direction: 'left' | 'right') => void;
@@ -57,6 +59,7 @@ export interface BaseEntityInterface extends EntityWithVelocity {
   readonly increaseSpriteIdx: () => void;
   readonly resetSpriteIdx: (override?: boolean) => void;
   readonly shootBullet: () => void;
+  readonly updateBullets: () => void;
 }
 export interface EnemyInterface extends BaseEntityInterface {
   readonly direction: 'left' | 'right';

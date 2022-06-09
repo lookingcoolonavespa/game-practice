@@ -243,6 +243,6 @@ export function update() {
 
   platforms.forEach((p) => p.updateXPosition());
   player.updatePosition();
-  player.bullets.forEach((b) => b.updatePosition());
+  player.updateBullets();
   enemies.forEach((e) => e.updatePosition());
 }
