@@ -11,9 +11,13 @@ export default function Sprite(sheet: { [key: string]: HTMLImageElement[] }) {
     get currAction() {
       return currAction;
     },
-    updateAction(action: Action) {
-      if (action !== currAction) this.resetSpriteIdx(true);
-      currAction = action;
+    updateAction(action: Action, wait?: boolean) {
+      if (!wait || currAction !== 'shoot') {
+        if (action !== currAction) this.resetSpriteIdx(true);
+        currAction = action;
+      } else {
+        if (spriteIdx === sheet[currAction].length - 1) currAction = action;
+      }
     },
     increaseSpriteIdx() {
       spriteIdx++;

@@ -21,11 +21,12 @@ export default function KeyPress(): KeyPressInterface {
     setReleased: (key: keyof typeof keyPress) => {
       keyPress[key].pressed = false;
     },
-    setTimer: (cb: () => void, delay: number) => {
-      if (keyPress.up.timer) return;
+    setTimer: (key: keyof typeof keyPress, cb: () => void, delay: number) => {
+      if (key !== 'up') return;
+      if (keyPress[key].timer) return;
 
-      keyPress.up.timer = DeltaTimer(cb, delay);
-      keyPress.up.timer.start();
+      keyPress[key].timer = DeltaTimer(cb, delay);
+      keyPress[key].timer?.start();
     },
 
     removeTimer: () => {

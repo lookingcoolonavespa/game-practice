@@ -36,7 +36,7 @@ export interface Size {
 
 export interface BulletInterface extends Entity {
   readonly velocity: XY;
-  readonly startX: number;
+  readonly isMaxRange: () => void;
   readonly increaseSpriteIdx: () => void;
   readonly resetSpriteIdx: () => void;
   readonly setVelocity: (axis: 'x' | 'y', direction: 'left' | 'right') => void;
@@ -46,10 +46,10 @@ export interface BulletInterface extends Entity {
 
 export interface BaseEntityInterface extends EntityWithVelocity {
   readonly bullets: BulletInterface[];
-  readonly currAction: Action;
-  readonly spriteIdx: number;
+  readonly sameShot: boolean;
   readonly updatePosition: () => void;
   readonly setPosition: (position: XY) => void;
+  readonly setSameShot: (val: boolean) => void;
   readonly updateVelocity: (axis: 'x' | 'y', amount: number) => void;
   readonly onCollideWall: (axis: 'x' | 'y') => void;
   readonly updateAction: (action: Action) => void;
@@ -112,7 +112,11 @@ export interface KeyPressInterface {
   };
   readonly setPressed: (key: keyof KeyPressType) => void;
   readonly setReleased: (key: keyof KeyPressType) => void;
-  readonly setTimer: (cb: () => void, delay: number) => void;
+  readonly setTimer: (
+    key: keyof KeyPressType,
+    cb: () => void,
+    delay: number
+  ) => void;
   readonly removeTimer: () => void;
 }
 

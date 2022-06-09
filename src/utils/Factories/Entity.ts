@@ -1,11 +1,4 @@
-import {
-  BaseEntityInterface,
-  BulletInterface,
-  Size,
-  SpriteCollectionInterface,
-  XY
-} from '../../types/interfaces';
-import { Action } from '../../types/types';
+import { BulletInterface, Size, XY } from '../../types/interfaces';
 import bulletSprites from '../sprites/bulletSprites';
 import Bullet from './Bullet';
 
@@ -22,6 +15,7 @@ export default function Entity(size: Size, position: XY) {
   };
 
   const bullets: BulletInterface[] = [];
+  let sameShot = false;
 
   let direction: 'right' | 'left' = 'right';
 
@@ -44,6 +38,9 @@ export default function Entity(size: Size, position: XY) {
     get bullets() {
       return bullets;
     },
+    get sameShot() {
+      return sameShot;
+    },
     updatePosition() {
       x += velocity.x;
       y += velocity.y;
@@ -63,7 +60,9 @@ export default function Entity(size: Size, position: XY) {
       velocity[axis] /= 2;
     },
     shootBullet() {
+      if (sameShot) return;
       const offsetX = direction === 'right' ? width : -width;
+
       const newBullet = Bullet(
         {
           x: x + offsetX,
@@ -74,6 +73,10 @@ export default function Entity(size: Size, position: XY) {
 
       newBullet.setVelocity('x', direction);
       bullets.push(newBullet);
+      sameShot = true;
+      setTimeout(() => {
+        sameShot = false;
+      }, 300);
     }
   };
 }

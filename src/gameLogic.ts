@@ -60,9 +60,13 @@ function handleKeyDown(e: KeyboardEvent) {
     if (!keyPress.up.timer) {
       gameState.player.setSameJump(false); // so users can double jump
       gameState.player.setJumpNumber(gameState.player.jumpNumber + 1);
-      keyPress.setTimer(() => {
-        gameState.player.setSameJump(true);
-      }, 20);
+      keyPress.setTimer(
+        'up',
+        () => {
+          gameState.player.setSameJump(true);
+        },
+        20
+      );
     }
   }
 }
@@ -176,7 +180,7 @@ export function update() {
     platforms.forEach((p) => p.updateVelocityX(0));
   }
 
-  if (space.pressed) {
+  if (space.pressed && !player.sameShot) {
     player.updateAction('shoot');
     player.setShooting(true);
     player.shootBullet();

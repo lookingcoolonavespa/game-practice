@@ -8,6 +8,7 @@ export default function Bullet(
   const width = 68;
   const height = 66;
 
+  const startX = position.x;
   let x = position.x;
   let y = position.y;
 
@@ -36,11 +37,11 @@ export default function Bullet(
     get height() {
       return height;
     },
-    get startX() {
-      return position.x;
-    },
     get currSprite() {
       return sprite.currSprite;
+    },
+    isMaxRange() {
+      return Math.abs(x - startX) >= 500;
     },
     setVelocity(axis: 'x' | 'y', direction: 'left' | 'right') {
       velocity[axis] = direction === 'right' ? speed : -speed;

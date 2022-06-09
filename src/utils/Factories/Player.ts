@@ -60,13 +60,13 @@ export default function Player(): PlayerInterface {
               return playerSprite.updateAction('shoot');
             }
             playerSprite.updateAction(action);
-            gunSprite.updateAction(action);
+            gunSprite.updateAction(action, true);
             break;
           }
           case 'run': {
             playerSprite.updateAction(action);
-            if (gunSprite.currAction !== 'shoot') {
-              gunSprite.updateAction(action);
+            if (!shooting) {
+              gunSprite.updateAction(action, true);
             }
             break;
           }
