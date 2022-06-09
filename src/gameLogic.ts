@@ -186,7 +186,14 @@ export function update() {
   /* end of key press */
 
   /* handle collision */
-  while (platforms.some((p) => checkCollideSide(p, player, true))) {
+  while (
+    platforms.some((p) =>
+      checkCollideSide(p, player, {
+        rectOne: p.velocity.x > 0,
+        rectTwo: player.velocity.x > 0
+      })
+    )
+  ) {
     player.onCollideWall('x');
     platforms.forEach((p) => p.updateVelocityX(0));
     platformVelocity = 0;
@@ -219,7 +226,13 @@ export function update() {
     let collideSide: 'left' | 'right' | '' = '';
     /* handle collision */
     while (
-      platforms.some((p) => (collideSide = checkCollideSide(p, enemy, false)))
+      platforms.some(
+        (p) =>
+          (collideSide = checkCollideSide(p, enemy, {
+            rectOne: false,
+            rectTwo: true
+          }))
+      )
     ) {
       enemy.onCollideWall('x');
       enemy.updateDirection(collideSide as 'left' | 'right');
@@ -250,7 +263,10 @@ export function update() {
     });
 
     enemiesInRange.forEach((e, j) => {
-      const collision = checkCollideSide(e, b, true);
+      const collision = checkCollideSide(e, b, {
+        rectOne: true,
+        rectTwo: true
+      });
       if (collision) b.stop();
     });
   });

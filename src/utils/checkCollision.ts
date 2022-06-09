@@ -37,46 +37,57 @@ export function checkOnPlatform(
 }
 
 export function checkCollideSide(
-  platform: EntityWithVelocityX,
-  entity: EntityWithVelocityX,
-  includePlatformVelocity: boolean // player needs this option bc when boundary is pushed player velocity is 0
+  rectOne: EntityWithVelocityX,
+  rectTwo: EntityWithVelocityX,
+  moveStatus: {
+    rectOne: boolean;
+    rectTwo: boolean;
+  }
 ) {
   const collideY =
-    // top of entity is above bottom of platform and bottom is below top of platform
-    entity.y <= platform.y + platform.height &&
-    entity.y + entity.height > platform.y;
+    // top of rectTwo is above bottom of rectOne and bottom is below top of rectOne
+    rectTwo.y <= rectOne.y + rectOne.height &&
+    rectTwo.y + rectTwo.height > rectOne.y;
 
   let collideLeft, collideRight;
+  switch (true) {
+    case moveStatus.rectOne && !moveStatus.rectTwo: {
+      collideLeft =
+        rectTwo.x + rectTwo.width <= rectOne.x &&
+        rectTwo.x + rectTwo.width >= rectOne.x + rectOne.velocity.x;
 
-  if (includePlatformVelocity) {
-    collideLeft =
-      // right of entity is to left of platform's left side, but with velocity is inside platform
-      entity.velocity.x
-        ? entity.x + entity.width <= platform.x &&
-          entity.x + entity.width + entity.velocity.x >= platform.x
-        : platform.velocity.x
-        ? entity.x + entity.width <= platform.x &&
-          entity.x + entity.width >= platform.x + platform.velocity.x
-        : false;
-    collideRight =
-      // left of entity is to right of platform's right side, but with velocity is inside platform
-      entity.velocity.x
-        ? entity.x >= platform.x + platform.width &&
-          entity.x + entity.velocity.x <= platform.x + platform.width
-        : platform.velocity.x
-        ? entity.x >= platform.x + platform.width &&
-          entity.x <= platform.x + platform.width + platform.velocity.x
-        : false;
-  } else {
-    collideLeft =
-      // right of entity is to left of platform's left side, but with velocity is inside platform
-      entity.x + entity.width <= platform.x &&
-      entity.x + entity.width + entity.velocity.x >= platform.x;
+      collideRight =
+        rectTwo.x >= rectOne.x + rectOne.width &&
+        rectTwo.x <= rectOne.x + rectOne.width + rectOne.velocity.x;
 
-    collideRight =
-      // left of entity is to right of platform's right side, but with velocity is inside platform
-      entity.x >= platform.x + platform.width &&
-      entity.x + entity.velocity.x <= platform.x + platform.width;
+      break;
+    }
+
+    case !moveStatus.rectOne && moveStatus.rectTwo: {
+      collideLeft =
+        // right of rectTwo is to left of rectOne's left side, but with velocity is inside rectOne
+        rectTwo.x + rectTwo.width <= rectOne.x &&
+        rectTwo.x + rectTwo.width + rectTwo.velocity.x >= rectOne.x;
+
+      collideRight =
+        // left of rectTwo is to right of rectOne's right side, but with velocity is inside rectOne
+        rectTwo.x >= rectOne.x + rectOne.width &&
+        rectTwo.x + rectTwo.velocity.x <= rectOne.x + rectOne.width;
+
+      break;
+    }
+
+    case moveStatus.rectOne && moveStatus.rectTwo: {
+      collideLeft =
+        rectTwo.x + rectTwo.width <= rectOne.x &&
+        rectTwo.x + rectTwo.width >= rectOne.x + rectOne.velocity.x;
+
+      collideRight =
+        rectTwo.x >= rectOne.x + rectOne.width &&
+        rectTwo.x <= rectOne.x + rectOne.width + rectOne.velocity.x;
+
+      break;
+    }
   }
 
   if (!collideY) return '';
