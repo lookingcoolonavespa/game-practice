@@ -8,7 +8,7 @@ import Entity from './Entity';
 import enemySprites from '../sprites/enemySprites';
 
 export default function Enemy(position: XY, size: Size): EnemyInterface {
-  const entity = Entity(enemySprites, size, position);
+  const entity = Entity(size, position);
 
   let direction = 'right';
 
@@ -43,10 +43,8 @@ export function GroundEnemy(position: XY): GroundEnemyInterface {
     setIdleTimer: {
       value: function (this: GroundEnemyInterface) {
         const start = Date.now();
-        console.log('start', Date.now());
         timer = setTimeout(
           function (this: GroundEnemyInterface) {
-            console.log('fired', Date.now() - start);
             this.updateVelocity(
               'x',
               this.direction === 'right' ? this.speed : -this.speed

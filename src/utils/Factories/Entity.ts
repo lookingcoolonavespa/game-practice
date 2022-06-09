@@ -6,11 +6,7 @@ import {
 } from '../../types/interfaces';
 import { Action } from '../../types/types';
 
-export default function Entity(
-  sprites: SpriteCollectionInterface,
-  size: Size,
-  position: XY
-) {
+export default function Entity(size: Size, position: XY) {
   const height = size.height;
   const width = size.width;
 
@@ -66,15 +62,6 @@ export default function Entity(
     onCollideWall(axis: 'x' | 'y') {
       if (velocity[axis] < 1) return (velocity[axis] = 0);
       velocity[axis] /= 2;
-    },
-    updateAction(action: Action) {
-      currAction = action;
-    },
-    increaseSpriteIdx() {
-      spriteIdx++;
-    },
-    resetSpriteIdx() {
-      if (spriteIdx === sprites[currAction].length - 1) spriteIdx = 0;
     }
   };
 }

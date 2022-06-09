@@ -99,7 +99,7 @@ export function draw() {
   //   drawPlatforms(c);
   platforms.forEach((p) => p.draw(c));
   player.draw(c);
-  enemies.forEach((e) => e.draw(c));
+  // enemies.forEach((e) => e.draw(c));
 }
 
 let frameCount = 0;
@@ -124,10 +124,10 @@ export function update() {
   if (frameCount === 3) {
     player.resetSpriteIdx();
     player.increaseSpriteIdx();
-    enemies.forEach((e) => {
-      e.resetSpriteIdx();
-      e.increaseSpriteIdx();
-    });
+    // enemies.forEach((e) => {
+    //   e.resetSpriteIdx();
+    //   e.increaseSpriteIdx();
+    // });
     // playerBullets.forEach((b) => {
     //   if (b.spriteIdx === bulletSprites.idle.length - 1) b.spriteIdx = 0;
     //   b.spriteIdx++;
@@ -145,13 +145,15 @@ export function update() {
 
   let platformVelocity = 0; // used to adjust enemy position as platforms move so enemies don;t fall off platforms as you move
   /* handle key press */
-  const { up, left, right } = keyPress;
+  const { up, left, right, space } = keyPress;
+
   if (up.pressed) {
     if (!player.jumpNumber) player.setJumpNumber(1); // so users can hold the up key to keep jumping
     if (!player.sameJump && player.jumpNumber <= 2) {
       player.updateVelocity('y', jumpHeight);
     }
   }
+
   if (left.pressed || right.pressed) {
     player.updateAction('run');
     player.updateVelocity('x', right.pressed ? speed : -speed);
@@ -167,11 +169,14 @@ export function update() {
     }
   } else {
     player.updateVelocity('x', 0);
-    player.updateAction('idle');
+    if (!space.pressed) player.updateAction('idle');
     platformVelocity = 0;
     platforms.forEach((p) => p.updateVelocityX(0));
   }
 
+  if (space.pressed) {
+    player.updateAction('shoot');
+  }
   /* end of key press */
 
   /* handle collision */
@@ -190,45 +195,44 @@ export function update() {
   /* end of collision */
 
   /* handle enemy movement */
-  enemies.forEach((enemy) => {
-    const { velocity, direction, speed, timer } = enemy;
+  // enemies.forEach((enemy) => {
+  //   const { velocity, direction, speed, timer } = enemy;
 
-    const onPlatform = platforms.some((p) => checkOnPlatform(p, enemy));
-    if (!onPlatform) {
-      enemy.updateVelocity('y', velocity.y + gravity);
-    } else if (!velocity.x && !timer) enemy.setIdleTimer();
+  //   const onPlatform = platforms.some((p) => checkOnPlatform(p, enemy));
+  //   if (!onPlatform) {
+  //     enemy.updateVelocity('y', velocity.y + gravity);
+  //   } else if (!velocity.x && !timer) enemy.setIdleTimer();
 
-    if (enemy.velocity.x) enemy.updateAction('run');
-    else enemy.updateAction('idle');
+  //   if (enemy.velocity.x) enemy.updateAction('run');
+  //   else enemy.updateAction('idle');
 
-    enemies.forEach((e) => {
-      e.setPosition({ x: e.x + platformVelocity, y: e.y });
-    });
+  //   enemies.forEach((e) => {
+  //     e.setPosition({ x: e.x + platformVelocity, y: e.y });
+  //   });
 
-    let collideSide: 'left' | 'right' | '' = '';
-    /* handle collision */
-    while (
-      platforms.some((p) => (collideSide = checkCollideSide(p, enemy, false)))
-    ) {
-      enemy.onCollideWall('x');
-      enemy.updateDirection(collideSide as 'left' | 'right');
-    }
-    while (platforms.some((p) => checkCollideTop(p, enemy))) {
-      enemy.onCollideWall('y');
-    }
-    while (
-      platforms.some(
-        (p) => (collideSide = checkFallOffPlatform(p, enemy, false))
-      )
-    ) {
-      enemy.onCollideWall('x');
-      enemy.updateDirection(
-        (collideSide as 'left' | 'right') === 'right' ? 'left' : 'right'
-      );
-    }
+  //   let collideSide: 'left' | 'right' | '' = '';
+  //   /* handle collision */
+  //   while (
+  //     platforms.some((p) => (collideSide = checkCollideSide(p, enemy, false)))
+  //   ) {
+  //     enemy.onCollideWall('x');
+  //     enemy.updateDirection(collideSide as 'left' | 'right');
+  //   }
+  //   while (platforms.some((p) => checkCollideTop(p, enemy))) {
+  //     enemy.onCollideWall('y');
+  //   }
+  //   while (
+  //     platforms.some(
+  //       (p) => (collideSide = checkFallOffPlatform(p, enemy, false))
+  //     )
+  //   ) {
+  //     enemy.onCollideWall('x');
+  //     enemy.updateDirection(
+  //       (collideSide as 'left' | 'right') === 'right' ? 'left' : 'right'
+  //     );
+  //   }
+  // });
 
-    /* end of collision */
-  });
   /* end of enemy */
 
   platforms.forEach((p) => p.updateXPosition());

@@ -52,7 +52,7 @@ export interface BaseEntityInterface extends EntityWithVelocity {
   readonly onCollideWall: (axis: 'x' | 'y') => void;
   readonly updateAction: (action: Action) => void;
   readonly increaseSpriteIdx: () => void;
-  readonly resetSpriteIdx: () => void;
+  readonly resetSpriteIdx: (override?: boolean) => void;
 }
 export interface EnemyInterface extends BaseEntityInterface {
   readonly direction: 'left' | 'right';
@@ -73,6 +73,7 @@ export interface PlayerInterface extends BaseEntityInterface {
   readonly setSameJump: (val: boolean) => void;
   readonly setJumpNumber: (num: number) => void;
   readonly draw: (c: CanvasRenderingContext2D) => void;
+  readonly updateGunAction: (action: string) => void;
 }
 
 export interface LevelInterface {

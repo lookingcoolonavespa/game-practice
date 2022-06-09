@@ -61,31 +61,13 @@ const run = [
   createImage(run08)
 ];
 
-const shoot = {
-  up: [
-    createImage(shootUp01),
-    createImage(shootUp02),
-    createImage(shootUp03),
-    createImage(shootUp04),
-    createImage(shootUp05),
-    createImage(shootUp06)
-  ],
-  sides: [
-    createImage(shootSides01),
-    createImage(shootSides02),
-    createImage(shootSides03),
-    createImage(shootSides04),
-    createImage(shootSides05),
-    createImage(shootSides06)
-  ],
-  down: [
-    createImage(shootDown01),
-    createImage(shootDown02),
-    createImage(shootDown03),
-    createImage(shootDown04),
-    createImage(shootDown05),
-    createImage(shootDown06)
-  ]
-};
+const shoot = [
+  createImage(shootSides01),
+  createImage(shootSides02),
+  createImage(shootSides03),
+  createImage(shootSides04),
+  createImage(shootSides05),
+  createImage(shootSides06)
+];
 
 export default { idle, run, shoot };
