@@ -94,7 +94,19 @@ export interface LevelInterface {
 export interface GameStateInterface extends LevelInterface {
   readonly player: PlayerInterface;
   readonly active: boolean;
+  readonly platforms: PlatformInterface[];
+  readonly enemies: GroundEnemyInterface[];
   readonly setGameOver: () => void;
+  readonly handleSprites: () => void;
+  readonly handleKeyPress: (
+    keyPress: KeyPressType,
+    boundaryLeft: number,
+    boundaryRight: number
+  ) => void;
+  readonly handleBulletCollision: () => void;
+  readonly handlePlayerCollision: () => void;
+  readonly handleEnemyMovement: () => void;
+  readonly update: () => void;
 }
 
 export interface DeltaTimeoutInterface {
