@@ -11,8 +11,6 @@ export default function Player(): PlayerInterface {
   let sameJump = false;
   let jumpNumber = 0;
 
-  let shooting = false;
-
   const playerSprite = Sprite(playerSprites);
   const gunSprite = Sprite(gunSprites);
 
@@ -56,18 +54,16 @@ export default function Player(): PlayerInterface {
       value: (action: string) => {
         switch (action) {
           case 'idle': {
-            if (shooting && !entity.velocity.y) {
-              return playerSprite.updateAction('shoot');
-            }
-            playerSprite.updateAction(action);
-            gunSprite.updateAction(action, true);
+            playerSprite.updateAction(
+              action,
+              playerSprite.currAction === 'shoot'
+            );
+            gunSprite.updateAction(action, gunSprite.currAction === 'shoot');
             break;
           }
           case 'run': {
             playerSprite.updateAction(action);
-            if (!shooting) {
-              gunSprite.updateAction(action, true);
-            }
+            gunSprite.updateAction(action, true);
             break;
           }
           case 'shoot': {
@@ -78,11 +74,6 @@ export default function Player(): PlayerInterface {
             break;
           }
         }
-      }
-    },
-    setShooting: {
-      value: (state: boolean) => {
-        shooting = state;
       }
     },
     draw: {

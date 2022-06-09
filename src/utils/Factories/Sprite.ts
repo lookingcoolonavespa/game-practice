@@ -12,7 +12,7 @@ export default function Sprite(sheet: { [key: string]: HTMLImageElement[] }) {
       return currAction;
     },
     updateAction(action: Action, wait?: boolean) {
-      if (!wait || currAction !== 'shoot') {
+      if (!wait) {
         if (action !== currAction) this.resetSpriteIdx(true);
         currAction = action;
       } else {

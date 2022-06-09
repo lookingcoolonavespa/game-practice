@@ -45,7 +45,6 @@ export function GroundEnemy(position: XY): GroundEnemyInterface {
     },
     setIdleTimer: {
       value: function (this: GroundEnemyInterface) {
-        const start = Date.now();
         timer = setTimeout(
           function (this: GroundEnemyInterface) {
             this.updateVelocity(

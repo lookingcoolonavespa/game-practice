@@ -159,7 +159,6 @@ export function update() {
       player.updateAction('idle');
     }
   }
-
   if (left.pressed || right.pressed) {
     if (!player.jumpNumber) player.updateAction('run');
     player.updateVelocity('x', right.pressed ? speed : -speed);
@@ -182,9 +181,8 @@ export function update() {
 
   if (space.pressed && !player.sameShot) {
     player.updateAction('shoot');
-    player.setShooting(true);
     player.shootBullet();
-  } else player.setShooting(false);
+  }
   /* end of key press */
 
   /* handle collision */

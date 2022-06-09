@@ -25,7 +25,7 @@ export default {
         // Platform1({ x: 300, y: 600 }),
         // Platform4({ x: 850, y: 600 })
       ],
-      [GroundEnemy({ x: 500, y: 200 })]
+      [GroundEnemy({ x: 694.5, y: 200 })]
     );
   }
 };
