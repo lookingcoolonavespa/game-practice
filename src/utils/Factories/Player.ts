@@ -56,7 +56,9 @@ export default function Player(): PlayerInterface {
       value: (action: string) => {
         switch (action) {
           case 'idle': {
-            if (shooting) return playerSprite.updateAction('shoot');
+            if (shooting && !entity.velocity.y) {
+              return playerSprite.updateAction('shoot');
+            }
             playerSprite.updateAction(action);
             gunSprite.updateAction(action);
             break;

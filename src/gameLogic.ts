@@ -151,11 +151,12 @@ export function update() {
     if (!player.jumpNumber) player.setJumpNumber(1); // so users can hold the up key to keep jumping
     if (!player.sameJump && player.jumpNumber <= 2) {
       player.updateVelocity('y', jumpHeight);
+      player.updateAction('idle');
     }
   }
 
   if (left.pressed || right.pressed) {
-    player.updateAction('run');
+    if (!player.jumpNumber) player.updateAction('run');
     player.updateVelocity('x', right.pressed ? speed : -speed);
 
     // boundary check
