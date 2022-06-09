@@ -99,6 +99,7 @@ export function draw() {
   //   drawPlatforms(c);
   platforms.forEach((p) => p.draw(c));
   player.draw(c);
+  player.bullets.forEach((b) => b.draw(c));
   enemies.forEach((e) => e.draw(c));
 }
 
@@ -128,10 +129,10 @@ export function update() {
       e.resetSpriteIdx();
       e.increaseSpriteIdx();
     });
-    // playerBullets.forEach((b) => {
-    //   if (b.spriteIdx === bulletSprites.idle.length - 1) b.spriteIdx = 0;
-    //   b.spriteIdx++;
-    // });
+    player.bullets.forEach((b) => {
+      b.resetSpriteIdx();
+      b.increaseSpriteIdx();
+    });
     frameCount = 0;
   }
 
@@ -158,7 +159,7 @@ export function update() {
   if (left.pressed || right.pressed) {
     if (!player.jumpNumber) player.updateAction('run');
     player.updateVelocity('x', right.pressed ? speed : -speed);
-
+    player.updateDirection(right.pressed ? 'right' : 'left');
     // boundary check
     if (
       (right.pressed && player.x + player.velocity.x >= boundaryRight) ||
@@ -178,6 +179,7 @@ export function update() {
   if (space.pressed) {
     player.updateAction('shoot');
     player.setShooting(true);
+    player.shootBullet();
   } else player.setShooting(false);
   /* end of key press */
 
@@ -239,5 +241,6 @@ export function update() {
 
   platforms.forEach((p) => p.updateXPosition());
   player.updatePosition();
+  player.bullets.forEach((b) => b.updatePosition());
   enemies.forEach((e) => e.updatePosition());
 }

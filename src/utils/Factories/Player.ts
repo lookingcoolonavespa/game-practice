@@ -88,18 +88,10 @@ export default function Player(): PlayerInterface {
     draw: {
       value: (c: CanvasRenderingContext2D) => {
         const { x, y, height, width } = entity;
-        // draw player
-        // c.fillRect(x, y, width, height);
+
         c.drawImage(playerSprite.currSprite, x - 10, y, 59, height);
 
-        // draw gun
-
         c.drawImage(gunSprite.currSprite, x + width - 30, y - 13, 50, 94);
-
-        // // draw bullets
-        // bullets.forEach((b) =>
-        //   c.drawImage(bulletSprites.idle[b.spriteIdx], b.x, b.y)
-        // );
       },
       enumerable: true
     }

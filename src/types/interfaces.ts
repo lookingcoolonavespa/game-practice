@@ -8,6 +8,8 @@ export interface XY {
 interface Entity extends XY {
   readonly width: number;
   readonly height: number;
+  readonly x: number;
+  readonly y: number;
 }
 
 export interface EntityWithVelocity extends Entity {
@@ -15,11 +17,7 @@ export interface EntityWithVelocity extends Entity {
 }
 
 export interface PlatformInterface extends Entity {
-  readonly x: number;
-  readonly y: number;
   readonly velocityX: number;
-  readonly width: number;
-  readonly height: number;
   readonly image: HTMLImageElement;
   readonly updateXPosition: () => void;
   readonly updateVelocityX: (num: number) => void;
@@ -37,9 +35,13 @@ export interface Size {
 }
 
 export interface BulletInterface extends Entity {
-  readonly spriteIdx: number;
-  readonly velocityX: number;
+  readonly velocity: XY;
   readonly startX: number;
+  readonly increaseSpriteIdx: () => void;
+  readonly resetSpriteIdx: () => void;
+  readonly setVelocity: (axis: 'x' | 'y', direction: 'left' | 'right') => void;
+  readonly updatePosition: () => void;
+  readonly draw: (c: CanvasRenderingContext2D) => void;
 }
 
 export interface BaseEntityInterface extends EntityWithVelocity {
@@ -51,8 +53,10 @@ export interface BaseEntityInterface extends EntityWithVelocity {
   readonly updateVelocity: (axis: 'x' | 'y', amount: number) => void;
   readonly onCollideWall: (axis: 'x' | 'y') => void;
   readonly updateAction: (action: Action) => void;
+  readonly updateDirection: (newDirection: 'left' | 'right') => void;
   readonly increaseSpriteIdx: () => void;
   readonly resetSpriteIdx: (override?: boolean) => void;
+  readonly shootBullet: () => void;
 }
 export interface EnemyInterface extends BaseEntityInterface {
   readonly direction: 'left' | 'right';
