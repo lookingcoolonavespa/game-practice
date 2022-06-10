@@ -1,3 +1,5 @@
+import enemySprites from '../utils/sprites/enemySprites';
+import playerSprites from '../utils/sprites/playerSprites';
 import { Action, KeyPressType } from './types';
 
 export interface XY {
@@ -52,38 +54,46 @@ export interface BulletInterface extends Entity {
 
 export interface BaseEntityInterface extends EntityWithVelocity {
   readonly bullets: BulletInterface[];
-  readonly sameShot: boolean;
+  // readonly sameShot: boolean;
   readonly updatePosition: () => void;
   readonly setPosition: (position: XY) => void;
-  readonly setSameShot: (val: boolean) => void;
+  // readonly setSameShot: (val: boolean) => void;
   readonly updateVelocity: (axis: 'x' | 'y', amount: number) => void;
   readonly onCollideWall: (axis: 'x' | 'y') => void;
-  readonly updateAction: (action: Action) => void;
-  readonly updateDirection: (newDirection: 'left' | 'right') => void;
+  // readonly updateAction: (action: Action) => void;
+  // readonly updateDirection: (newDirection: 'left' | 'right') => void;
   readonly increaseSpriteIdx: () => void;
   readonly resetSpriteIdx: (override?: boolean) => void;
-  readonly shootBullet: () => void;
+  // readonly shootBullet: () => void;
   readonly updateBullets: () => void;
+  readonly draw: (c: CanvasRenderingContext2D) => void;
+  readonly fall: () => void;
 }
 export interface EnemyInterface extends BaseEntityInterface {
   readonly direction: 'left' | 'right';
   readonly updateDirection: (newDirection: 'left' | 'right') => void;
-  readonly draw: (c: CanvasRenderingContext2D) => void;
-  readonly speed: number;
+  readonly updateVelocity: (axis: 'x' | 'y', amount: number) => void;
 }
 
 export interface GroundEnemyInterface extends EnemyInterface {
+  readonly speed: number;
   readonly type: 'ground';
   readonly timer: NodeJS.Timer | null;
-  setIdleTimer: (this: GroundEnemyInterface) => void;
+  readonly setIdleTimer: () => void;
+  readonly updateAction: (action: keyof typeof enemySprites) => void;
 }
 
 export interface PlayerInterface extends BaseEntityInterface {
   readonly sameJump: boolean;
   readonly jumpNumber: number;
+  readonly currAction: string | number;
+  readonly jump: () => void;
+  readonly rest: () => void;
+  readonly run: (dir: 'left' | 'right') => void;
+  readonly shoot: () => void;
+  readonly resetJump: () => void;
   readonly setSameJump: (val: boolean) => void;
   readonly setJumpNumber: (num: number) => void;
-  readonly draw: (c: CanvasRenderingContext2D) => void;
 }
 
 export interface LevelInterface {

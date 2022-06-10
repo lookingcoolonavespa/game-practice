@@ -15,7 +15,7 @@ import {
 import { gravity, speed } from '../constants';
 import { KeyPressType } from '../../types/types';
 
-export default function GameState(level: LevelInterface): GameStateInterface {
+export default function GameState(level: LevelInterface) {
   const player = Player();
   const { platforms, enemies } = level;
 
@@ -41,7 +41,6 @@ export default function GameState(level: LevelInterface): GameStateInterface {
     get enemies() {
       return level.enemies;
     },
-
     setGameOver() {
       active = false;
     },
@@ -127,7 +126,7 @@ export default function GameState(level: LevelInterface): GameStateInterface {
 
         const onPlatform = platforms.some((p) => checkOnPlatform(p, enemy));
         if (!onPlatform) {
-          enemy.updateVelocity('y', velocity.y + gravity);
+          enemy.fall();
         } else if (!velocity.x && !timer) enemy.setIdleTimer();
 
         if (enemy.velocity.x) enemy.updateAction('run');

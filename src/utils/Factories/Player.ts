@@ -4,7 +4,7 @@ import bulletSprites from '../sprites/bulletSprites';
 import gunSprites from '../sprites/gunSprites';
 import Entity from './Entity';
 import Sprite from './Sprite';
-import { jumpHeight, speed } from '../constants';
+import { jumpHeight, speed, gravity } from '../constants';
 
 export default function Player(): PlayerInterface {
   const entity = Entity({ height: 50, width: 45 }, { x: 100, y: 100 });
@@ -64,12 +64,22 @@ export default function Player(): PlayerInterface {
     get currAction() {
       return playerSprite.currAction;
     },
+    setPosition: entity.setPosition,
+    updatePosition: entity.updatePosition,
+    updateVelocity: entity.updateVelocity,
+    updateBullets: entity.updateBullets,
+    onCollideWall(axis: 'x' | 'y') {
+      entity.onCollideWall(axis);
+    },
     jump() {
       if (!jumpNumber) this.setJumpNumber(1); // so users can hold the up key to keep jumping
       if (!sameJump && jumpNumber <= 2) {
         entity.updateVelocity('y', jumpHeight);
         updateAction('idle');
       }
+    },
+    fall() {
+      entity.updateVelocity('y', entity.velocity.y + gravity);
     },
     rest() {
       entity.updateVelocity('x', 0);

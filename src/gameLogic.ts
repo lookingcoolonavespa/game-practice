@@ -123,50 +123,23 @@ export function update() {
   if (player.y >= canvas.height) {
     gameState.setGameOver();
   }
+
   /* handle sprites */
   frameCount++;
-
   if (frameCount === 3) {
     gameState.handleSprites();
     frameCount = 0;
   }
-
   /* end handle sprites */
 
   const onPlatform = platforms.some((p) => checkOnPlatform(p, player));
   if (onPlatform) {
     player.resetJump();
-  } else player.updateVelocity('y', player.velocity.y + gravity);
+  } else player.fall();
 
-  /* handle key press */
-  const { up, left, right, space } = keyPress;
-
-  if (up.pressed) {
-    player.jump();
-  }
-  if (left.pressed || right.pressed) {
-    player.run(right.pressed ? 'right' : 'left');
-    // boundary check
-    if (
-      (right.pressed && player.x + player.velocity.x >= boundaryRight) ||
-      (left.pressed && player.x + player.velocity.x <= boundaryLeft)
-    ) {
-      gameState.setPlatformVelocity(right.pressed ? -speed : speed);
-      player.updateVelocity('x', 0);
-    }
-  } else {
-    gameState.setPlatformVelocity(0);
-  }
-
-  if (space.pressed) {
-    player.shoot();
-  }
-  /* end of key press */
-
+  gameState.handleKeyPress(keyPress, boundaryLeft, boundaryRight);
   gameState.handlePlayerCollision();
-
   gameState.handleEnemyMovement();
-
   gameState.handleBulletCollision();
   gameState.update(); // handle all movement + bullet collision
 }

@@ -7,6 +7,7 @@ import {
 import Entity from './Entity';
 import enemySprites from '../sprites/enemySprites';
 import Sprite from './Sprite';
+import { gravity } from '../constants';
 
 export default function Enemy(position: XY, size: Size): EnemyInterface {
   const entity = Entity(size, position);
@@ -27,50 +28,71 @@ export default function Enemy(position: XY, size: Size): EnemyInterface {
 }
 
 export function GroundEnemy(position: XY): GroundEnemyInterface {
-  const enemy = Enemy(position, { height: 48, width: 42 });
+  const entity = Enemy(position, { height: 48, width: 42 });
 
   let timer: NodeJS.Timer | null;
 
   const sprite = Sprite(enemySprites);
 
-  return Object.create(enemy, {
-    type: { value: 'ground', enumerable: true },
-    speed: { value: 2, enumerable: true },
-    timer: { get: () => timer, enumerable: true },
-    draw: {
-      value: (c: CanvasRenderingContext2D) => {
-        const { x, y } = enemy;
-        c.drawImage(sprite.currSprite, x - 40, y - 47, 128, 128);
-      }
+  const speed = 2;
+
+  return {
+    get direction() {
+      return entity.direction;
     },
-    setIdleTimer: {
-      value: function (this: GroundEnemyInterface) {
-        timer = setTimeout(
-          function (this: GroundEnemyInterface) {
-            this.updateVelocity(
-              'x',
-              this.direction === 'right' ? this.speed : -this.speed
-            );
-            timer = null;
-          }.bind(this),
-          2000
+    get speed() {
+      return speed;
+    },
+    get timer() {
+      return timer;
+    },
+    get x() {
+      return entity.x;
+    },
+    get y() {
+      return entity.y;
+    },
+    get velocity() {
+      return entity.velocity;
+    },
+    get height() {
+      return entity.height;
+    },
+    get width() {
+      return entity.width;
+    },
+    get bullets() {
+      return entity.bullets;
+    },
+    get type(): 'ground' {
+      return 'ground';
+    },
+    setPosition: entity.setPosition,
+    updatePosition: entity.updatePosition,
+    onCollideWall: entity.onCollideWall,
+    updateBullets: entity.updateBullets,
+    updateDirection: entity.updateDirection,
+    updateVelocity: entity.updateVelocity,
+    increaseSpriteIdx: sprite.increaseSpriteIdx,
+    resetSpriteIdx: sprite.resetSpriteIdx,
+    fall() {
+      entity.updateVelocity('y', entity.velocity.y + gravity);
+    },
+    updateAction(action: keyof typeof enemySprites) {
+      sprite.updateAction(action);
+    },
+    setIdleTimer() {
+      timer = setTimeout(function () {
+        entity.updateVelocity(
+          'x',
+          entity.direction === 'right' ? speed : -speed
         );
-      }
+        timer = null;
+      }, 2000);
     },
-    updateAction: {
-      value: (action: keyof typeof enemySprites) => {
-        sprite.updateAction(action);
-      }
-    },
-    increaseSpriteIdx: {
-      value: () => {
-        sprite.increaseSpriteIdx();
-      }
-    },
-    resetSpriteIdx: {
-      value: () => {
-        sprite.resetSpriteIdx();
-      }
+    draw(c: CanvasRenderingContext2D) {
+      const { x, y } = entity;
+      c.drawImage(sprite.currSprite, x - 40, y - 47, 128, 128);
     }
-  });
+  };
 }
