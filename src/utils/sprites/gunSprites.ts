@@ -1,73 +1,118 @@
 import { createImage } from '../misc';
 
-import idle01 from '../../assets/Gun01/Gun01/Idle/Idle_Gun01_01.png';
-import idle02 from '../../assets/Gun01/Gun01/Idle/Idle_Gun01_02.png';
-import idle03 from '../../assets/Gun01/Gun01/Idle/Idle_Gun01_03.png';
-import idle04 from '../../assets/Gun01/Gun01/Idle/Idle_Gun01_04.png';
-import idle05 from '../../assets/Gun01/Gun01/Idle/Idle_Gun01_05.png';
-import idle06 from '../../assets/Gun01/Gun01/Idle/Idle_Gun01_06.png';
-import idle07 from '../../assets/Gun01/Gun01/Idle/Idle_Gun01_07.png';
-import idle08 from '../../assets/Gun01/Gun01/Idle/Idle_Gun01_08.png';
+import idle01Left from '../../assets/Gun01/Gun01/Left/Idle/Idle_Gun01_01.png';
+import idle02Left from '../../assets/Gun01/Gun01/Left/Idle/Idle_Gun01_02.png';
+import idle03Left from '../../assets/Gun01/Gun01/Left/Idle/Idle_Gun01_03.png';
+import idle04Left from '../../assets/Gun01/Gun01/Left/Idle/Idle_Gun01_04.png';
+import idle05Left from '../../assets/Gun01/Gun01/Left/Idle/Idle_Gun01_05.png';
+import idle06Left from '../../assets/Gun01/Gun01/Left/Idle/Idle_Gun01_06.png';
+import idle07Left from '../../assets/Gun01/Gun01/Left/Idle/Idle_Gun01_07.png';
+import idle08Left from '../../assets/Gun01/Gun01/Left/Idle/Idle_Gun01_08.png';
 
-import run01 from '../../assets/Gun01/Gun01/Run/Run_Gun01_01.png';
-import run02 from '../../assets/Gun01/Gun01/Run/Run_Gun01_02.png';
-import run03 from '../../assets/Gun01/Gun01/Run/Run_Gun01_03.png';
-import run04 from '../../assets/Gun01/Gun01/Run/Run_Gun01_04.png';
-import run05 from '../../assets/Gun01/Gun01/Run/Run_Gun01_05.png';
-import run06 from '../../assets/Gun01/Gun01/Run/Run_Gun01_06.png';
-import run07 from '../../assets/Gun01/Gun01/Run/Run_Gun01_07.png';
-import run08 from '../../assets/Gun01/Gun01/Run/Run_Gun01_08.png';
+import run01Left from '../../assets/Gun01/Gun01/Left/Run/Run_Gun01_01.png';
+import run02Left from '../../assets/Gun01/Gun01/Left/Run/Run_Gun01_02.png';
+import run03Left from '../../assets/Gun01/Gun01/Left/Run/Run_Gun01_03.png';
+import run04Left from '../../assets/Gun01/Gun01/Left/Run/Run_Gun01_04.png';
+import run05Left from '../../assets/Gun01/Gun01/Left/Run/Run_Gun01_05.png';
+import run06Left from '../../assets/Gun01/Gun01/Left/Run/Run_Gun01_06.png';
+import run07Left from '../../assets/Gun01/Gun01/Left/Run/Run_Gun01_07.png';
+import run08Left from '../../assets/Gun01/Gun01/Left/Run/Run_Gun01_08.png';
 
-import shootDown01 from '../../assets/Gun01/Gun01/ShootDown/ShootDown_Gun01_01.png';
-import shootDown02 from '../../assets/Gun01/Gun01/ShootDown/ShootDown_Gun01_02.png';
-import shootDown03 from '../../assets/Gun01/Gun01/ShootDown/ShootDown_Gun01_03.png';
-import shootDown04 from '../../assets/Gun01/Gun01/ShootDown/ShootDown_Gun01_04.png';
-import shootDown05 from '../../assets/Gun01/Gun01/ShootDown/ShootDown_Gun01_05.png';
-import shootDown06 from '../../assets/Gun01/Gun01/ShootDown/ShootDown_Gun01_06.png';
+import shootSides01Left from '../../assets/Gun01/Gun01/Left/ShootSides/ShootSides_Gun01_01.png';
+import shootSides02Left from '../../assets/Gun01/Gun01/Left/ShootSides/ShootSides_Gun01_02.png';
+import shootSides03Left from '../../assets/Gun01/Gun01/Left/ShootSides/ShootSides_Gun01_03.png';
+import shootSides04Left from '../../assets/Gun01/Gun01/Left/ShootSides/ShootSides_Gun01_04.png';
+import shootSides05Left from '../../assets/Gun01/Gun01/Left/ShootSides/ShootSides_Gun01_05.png';
+import shootSides06Left from '../../assets/Gun01/Gun01/Left/ShootSides/ShootSides_Gun01_06.png';
 
-import shootSides01 from '../../assets/Gun01/Gun01/ShootSides/ShootSides_Gun01_01.png';
-import shootSides02 from '../../assets/Gun01/Gun01/ShootSides/ShootSides_Gun01_02.png';
-import shootSides03 from '../../assets/Gun01/Gun01/ShootSides/ShootSides_Gun01_03.png';
-import shootSides04 from '../../assets/Gun01/Gun01/ShootSides/ShootSides_Gun01_04.png';
-import shootSides05 from '../../assets/Gun01/Gun01/ShootSides/ShootSides_Gun01_05.png';
-import shootSides06 from '../../assets/Gun01/Gun01/ShootSides/ShootSides_Gun01_06.png';
+import idle01Right from '../../assets/Gun01/Gun01/Right/Idle/Idle_Gun01_01.png';
+import idle02Right from '../../assets/Gun01/Gun01/Right/Idle/Idle_Gun01_02.png';
+import idle03Right from '../../assets/Gun01/Gun01/Right/Idle/Idle_Gun01_03.png';
+import idle04Right from '../../assets/Gun01/Gun01/Right/Idle/Idle_Gun01_04.png';
+import idle05Right from '../../assets/Gun01/Gun01/Right/Idle/Idle_Gun01_05.png';
+import idle06Right from '../../assets/Gun01/Gun01/Right/Idle/Idle_Gun01_06.png';
+import idle07Right from '../../assets/Gun01/Gun01/Right/Idle/Idle_Gun01_07.png';
+import idle08Right from '../../assets/Gun01/Gun01/Right/Idle/Idle_Gun01_08.png';
 
-import shootUp01 from '../../assets/Gun01/Gun01/ShootUp/ShootUp_Gun01_01.png';
-import shootUp02 from '../../assets/Gun01/Gun01/ShootUp/ShootUp_Gun01_02.png';
-import shootUp03 from '../../assets/Gun01/Gun01/ShootUp/ShootUp_Gun01_03.png';
-import shootUp04 from '../../assets/Gun01/Gun01/ShootUp/ShootUp_Gun01_04.png';
-import shootUp05 from '../../assets/Gun01/Gun01/ShootUp/ShootUp_Gun01_05.png';
-import shootUp06 from '../../assets/Gun01/Gun01/ShootUp/ShootUp_Gun01_06.png';
+import run01Right from '../../assets/Gun01/Gun01/Right/Run/Run_Gun01_01.png';
+import run02Right from '../../assets/Gun01/Gun01/Right/Run/Run_Gun01_02.png';
+import run03Right from '../../assets/Gun01/Gun01/Right/Run/Run_Gun01_03.png';
+import run04Right from '../../assets/Gun01/Gun01/Right/Run/Run_Gun01_04.png';
+import run05Right from '../../assets/Gun01/Gun01/Right/Run/Run_Gun01_05.png';
+import run06Right from '../../assets/Gun01/Gun01/Right/Run/Run_Gun01_06.png';
+import run07Right from '../../assets/Gun01/Gun01/Right/Run/Run_Gun01_07.png';
+import run08Right from '../../assets/Gun01/Gun01/Right/Run/Run_Gun01_08.png';
 
-const idle = [
-  createImage(idle01),
-  createImage(idle02),
-  createImage(idle03),
-  createImage(idle04),
-  createImage(idle05),
-  createImage(idle06),
-  createImage(idle07),
-  createImage(idle08)
+import shootSides01Right from '../../assets/Gun01/Gun01/Right/ShootSides/ShootSides_Gun01_01.png';
+import shootSides02Right from '../../assets/Gun01/Gun01/Right/ShootSides/ShootSides_Gun01_02.png';
+import shootSides03Right from '../../assets/Gun01/Gun01/Right/ShootSides/ShootSides_Gun01_03.png';
+import shootSides04Right from '../../assets/Gun01/Gun01/Right/ShootSides/ShootSides_Gun01_04.png';
+import shootSides05Right from '../../assets/Gun01/Gun01/Right/ShootSides/ShootSides_Gun01_05.png';
+import shootSides06Right from '../../assets/Gun01/Gun01/Right/ShootSides/ShootSides_Gun01_06.png';
+
+const idleRight = [
+  createImage(idle01Right),
+  createImage(idle02Right),
+  createImage(idle03Right),
+  createImage(idle04Right),
+  createImage(idle05Right),
+  createImage(idle06Right),
+  createImage(idle07Right),
+  createImage(idle08Right)
 ];
 
-const run = [
-  createImage(run01),
-  createImage(run02),
-  createImage(run03),
-  createImage(run04),
-  createImage(run05),
-  createImage(run06),
-  createImage(run07),
-  createImage(run08)
+const runRight = [
+  createImage(run01Right),
+  createImage(run02Right),
+  createImage(run03Right),
+  createImage(run04Right),
+  createImage(run05Right),
+  createImage(run06Right),
+  createImage(run07Right),
+  createImage(run08Right)
 ];
 
-const shoot = [
-  createImage(shootSides01),
-  createImage(shootSides02),
-  createImage(shootSides03),
-  createImage(shootSides04),
-  createImage(shootSides05),
-  createImage(shootSides06)
+const shootRight = [
+  createImage(shootSides01Right),
+  createImage(shootSides02Right),
+  createImage(shootSides03Right),
+  createImage(shootSides04Right),
+  createImage(shootSides05Right),
+  createImage(shootSides06Right)
 ];
 
-export default { idle, run, shoot };
+const idleLeft = [
+  createImage(idle01Left),
+  createImage(idle02Left),
+  createImage(idle03Left),
+  createImage(idle04Left),
+  createImage(idle05Left),
+  createImage(idle06Left),
+  createImage(idle07Left),
+  createImage(idle08Left)
+];
+
+const runLeft = [
+  createImage(run01Left),
+  createImage(run02Left),
+  createImage(run03Left),
+  createImage(run04Left),
+  createImage(run05Left),
+  createImage(run06Left),
+  createImage(run07Left),
+  createImage(run08Left)
+];
+
+const shootLeft = [
+  createImage(shootSides01Left),
+  createImage(shootSides02Left),
+  createImage(shootSides03Left),
+  createImage(shootSides04Left),
+  createImage(shootSides05Left),
+  createImage(shootSides06Left)
+];
+
+export default {
+  left: { idleLeft, runLeft, shootLeft },
+  right: { idleRight, runRight, shootRight }
+};
