@@ -78,6 +78,7 @@ export default function GameState(level: LevelInterface) {
         }
       } else {
         setPlatformVelocity(0);
+        player.rest();
       }
 
       if (space.pressed) {
@@ -102,15 +103,19 @@ export default function GameState(level: LevelInterface) {
     },
     handlePlayerCollision() {
       while (
-        platforms.some((p) =>
-          checkCollideSide(p, player, {
-            rectOne: p.velocity.x > 0,
-            rectTwo: player.velocity.x > 0
-          })
-        )
+        platforms.some((p) => {
+          // console.log({
+          //   rectOne: Math.abs(p.velocity.x) > 0,
+          //   rectTwo: Math.abs(player.velocity.x) > 0
+          // });
+          return checkCollideSide(p, player, {
+            rectOne: Math.abs(p.velocity.x) > 0,
+            rectTwo: Math.abs(player.velocity.x) > 0
+          });
+        })
       ) {
         player.onCollideWall('x');
-        platformVelocity = 0;
+        setPlatformVelocity(0);
       }
       while (
         platforms.some(
@@ -173,7 +178,6 @@ export default function GameState(level: LevelInterface) {
       platforms.forEach((p) => p.updateXPosition());
       player.updatePosition();
       player.updateBullets();
-
       enemies.forEach((e) => e.updatePosition());
     }
   };

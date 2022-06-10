@@ -36,7 +36,12 @@ export default function Player(): PlayerInterface {
       }
     }
   }
+
+  function setJumpNumber(val: number) {
+    jumpNumber = val;
+  }
   return {
+    setJumpNumber,
     get x() {
       return entity.x;
     },
@@ -68,11 +73,9 @@ export default function Player(): PlayerInterface {
     updatePosition: entity.updatePosition,
     updateVelocity: entity.updateVelocity,
     updateBullets: entity.updateBullets,
-    onCollideWall(axis: 'x' | 'y') {
-      entity.onCollideWall(axis);
-    },
+    onCollideWall: entity.onCollideWall,
     jump() {
-      if (!jumpNumber) this.setJumpNumber(1); // so users can hold the up key to keep jumping
+      if (!jumpNumber) setJumpNumber(1); // so users can hold the up key to keep jumping
       if (!sameJump && jumpNumber <= 2) {
         entity.updateVelocity('y', jumpHeight);
         updateAction('idle');
@@ -102,9 +105,6 @@ export default function Player(): PlayerInterface {
     },
     setSameJump(val: boolean) {
       sameJump = val;
-    },
-    setJumpNumber(val: number) {
-      jumpNumber = val;
     },
     increaseSpriteIdx() {
       playerSprite.increaseSpriteIdx();
