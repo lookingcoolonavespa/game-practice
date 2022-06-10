@@ -11,7 +11,6 @@ export default function Sprite(sheet: {
 
   return {
     get currSprite() {
-      console.log(direction);
       return sheet[direction][currAction][spriteIdx];
     },
     get currAction() {

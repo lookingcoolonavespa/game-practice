@@ -142,4 +142,5 @@ export function update() {
   gameState.handleEnemyMovement();
   gameState.handleBulletCollision();
   gameState.update(); // handle all movement + bullet collision
+  console.log(player.velocity.x);
 }

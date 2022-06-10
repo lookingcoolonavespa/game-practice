@@ -76,6 +76,8 @@ export default function GameState(level: LevelInterface) {
         ) {
           setPlatformVelocity(right.pressed ? -speed : speed);
           player.updateVelocity('x', 0);
+        } else {
+          setPlatformVelocity(0);
         }
       } else {
         setPlatformVelocity(0);
