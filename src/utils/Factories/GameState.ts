@@ -10,7 +10,8 @@ import {
   checkOnPlatform,
   checkFallOffPlatform,
   checkCollideTop,
-  checkCollideBottom
+  checkCollideBottom,
+  checkIfInsideDiameter
 } from '../checkCollision';
 import { gravity, speed } from '../constants';
 import { KeyPressType } from '../../types/types';
@@ -92,10 +93,11 @@ export default function GameState(level: LevelInterface) {
         });
 
         enemiesInRange.forEach((e) => {
-          const collision = checkCollideSide(e, b, {
-            rectOne: true,
-            rectTwo: true
-          });
+          const collision =
+            checkCollideSide(e, b, {
+              rectOne: true,
+              rectTwo: true
+            }) || checkIfInsideDiameter(e, b);
           console.log(collision);
           if (collision) b.stop();
         });
@@ -103,16 +105,12 @@ export default function GameState(level: LevelInterface) {
     },
     handlePlayerCollision() {
       while (
-        platforms.some((p) => {
-          // console.log({
-          //   rectOne: Math.abs(p.velocity.x) > 0,
-          //   rectTwo: Math.abs(player.velocity.x) > 0
-          // });
-          return checkCollideSide(p, player, {
+        platforms.some((p) =>
+          checkCollideSide(p, player, {
             rectOne: Math.abs(p.velocity.x) > 0,
             rectTwo: Math.abs(player.velocity.x) > 0
-          });
-        })
+          })
+        )
       ) {
         player.onCollideWall('x');
         setPlatformVelocity(0);

@@ -36,6 +36,16 @@ export function checkOnPlatform(
   return insidePlatformDiameter && collideY;
 }
 
+export function checkIfInsideDiameter(
+  rectOne: EntityWithVelocity,
+  rectTwo: EntityWithVelocity
+) {
+  return (
+    rectOne.x <= rectTwo.x + rectTwo.width &&
+    rectTwo.x <= rectOne.x + rectOne.width
+  );
+}
+
 export function checkCollideSide(
   rectOne: EntityWithVelocityX,
   rectTwo: EntityWithVelocityX,

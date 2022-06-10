@@ -139,7 +139,7 @@ export function update() {
 
   gameState.handleKeyPress(keyPress, boundaryLeft, boundaryRight);
   gameState.handlePlayerCollision();
-  // gameState.handleEnemyMovement();
+  gameState.handleEnemyMovement();
   gameState.handleBulletCollision();
   gameState.update(); // handle all movement + bullet collision
 }
