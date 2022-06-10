@@ -114,13 +114,13 @@ const shootLeft = [
 
 export default {
   right: {
-    idleRight,
-    runRight,
-    shootRight
+    idle: idleRight,
+    run: runRight,
+    shoot: shootRight
   },
   left: {
-    idleLeft,
-    runLeft,
-    shootLeft
+    idle: idleLeft,
+    run: runLeft,
+    shoot: shootLeft
   }
 };

@@ -1,9 +1,9 @@
-import { XY } from '../../types/interfaces';
+import { SpriteSheetInterface, XY } from '../../types/interfaces';
 import Sprite from './Sprite';
 
 export default function Bullet(
   position: XY,
-  spriteSheet: { [key: string]: HTMLImageElement[] }
+  spriteSheet: SpriteSheetInterface
 ) {
   const width = 32;
   const height = 32;
@@ -62,6 +62,7 @@ export default function Bullet(
       disappear();
     },
     setVelocity(axis: 'x' | 'y', direction: 'left' | 'right') {
+      sprite.updateDirection(direction);
       velocity[axis] = direction === 'right' ? speed : -speed;
     },
     updateAction(action: keyof typeof spriteSheet) {

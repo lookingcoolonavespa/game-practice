@@ -80,7 +80,7 @@ export interface GroundEnemyInterface extends EnemyInterface {
   readonly type: 'ground';
   readonly timer: NodeJS.Timer | null;
   readonly setIdleTimer: () => void;
-  readonly updateAction: (action: keyof typeof enemySprites) => void;
+  readonly updateAction: (action: keyof typeof enemySprites.right) => void;
 }
 
 export interface PlayerInterface extends BaseEntityInterface {
@@ -150,4 +150,9 @@ export interface KeyPressInterface {
 
 export interface SpriteCollectionInterface {
   [key: string]: HTMLImageElement[];
+}
+
+export interface SpriteSheetInterface {
+  left: SpriteCollectionInterface;
+  right: SpriteCollectionInterface;
 }

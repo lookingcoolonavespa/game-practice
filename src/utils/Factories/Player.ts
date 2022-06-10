@@ -91,6 +91,8 @@ export default function Player(): PlayerInterface {
     run(dir: 'left' | 'right') {
       if (!jumpNumber) updateAction('run');
       entity.updateDirection(dir);
+      playerSprite.updateDirection(dir);
+      gunSprite.updateDirection(dir);
       entity.updateVelocity('x', dir === 'right' ? speed : -speed);
     },
     shoot() {
@@ -119,7 +121,8 @@ export default function Player(): PlayerInterface {
 
       c.drawImage(playerSprite.currSprite, x - 10, y, 59, height);
 
-      c.drawImage(gunSprite.currSprite, x + width - 30, y - 13, 50, 94);
+      const offsetX = entity.direction === 'right' ? width - 30 : -30;
+      c.drawImage(gunSprite.currSprite, x + offsetX, y - 13, 50, 94);
     }
   };
 }

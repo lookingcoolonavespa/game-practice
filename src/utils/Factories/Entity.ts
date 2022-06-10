@@ -41,6 +41,9 @@ export default function Entity(size: Size, position: XY) {
     get sameShot() {
       return sameShot;
     },
+    get direction() {
+      return direction;
+    },
     updatePosition() {
       x += velocity.x;
       y += velocity.y;

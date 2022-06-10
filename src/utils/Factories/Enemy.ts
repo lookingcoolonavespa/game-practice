@@ -71,14 +71,17 @@ export function GroundEnemy(position: XY): GroundEnemyInterface {
     updatePosition: entity.updatePosition,
     onCollideWall: entity.onCollideWall,
     updateBullets: entity.updateBullets,
-    updateDirection: entity.updateDirection,
     updateVelocity: entity.updateVelocity,
     increaseSpriteIdx: sprite.increaseSpriteIdx,
     resetSpriteIdx: sprite.resetSpriteIdx,
+    updateDirection(dir: 'left' | 'right') {
+      sprite.updateDirection(dir);
+      entity.updateDirection(dir);
+    },
     fall() {
       entity.updateVelocity('y', entity.velocity.y + gravity);
     },
-    updateAction(action: keyof typeof enemySprites) {
+    updateAction(action: keyof typeof enemySprites.right) {
       sprite.updateAction(action);
     },
     setIdleTimer() {
