@@ -12,6 +12,8 @@ export default function Bullet(
   let x = position.x;
   let y = position.y;
 
+  let distanceTraveled = 0;
+
   const velocity = {
     x: 0,
     y: 0
@@ -38,6 +40,9 @@ export default function Bullet(
     get y() {
       return y;
     },
+    get distanceTraveled() {
+      return distanceTraveled;
+    },
     get velocity() {
       return velocity;
     },
@@ -54,12 +59,15 @@ export default function Bullet(
       return status;
     },
     isMaxRange() {
-      return Math.abs(x - startX) >= 300;
+      return Math.abs(distanceTraveled) >= 300;
     },
     stop() {
       velocity.x = 0;
       velocity.y = 0;
       disappear();
+    },
+    shiftXBy(amount: number) {
+      x += amount;
     },
     setVelocity(axis: 'x' | 'y', direction: 'left' | 'right') {
       sprite.updateDirection(direction);
@@ -69,8 +77,8 @@ export default function Bullet(
       sprite.updateAction(action);
     },
     updatePosition() {
-      if (velocity.x) x += velocity.x;
-      if (velocity.y) y += velocity.y;
+      distanceTraveled += Math.abs(velocity.x);
+      x += velocity.x;
     },
     increaseSpriteIdx() {
       sprite.increaseSpriteIdx();

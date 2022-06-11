@@ -81,9 +81,10 @@ export default function Entity(size: Size, position: XY) {
         sameShot = false;
       }, 300);
     },
-
-    updateBullets() {
+    updateBullets(offsetX: number) {
       bullets = bullets.filter((b) => {
+        console.log(offsetX);
+        b.shiftXBy(offsetX);
         b.updatePosition();
 
         if (b.isMaxRange() || b.status === 'disappearing') b.stop();

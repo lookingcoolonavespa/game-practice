@@ -72,8 +72,8 @@ export default function Player(): PlayerInterface {
     setPosition: entity.setPosition,
     updatePosition: entity.updatePosition,
     updateVelocity: entity.updateVelocity,
-    updateBullets: entity.updateBullets,
     onCollideWall: entity.onCollideWall,
+    updateBullets: entity.updateBullets,
     jump() {
       if (!jumpNumber) setJumpNumber(1); // so users can hold the up key to keep jumping
       if (!sameJump && jumpNumber <= 2) {

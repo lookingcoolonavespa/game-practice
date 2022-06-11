@@ -152,6 +152,7 @@ export default function GameState(level: LevelInterface) {
         else enemy.updateAction('idle');
 
         enemies.forEach((e) => {
+          // shift enemies as platforms move so they keep their position
           e.setPosition({ x: e.x + platformVelocity, y: e.y });
         });
 
@@ -192,7 +193,7 @@ export default function GameState(level: LevelInterface) {
     update() {
       platforms.forEach((p) => p.updateXPosition());
       player.updatePosition();
-      player.updateBullets();
+      player.updateBullets(platformVelocity);
       updateEnemies();
     }
   };

@@ -44,6 +44,7 @@ export interface BulletInterface extends Entity {
   readonly velocity: XY;
   readonly status: 'active' | 'gone' | 'disappearing';
   readonly isMaxRange: () => boolean;
+  readonly shiftXBy: (amount: number) => void;
   readonly stop: () => Promise<void> | void;
   readonly increaseSpriteIdx: () => void;
   readonly resetSpriteIdx: () => void;
@@ -65,7 +66,7 @@ export interface BaseEntityInterface extends EntityWithVelocity {
   readonly increaseSpriteIdx: () => void;
   readonly resetSpriteIdx: (override?: boolean) => void;
   // readonly shootBullet: () => void;
-  readonly updateBullets: () => void;
+  readonly updateBullets: (offsetX: number) => void;
   readonly draw: (c: CanvasRenderingContext2D) => void;
   readonly fall: () => void;
 }
