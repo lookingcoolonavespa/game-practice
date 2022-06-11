@@ -88,6 +88,7 @@ export default function Bullet(
     },
     draw(c: CanvasRenderingContext2D) {
       c.drawImage(sprite.currSprite, x - 2, y - 2);
+      c.fillRect(x, y, width, height);
     }
   };
 }

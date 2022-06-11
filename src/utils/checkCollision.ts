@@ -40,10 +40,14 @@ export function checkIfInsideDiameter(
   rectOne: EntityWithVelocity,
   rectTwo: EntityWithVelocity
 ) {
-  return (
+  const insideY =
+    rectTwo.y <= rectOne.y + rectOne.height &&
+    rectTwo.y + rectTwo.height > rectOne.y;
+
+  const insideX =
     rectOne.x <= rectTwo.x + rectTwo.width &&
-    rectTwo.x <= rectOne.x + rectOne.width
-  );
+    rectTwo.x <= rectOne.x + rectOne.width;
+  return insideX && insideY;
 }
 
 export function checkCollideSide(
