@@ -7,6 +7,14 @@ export interface XY {
   readonly y: number;
 }
 
+export interface Line {
+  y: number;
+  x: {
+    start: number;
+    end: number;
+  };
+}
+
 interface Entity extends XY {
   readonly width: number;
   readonly height: number;

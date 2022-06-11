@@ -2,6 +2,7 @@
 import {
   checkCollideSide,
   checkFallOffPlatform,
+  checkInLineOfSight,
   checkOnPlatform
 } from '../utils/checkCollision';
 import { Platform4 } from '../utils/Factories/Platform';
@@ -210,5 +211,104 @@ describe('checkFallOffPlatform works', () => {
         rectTwo: false
       })
     ).toBe('left');
+  });
+});
+
+describe('checkInLineOfSight works', () => {
+  test('from right', () => {
+    const line = {
+      y: 65,
+      x: {
+        start: 500,
+        end: 200
+      }
+    };
+
+    const rect = {
+      x: 300,
+      y: 50,
+      height: 50,
+      width: 50
+    };
+
+    const rectTwo = {
+      x: 140,
+      y: 50,
+      height: 50,
+      width: 50
+    };
+
+    const rectThree = {
+      x: 155,
+      y: 50,
+      height: 50,
+      width: 50
+    };
+
+    expect(checkInLineOfSight(line, rect)).toBe('right');
+    expect(checkInLineOfSight(line, rectTwo)).toBe('');
+    expect(checkInLineOfSight(line, rectThree)).toBe('right');
+  });
+
+  test('from left', () => {
+    const line = {
+      y: 65,
+      x: {
+        start: 200,
+        end: 500
+      }
+    };
+
+    const rect = {
+      x: 300,
+      y: 50,
+      height: 50,
+      width: 50
+    };
+
+    const rectTwo = {
+      x: 501,
+      y: 50,
+      height: 50,
+      width: 50
+    };
+
+    const rectThree = {
+      x: 499,
+      y: 50,
+      height: 50,
+      width: 50
+    };
+
+    expect(checkInLineOfSight(line, rect)).toBe('left');
+    expect(checkInLineOfSight(line, rectTwo)).toBe('');
+    expect(checkInLineOfSight(line, rectThree)).toBe('left');
+  });
+
+  test('doesnt work when y is too high or too low', () => {
+    const line = {
+      y: 65,
+      x: {
+        start: 200,
+        end: 500
+      }
+    };
+
+    const rect = {
+      x: 300,
+      y: 14,
+      height: 50,
+      width: 50
+    };
+
+    const rectTwo = {
+      x: 66,
+      y: 14,
+      height: 50,
+      width: 50
+    };
+
+    expect(checkInLineOfSight(line, rect)).toBe('');
+    expect(checkInLineOfSight(line, rectTwo)).toBe('');
   });
 });

@@ -92,26 +92,15 @@ export function GroundEnemy(position: XY): GroundEnemyInterface {
     fall() {
       entity.updateVelocity('y', entity.velocity.y + gravity);
     },
-    shoot() {
+    shoot(playerPos: XY) {
       if (!shooting) {
         sprite.updateAction('aim');
         shooting = true;
       }
       sprite.updateAction('shoot', true);
 
-      // const { direction, width, x, y, bullets } = entity;
-
-      // const offsetX = direction === 'right' ? width : -width;
-      // const newBullet = Bullet(
-      //   {
-      //     x: x + offsetX,
-      //     y: y + 18
-      //   },
-      //   bulletSprites
-      // );
-
-      // newBullet.setVelocity('x', direction);
-      // bullets.push(newBullet);
+      // if player is line of sight when shoot happens, they get hit
+      // otherwise bullet explodes at max rangeg
 
       sprite.updateAction('reload', true);
     },

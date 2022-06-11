@@ -1,6 +1,7 @@
 import {
   EntityWithVelocity,
   EntityWithVelocityX,
+  Line,
   PlatformInterface
 } from '../types/interfaces';
 
@@ -166,4 +167,17 @@ export function checkFallOffPlatform(
   if (!onPlatform) return '';
 
   return fallLeft ? 'left' : fallRight ? 'right' : '';
+}
+
+export function checkInLineOfSight(line: Line, rect: EntityWithVelocity) {
+  const collideY = rect.y <= line.y && rect.y + rect.height >= line.y;
+
+  const collideRight =
+    line.x.end <= rect.x + rect.width && line.x.start >= rect.x + rect.width;
+
+  const collideLeft = line.x.end >= rect.x && line.x.start <= rect.x;
+  console.log(collideY, collideLeft, collideRight);
+  if (!collideY) return '';
+
+  return collideLeft ? 'left' : collideRight ? 'right' : '';
 }
