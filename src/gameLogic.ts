@@ -9,13 +9,7 @@ import {
   checkCollideBottom,
   checkFallOffPlatform
 } from './utils/checkCollision';
-import {
-  gravity,
-  speed,
-  jumpHeight,
-  boundaryLeft,
-  getBoundaryRight
-} from './utils/constants';
+import { BOUNDARY_LEFT, getBoundaryRight } from './utils/constants';
 import KeyPress from './utils/Factories/KeyPress';
 import Modal from './components/Modal';
 
@@ -133,7 +127,7 @@ export function update() {
     player.resetJump();
   } else player.fall();
 
-  gameState.handleKeyPress(keyPress, boundaryLeft, boundaryRight);
+  gameState.handleKeyPress(keyPress, BOUNDARY_LEFT, boundaryRight);
   gameState.handlePlayerCollision();
   gameState.handleEnemyMovement();
   gameState.handleBulletCollision();

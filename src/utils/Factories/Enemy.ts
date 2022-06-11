@@ -11,7 +11,7 @@ import enemySprites from '../sprites/enemySprites';
 import Sprite from './Sprite';
 import Bullet from './Bullet';
 import bulletSprites from '../sprites/bulletSprites';
-import { gravity } from '../constants';
+import { GRAVITY, ENEMY_MAX_GUN_RANGE } from '../constants';
 import Explosion from './Explosion';
 import { checkInLineOfSight } from '../checkCollision';
 
@@ -94,7 +94,7 @@ export function GroundEnemy(position: XY) {
       entity.updateDirection(dir);
     },
     fall() {
-      entity.updateVelocity('y', entity.velocity.y + gravity);
+      entity.updateVelocity('y', entity.velocity.y + GRAVITY);
     },
     shoot(player: PlayerInterface) {
       if (!shooting) {
@@ -102,39 +102,55 @@ export function GroundEnemy(position: XY) {
         shooting = true;
       }
 
-      if (sprite.currAction === 'reload' && sprite.resolveAnimationEnd())
+      if (sprite.currAction === 'reload' && sprite.resolveAnimationEnd()) {
         sameShot = false;
+      }
+
       sprite.updateAction('shoot', true);
 
-      if (sameShot) return;
+      if (sameShot) return; //needs to be after updateAction other animation wont finish
 
-      function hitScan() {
+      setTimeout(() => {
+        //timeout so bullets dont magically teleport
         const { x, y, direction, width } = entity;
         const startX = direction === 'right' ? x + width + 13 : x - 15;
-        const endOffset = direction === 'right' ? 100 : -100;
+        const endOffset =
+          direction === 'right' ? ENEMY_MAX_GUN_RANGE : -ENEMY_MAX_GUN_RANGE;
+        const end = startX + endOffset;
 
-        return checkInLineOfSight(
+        const collision = checkInLineOfSight(
           {
             y: y + 17,
             x: {
-              start: startX,
-              end: startX + endOffset
+              end,
+              start: startX
             }
           },
           player
         );
-      }
-      const collision = hitScan();
-      if (collision) {
-        if (collision === 'right') {
-          const explosion = Explosion({
-            y: entity.y + 17,
-            x: player.x + player.width
-          });
-          bullets.push(explosion);
+        /* end hit scan */
+
+        let xPos;
+        switch (collision) {
+          case 'left':
+            xPos = player.x;
+            break;
+          case 'right':
+            xPos = player.x + player.width;
+            break;
+          default:
+            xPos = end;
         }
-      }
+        const explosion = Explosion({
+          y: entity.y + 17,
+          x: xPos as number
+        });
+        bullets.push(explosion);
+      }, 200);
+
       sameShot = true;
+
+      /* hit scan */
     },
     reload() {
       if (sprite.currAction !== 'shoot') return;

@@ -16,7 +16,7 @@ import {
   checkIfInsideDiameter,
   checkInLineOfSight
 } from '../checkCollision';
-import { gravity, speed } from '../constants';
+import { GRAVITY, SPEED } from '../constants';
 import { KeyPressType } from '../../types/types';
 import Explosion from './Explosion';
 
@@ -105,7 +105,7 @@ export default function GameState(level: LevelInterface) {
           (right.pressed && player.x + player.velocity.x >= boundaryRight) ||
           (left.pressed && player.x + player.velocity.x <= boundaryLeft)
         ) {
-          setPlatformVelocity(right.pressed ? -speed : speed);
+          setPlatformVelocity(right.pressed ? -SPEED : SPEED);
           player.updateVelocity('x', 0);
         } else {
           setPlatformVelocity(0);

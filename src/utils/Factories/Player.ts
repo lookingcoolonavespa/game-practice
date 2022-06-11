@@ -5,7 +5,7 @@ import gunSprites from '../sprites/gunSprites';
 import Entity from './Entity';
 import Sprite from './Sprite';
 import Bullet from './Bullet';
-import { jumpHeight, speed, gravity } from '../constants';
+import { JUMP_HEIGHT, SPEED, GRAVITY } from '../constants';
 
 export default function Player(): PlayerInterface {
   const entity = Entity({ height: 50, width: 45 }, { x: 100, y: 100 });
@@ -80,12 +80,12 @@ export default function Player(): PlayerInterface {
     jump() {
       if (!jumpNumber) setJumpNumber(1); // so users can hold the up key to keep jumping
       if (!sameJump && jumpNumber <= 2) {
-        entity.updateVelocity('y', jumpHeight);
+        entity.updateVelocity('y', JUMP_HEIGHT);
         updateAction('idle');
       }
     },
     fall() {
-      entity.updateVelocity('y', entity.velocity.y + gravity);
+      entity.updateVelocity('y', entity.velocity.y + GRAVITY);
     },
     rest() {
       entity.updateVelocity('x', 0);
@@ -96,7 +96,7 @@ export default function Player(): PlayerInterface {
       entity.updateDirection(dir);
       playerSprite.updateDirection(dir);
       gunSprite.updateDirection(dir);
-      entity.updateVelocity('x', dir === 'right' ? speed : -speed);
+      entity.updateVelocity('x', dir === 'right' ? SPEED : -SPEED);
     },
     shoot() {
       if (sameShot) return;
