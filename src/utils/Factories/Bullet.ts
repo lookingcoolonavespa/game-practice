@@ -17,7 +17,7 @@ export default function Bullet(
     y: 0
   };
 
-  let status: 'alive' | 'gone' | 'disappearing' = 'alive';
+  let status: 'active' | 'gone' | 'disappearing' = 'active';
 
   const speed = 5;
 

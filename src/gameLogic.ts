@@ -96,9 +96,6 @@ export function draw() {
   c.fillStyle = '#B33B44';
   c.fillRect(0, 0, width, height);
 
-  // c.fillStyle = 'black';
-  // c.fillRect(0, 0, width, 160);
-
   /* handle sprites */
   frameCount++;
   if (frameCount === 3) {

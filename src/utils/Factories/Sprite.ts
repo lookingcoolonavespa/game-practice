@@ -21,7 +21,6 @@ export default function Sprite(sheet: {
         if (action !== currAction) this.resetSpriteIdx(true);
         currAction = action;
       } else {
-        if (currAction === 'hit') console.log(spriteIdx);
         if (spriteIdx === sheet[direction][currAction].length - 1) {
           currAction = action;
         }

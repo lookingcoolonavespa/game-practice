@@ -36,6 +36,8 @@ export function GroundEnemy(position: XY): GroundEnemyInterface {
 
   const speed = 2;
 
+  let lifePoints = 3;
+
   return {
     get direction() {
       return entity.direction;
@@ -82,12 +84,27 @@ export function GroundEnemy(position: XY): GroundEnemyInterface {
       entity.updateVelocity('y', entity.velocity.y + gravity);
     },
     updateAction(action: keyof typeof enemySprites.right) {
+      if (sprite.currAction === 'dead') return;
       sprite.updateAction(action, sprite.currAction === 'hit');
     },
-    stun() {
+    onHit() {
       entity.updateVelocity('x', 0);
+      lifePoints--;
+      console.log(lifePoints);
+
+      // handle death
+      if (!lifePoints) {
+        sprite.updateAction('dead');
+        if (timer) {
+          clearTimeout(timer); // so enemey doesnt move when theyre dead
+          timer = null;
+        }
+      }
     },
     setIdleTimer() {
+      if (sprite.currAction === 'dead') {
+        return;
+      }
       timer = setTimeout(function () {
         entity.updateVelocity(
           'x',

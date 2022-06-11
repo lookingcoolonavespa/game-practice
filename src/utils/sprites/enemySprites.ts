@@ -13,6 +13,31 @@ import hit01Right from '../../assets/Enemy01/Right/Hit/Enemy01_Hit_01.png';
 import hit02Right from '../../assets/Enemy01/Right/Hit/Enemy01_Hit_02.png';
 import hit03Right from '../../assets/Enemy01/Right/Hit/Enemy01_Hit_03.png';
 
+import death01Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_01.png';
+import death02Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_02.png';
+import death03Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_03.png';
+import death04Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_04.png';
+import death05Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_05.png';
+import death06Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_06.png';
+import death07Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_07.png';
+import death08Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_08.png';
+import death09Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_09.png';
+import death10Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_10.png';
+import death11Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_11.png';
+import death12Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_12.png';
+import death13Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_13.png';
+import death14Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_14.png';
+import death15Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_15.png';
+import death16Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_16.png';
+import death17Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_17.png';
+import death18Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_18.png';
+import death19Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_19.png';
+import death20Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_20.png';
+import death21Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_21.png';
+import death22Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_22.png';
+import death23Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_23.png';
+import death24Right from '../../assets/Enemy01/Right/Death/Enemy01_Death_24.png';
+
 import run01Right from '../../assets/Enemy01/Right/Run/Enemy01_Run_01.png';
 import run02Right from '../../assets/Enemy01/Right/Run/Enemy01_Run_02.png';
 import run03Right from '../../assets/Enemy01/Right/Run/Enemy01_Run_03.png';
@@ -43,6 +68,31 @@ import idle08Left from '../../assets/Enemy01/Left/Idle/Enemy01_Idle_08.png';
 import hit01Left from '../../assets/Enemy01/Left/Hit/Enemy01_Hit_01.png';
 import hit02Left from '../../assets/Enemy01/Left/Hit/Enemy01_Hit_02.png';
 import hit03Left from '../../assets/Enemy01/Left/Hit/Enemy01_Hit_03.png';
+
+import death01Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_01.png';
+import death02Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_02.png';
+import death03Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_03.png';
+import death04Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_04.png';
+import death05Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_05.png';
+import death06Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_06.png';
+import death07Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_07.png';
+import death08Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_08.png';
+import death09Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_09.png';
+import death10Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_10.png';
+import death11Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_11.png';
+import death12Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_12.png';
+import death13Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_13.png';
+import death14Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_14.png';
+import death15Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_15.png';
+import death16Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_16.png';
+import death17Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_17.png';
+import death18Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_18.png';
+import death19Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_19.png';
+import death20Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_20.png';
+import death21Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_21.png';
+import death22Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_22.png';
+import death23Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_23.png';
+import death24Left from '../../assets/Enemy01/Left/Death/Enemy01_Death_24.png';
 
 import run01Left from '../../assets/Enemy01/Left/Run/Enemy01_Run_01.png';
 import run02Left from '../../assets/Enemy01/Left/Run/Enemy01_Run_02.png';
@@ -101,6 +151,33 @@ const hitLeft = [
   createImage(hit03Left)
 ];
 
+const deathLeft = [
+  createImage(death01Left),
+  createImage(death02Left),
+  createImage(death03Left),
+  createImage(death04Left),
+  createImage(death05Left),
+  createImage(death06Left),
+  createImage(death07Left),
+  createImage(death08Left),
+  createImage(death09Left),
+  createImage(death10Left),
+  createImage(death11Left),
+  createImage(death12Left),
+  createImage(death13Left),
+  createImage(death14Left),
+  createImage(death15Left),
+  createImage(death16Left),
+  createImage(death17Left),
+  createImage(death18Left),
+  createImage(death19Left),
+  createImage(death20Left),
+  createImage(death21Left),
+  createImage(death22Left),
+  createImage(death23Left),
+  createImage(death24Left)
+];
+
 const idleRight = [
   createImage(idle01Right),
   createImage(idle02Right),
@@ -140,7 +217,46 @@ const shootRight = [
   createImage(shoot08Right)
 ];
 
+const deathRight = [
+  createImage(death01Right),
+  createImage(death02Right),
+  createImage(death03Right),
+  createImage(death04Right),
+  createImage(death05Right),
+  createImage(death06Right),
+  createImage(death07Right),
+  createImage(death08Right),
+  createImage(death09Right),
+  createImage(death10Right),
+  createImage(death11Right),
+  createImage(death12Right),
+  createImage(death13Right),
+  createImage(death14Right),
+  createImage(death15Right),
+  createImage(death16Right),
+  createImage(death17Right),
+  createImage(death18Right),
+  createImage(death19Right),
+  createImage(death20Right),
+  createImage(death21Right),
+  createImage(death22Right),
+  createImage(death23Right),
+  createImage(death24Right)
+];
+
 export default {
-  right: { idle: idleRight, run: runRight, shoot: shootRight, hit: hitRight },
-  left: { idle: idleLeft, run: runLeft, shoot: shootLeft, hit: hitLeft }
+  right: {
+    idle: idleRight,
+    run: runRight,
+    shoot: shootRight,
+    hit: hitRight,
+    dead: deathRight
+  },
+  left: {
+    idle: idleLeft,
+    run: runLeft,
+    shoot: shootLeft,
+    hit: hitLeft,
+    dead: deathLeft
+  }
 };

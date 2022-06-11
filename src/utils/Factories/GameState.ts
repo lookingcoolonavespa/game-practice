@@ -90,6 +90,8 @@ export default function GameState(level: LevelInterface) {
     },
     handleBulletCollision() {
       player.bullets.forEach((b) => {
+        if (b.status !== 'active') return;
+
         const enemiesInRange = enemies.filter((e) => {
           return Math.abs(player.x - e.x) <= 600;
         });
@@ -104,7 +106,7 @@ export default function GameState(level: LevelInterface) {
           if (collision) {
             b.stop();
             e.updateAction('hit');
-            e.stun();
+            e.onHit();
           }
         });
       });

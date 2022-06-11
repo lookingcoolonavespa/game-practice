@@ -42,7 +42,7 @@ export interface Size {
 
 export interface BulletInterface extends Entity {
   readonly velocity: XY;
-  readonly status: 'alive' | 'gone' | 'disappearing';
+  readonly status: 'active' | 'gone' | 'disappearing';
   readonly isMaxRange: () => boolean;
   readonly stop: () => Promise<void> | void;
   readonly increaseSpriteIdx: () => void;
@@ -81,7 +81,7 @@ export interface GroundEnemyInterface extends EnemyInterface {
   readonly timer: NodeJS.Timer | null;
   readonly setIdleTimer: () => void;
   readonly updateAction: (action: keyof typeof enemySprites.right) => void;
-  readonly stun: () => void;
+  readonly onHit: () => void;
 }
 
 export interface PlayerInterface extends BaseEntityInterface {
