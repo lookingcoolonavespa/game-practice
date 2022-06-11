@@ -1,7 +1,5 @@
 import {
-  ExplosionInterface,
   FloorInterface,
-  GameStateInterface,
   GroundEnemyInterface,
   LevelInterface,
   PlatformInterface
@@ -13,12 +11,10 @@ import {
   checkFallOffPlatform,
   checkCollideTop,
   checkCollideBottom,
-  checkIfInsideDiameter,
-  checkInLineOfSight
+  checkIfInsideDiameter
 } from '../checkCollision';
-import { GRAVITY, SPEED } from '../constants';
+import { SPEED } from '../constants';
 import { KeyPressType } from '../../types/types';
-import Explosion from './Explosion';
 
 export default function GameState(level: LevelInterface) {
   const player = Player();
@@ -57,8 +53,6 @@ export default function GameState(level: LevelInterface) {
     return filtered;
   }
 
-  function onPlayerHit(collideSide: 'left' | 'right') {}
-
   return {
     get active() {
       return active;
@@ -76,16 +70,9 @@ export default function GameState(level: LevelInterface) {
       active = false;
     },
     handleSprites() {
-      player.resetSpriteIdx();
-      player.increaseSpriteIdx();
+      player.handleSprites();
       enemies.forEach((e) => {
-        e.resetSpriteIdx();
-        e.increaseSpriteIdx();
-        e.updateBulletSprites();
-      });
-      player.bullets.forEach((b) => {
-        b.resetSpriteIdx();
-        b.increaseSpriteIdx();
+        e.handleSprites();
       });
     },
     handleKeyPress(

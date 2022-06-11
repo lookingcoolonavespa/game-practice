@@ -74,16 +74,15 @@ export interface ExplosionInterface {
 }
 
 export interface BaseEntityInterface extends EntityWithVelocity {
-  // readonly sameShot: boolean;
+  readonly status: 'alive' | 'dieing' | 'dead';
   readonly updatePosition: () => void;
   readonly setPosition: (position: XY) => void;
-  // readonly setSameShot: (val: boolean) => void;
   readonly updateVelocity: (axis: 'x' | 'y', amount: number) => void;
   readonly onCollideWall: (axis: 'x' | 'y') => void;
   // readonly updateAction: (action: Action) => void;
   // readonly updateDirection: (newDirection: 'left' | 'right') => void;
-  readonly increaseSpriteIdx: () => void;
-  readonly resetSpriteIdx: (override?: boolean) => void;
+  // readonly increaseSpriteIdx: () => void;
+  // readonly resetSpriteIdx: (override?: boolean) => void;
   readonly draw: (c: CanvasRenderingContext2D) => void;
   readonly fall: () => void;
   readonly onHit: () => void;
@@ -98,14 +97,13 @@ export interface GroundEnemyInterface extends EnemyInterface {
   readonly speed: number;
   readonly type: 'ground';
   readonly timer: NodeJS.Timer | null;
-  readonly status: 'alive' | 'dieing' | 'dead';
   readonly reload: () => void;
   readonly setIdleTimer: () => void;
   readonly updateAction: (action: keyof typeof enemySprites.right) => void;
   readonly handleDeath: () => void;
   readonly shoot: (player: PlayerInterface) => void;
   readonly updateBullets: () => void;
-  readonly updateBulletSprites: () => void;
+  readonly handleSprites: () => void;
 }
 
 export interface PlayerInterface extends BaseEntityInterface {
@@ -121,6 +119,7 @@ export interface PlayerInterface extends BaseEntityInterface {
   readonly resetJump: () => void;
   readonly setSameJump: (val: boolean) => void;
   readonly setJumpNumber: (num: number) => void;
+  readonly handleSprites: () => void;
 }
 
 export interface LevelInterface {

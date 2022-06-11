@@ -117,7 +117,7 @@ export function update() {
 
   const { player, platforms, enemies } = gameState;
 
-  if (player.y >= canvas.height) {
+  if (player.y >= canvas.height || player.status === 'dead') {
     gameState.setGameOver();
   }
 
@@ -130,5 +130,5 @@ export function update() {
   gameState.handlePlayerCollision();
   gameState.handleEnemyMovement();
   gameState.handleBulletCollision();
-  gameState.update(); // handle all movement + bullet collision
+  gameState.update(); // updates position + removes dead bodies/bullets
 }

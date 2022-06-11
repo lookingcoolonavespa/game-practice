@@ -1,40 +1,17 @@
 import {
-  EnemyInterface,
   ExplosionInterface,
-  GroundEnemyInterface,
   PlayerInterface,
-  Size,
   XY
 } from '../../types/interfaces';
 import Entity from './Entity';
 import enemySprites from '../sprites/enemySprites';
 import Sprite from './Sprite';
-import Bullet from './Bullet';
-import bulletSprites from '../sprites/bulletSprites';
 import { GRAVITY, ENEMY_MAX_GUN_RANGE } from '../constants';
 import Explosion from './Explosion';
 import { checkInLineOfSight } from '../checkCollision';
 
-export default function Enemy(position: XY, size: Size): EnemyInterface {
-  const entity = Entity(size, position);
-
-  let direction = 'right';
-
-  return Object.create(entity, {
-    direction: {
-      get: () => direction,
-      enumerable: true
-    },
-    updateDirection: {
-      value: (newDirection: 'left' | 'right') => {
-        direction = newDirection;
-      }
-    }
-  });
-}
-
 export function GroundEnemy(position: XY) {
-  const entity = Enemy(position, { height: 48, width: 42 });
+  const entity = Entity({ height: 48, width: 42 }, position);
 
   let timer: NodeJS.Timer | null;
 
@@ -51,6 +28,13 @@ export function GroundEnemy(position: XY) {
   let sameShot = false;
 
   let bullets: ExplosionInterface[] = [];
+
+  function updateBulletSprites() {
+    bullets.forEach((b) => {
+      b.resetSpriteIdx();
+      b.increaseSpriteIdx();
+    });
+  }
 
   return {
     get direction() {
@@ -87,8 +71,6 @@ export function GroundEnemy(position: XY) {
     updatePosition: entity.updatePosition,
     onCollideWall: entity.onCollideWall,
     updateVelocity: entity.updateVelocity,
-    increaseSpriteIdx: sprite.increaseSpriteIdx,
-    resetSpriteIdx: sprite.resetSpriteIdx,
     updateDirection(dir: 'left' | 'right') {
       sprite.updateDirection(dir);
       entity.updateDirection(dir);
@@ -160,12 +142,6 @@ export function GroundEnemy(position: XY) {
     updateBullets() {
       bullets = bullets.filter((b) => b.status !== 'gone');
     },
-    updateBulletSprites() {
-      bullets.forEach((b) => {
-        b.resetSpriteIdx();
-        b.increaseSpriteIdx();
-      });
-    },
     updateAction(action: keyof typeof enemySprites.right) {
       if (sprite.currAction === 'dead') return;
       sprite.updateAction(action, sprite.currAction === 'hit');
@@ -200,6 +176,12 @@ export function GroundEnemy(position: XY) {
         );
         timer = null;
       }, 2000);
+    },
+    handleSprites() {
+      const { resetSpriteIdx, increaseSpriteIdx } = sprite;
+      resetSpriteIdx();
+      increaseSpriteIdx();
+      updateBulletSprites();
     },
     draw(c: CanvasRenderingContext2D) {
       if (status === 'dead') return;

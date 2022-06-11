@@ -19,6 +19,7 @@ export default function Player(): PlayerInterface {
   const gunSprite = Sprite(gunSprites);
 
   let lifePoints = 3;
+  let bullets: BulletInterface[] = [];
 
   let status: 'alive' | 'dieing' | 'dead' = 'alive';
 
@@ -78,13 +79,16 @@ export default function Player(): PlayerInterface {
       return entity.width;
     },
     get bullets() {
-      return entity.bullets;
+      return bullets;
     },
     get sameJump() {
       return sameJump;
     },
     get jumpNumber() {
       return jumpNumber;
+    },
+    get status() {
+      return status;
     },
     get currAction() {
       return playerSprite.currAction;
@@ -93,7 +97,16 @@ export default function Player(): PlayerInterface {
     updatePosition: entity.updatePosition,
     updateVelocity: entity.updateVelocity,
     onCollideWall: entity.onCollideWall,
-    updateBullets: entity.updateBullets,
+    updateBullets(offsetX: number) {
+      bullets = bullets.filter((b) => {
+        b.shiftXBy(offsetX);
+        b.updatePosition();
+
+        if (b.isMaxRange() || b.status === 'disappearing') b.stop();
+
+        return b.status !== 'gone';
+      });
+    },
     jump() {
       if (!jumpNumber) setJumpNumber(1); // so users can hold the up key to keep jumping
       if (!sameJump && jumpNumber <= 2) {
@@ -120,7 +133,7 @@ export default function Player(): PlayerInterface {
 
       updateAction('shoot');
 
-      const { direction, width, x, y, bullets } = entity;
+      const { direction, width, x, y } = entity;
 
       const offsetX = direction === 'right' ? width : -width;
       const newBullet = Bullet(
@@ -153,18 +166,23 @@ export default function Player(): PlayerInterface {
     setSameJump(val: boolean) {
       sameJump = val;
     },
-    increaseSpriteIdx() {
-      if (status === 'dieing' && playerSprite.resolveAnimationEnd()) return;
-      playerSprite.increaseSpriteIdx();
-      gunSprite.increaseSpriteIdx();
-    },
-    resetSpriteIdx: () => {
-      if (status === 'dieing' && playerSprite.resolveAnimationEnd()) return;
+    handleSprites() {
+      if (status !== 'alive' && playerSprite.resolveAnimationEnd()) {
+        return (status = 'dead');
+      }
       playerSprite.resetSpriteIdx();
       gunSprite.resetSpriteIdx();
+
+      playerSprite.increaseSpriteIdx();
+      gunSprite.increaseSpriteIdx();
+
+      bullets.forEach((b) => {
+        b.resetSpriteIdx();
+        b.increaseSpriteIdx();
+      });
     },
     draw: (c: CanvasRenderingContext2D) => {
-      const { x, y, height, width, bullets } = entity;
+      const { x, y, height, width } = entity;
 
       const offsetX = {
         player: entity.direction === 'right' ? -10 : 0,

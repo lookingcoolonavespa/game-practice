@@ -14,8 +14,6 @@ export default function Entity(size: Size, position: XY) {
     y: 0
   };
 
-  let bullets: BulletInterface[] = [];
-
   let direction: 'right' | 'left' = 'right';
 
   return {
@@ -33,9 +31,6 @@ export default function Entity(size: Size, position: XY) {
     },
     get width() {
       return width;
-    },
-    get bullets() {
-      return bullets;
     },
     get direction() {
       return direction;
@@ -57,16 +52,6 @@ export default function Entity(size: Size, position: XY) {
     onCollideWall(axis: 'x' | 'y') {
       if (velocity[axis] < 1) return (velocity[axis] = 0);
       velocity[axis] /= 2;
-    },
-    updateBullets(offsetX: number) {
-      bullets = bullets.filter((b) => {
-        b.shiftXBy(offsetX);
-        b.updatePosition();
-
-        if (b.isMaxRange() || b.status === 'disappearing') b.stop();
-
-        return b.status !== 'gone';
-      });
     }
   };
 }
