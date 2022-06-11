@@ -119,10 +119,14 @@ export default function Player(): PlayerInterface {
     draw: (c: CanvasRenderingContext2D) => {
       const { x, y, height, width } = entity;
 
-      c.drawImage(playerSprite.currSprite, x - 10, y, 59, height);
+      const offsetX = {
+        player: entity.direction === 'right' ? -10 : 0,
+        gun: entity.direction === 'right' ? width - 30 : -17
+      };
+      // c.fillRect(x, y, width, height);
+      c.drawImage(playerSprite.currSprite, x + offsetX.player, y, 59, height);
 
-      const offsetX = entity.direction === 'right' ? width - 30 : -30;
-      c.drawImage(gunSprite.currSprite, x + offsetX, y - 13, 50, 94);
+      c.drawImage(gunSprite.currSprite, x + offsetX.gun, y - 13, 50, 94);
     }
   };
 }
