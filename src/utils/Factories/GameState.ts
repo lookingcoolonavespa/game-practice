@@ -1,4 +1,5 @@
 import {
+  FloorInterface,
   GameStateInterface,
   GroundEnemyInterface,
   LevelInterface,
@@ -35,6 +36,21 @@ export default function GameState(level: LevelInterface) {
       e.handleDeath();
       return e.status !== 'dead';
     });
+  }
+
+  function getEntityInRange(entity: 'platforms' | 'enemies', range: number) {
+    const entities = {
+      platforms,
+      enemies
+    };
+
+    let filtered = [];
+    for (let i = 0; i < entities[entity].length; i++) {
+      if (Math.abs(player.x - entities[entity][i].x) <= 600)
+        filtered.push(entities[entity][i]);
+    }
+
+    return filtered;
   }
 
   return {
@@ -100,9 +116,10 @@ export default function GameState(level: LevelInterface) {
       player.bullets.forEach((b) => {
         if (b.status !== 'active') return;
 
-        const enemiesInRange = enemies.filter((e) => {
-          return Math.abs(player.x - e.x) <= 600;
-        });
+        const enemiesInRange = getEntityInRange(
+          'enemies',
+          600
+        ) as GroundEnemyInterface[];
 
         enemiesInRange.forEach((e) => {
           const collision =
@@ -115,6 +132,22 @@ export default function GameState(level: LevelInterface) {
             b.stop();
             e.updateAction('hit');
             e.onHit();
+          }
+        });
+
+        const platformsInRange = getEntityInRange('platforms', 600) as
+          | PlatformInterface[]
+          | FloorInterface[];
+
+        platformsInRange.forEach((p) => {
+          const collision =
+            checkCollideSide(p, b, {
+              rectOne: Math.abs(p.velocity.x) > 0,
+              rectTwo: Math.abs(b.velocity.x) > 0
+            }) || checkIfInsideDiameter(p, b);
+
+          if (collision) {
+            b.stop();
           }
         });
       });

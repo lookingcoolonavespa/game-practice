@@ -37,8 +37,8 @@ export function checkOnPlatform(
 }
 
 export function checkIfInsideDiameter(
-  rectOne: EntityWithVelocity,
-  rectTwo: EntityWithVelocity
+  rectOne: EntityWithVelocityX,
+  rectTwo: EntityWithVelocityX
 ) {
   const insideY =
     rectTwo.y <= rectOne.y + rectOne.height &&
@@ -47,6 +47,7 @@ export function checkIfInsideDiameter(
   const insideX =
     rectOne.x <= rectTwo.x + rectTwo.width &&
     rectTwo.x <= rectOne.x + rectOne.width;
+
   return insideX && insideY;
 }
 

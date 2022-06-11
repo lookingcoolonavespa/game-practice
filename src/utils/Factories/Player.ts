@@ -123,9 +123,8 @@ export default function Player(): PlayerInterface {
         player: entity.direction === 'right' ? -10 : 0,
         gun: entity.direction === 'right' ? width - 30 : -17
       };
-      // c.fillRect(x, y, width, height);
-      c.drawImage(playerSprite.currSprite, x + offsetX.player, y, 59, height);
 
+      c.drawImage(playerSprite.currSprite, x + offsetX.player, y, 59, height);
       c.drawImage(gunSprite.currSprite, x + offsetX.gun, y - 13, 50, 94);
     }
   };

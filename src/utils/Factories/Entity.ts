@@ -83,7 +83,6 @@ export default function Entity(size: Size, position: XY) {
     },
     updateBullets(offsetX: number) {
       bullets = bullets.filter((b) => {
-        console.log(offsetX);
         b.shiftXBy(offsetX);
         b.updatePosition();
 

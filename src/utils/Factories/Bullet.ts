@@ -8,7 +8,6 @@ export default function Bullet(
   const width = 32;
   const height = 32;
 
-  const startX = position.x;
   let x = position.x;
   let y = position.y;
 
@@ -39,9 +38,6 @@ export default function Bullet(
     },
     get y() {
       return y;
-    },
-    get distanceTraveled() {
-      return distanceTraveled;
     },
     get velocity() {
       return velocity;
@@ -88,7 +84,6 @@ export default function Bullet(
     },
     draw(c: CanvasRenderingContext2D) {
       c.drawImage(sprite.currSprite, x - 2, y - 2);
-      c.fillRect(x, y, width, height);
     }
   };
 }
