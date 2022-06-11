@@ -33,6 +33,7 @@ export default function GameState(level: LevelInterface) {
   function updateEnemies() {
     enemies = enemies.filter((e) => {
       e.updatePosition();
+      e.updateBullets(platformVelocity);
       e.handleDeath();
       return e.status !== 'dead';
     });
@@ -179,15 +180,15 @@ export default function GameState(level: LevelInterface) {
         const onPlatform = platforms.some((p) => checkOnPlatform(p, enemy));
         if (!onPlatform) {
           enemy.fall();
-        } else if (!velocity.x && !timer) enemy.setIdleTimer();
+        } else enemy.shoot();
 
-        if (enemy.velocity.x) enemy.updateAction('run');
-        else enemy.updateAction('idle');
+        // else if (!velocity.x && !timer) enemy.setIdleTimer();
 
-        enemies.forEach((e) => {
-          // shift enemies as platforms move so they keep their position
-          e.setPosition({ x: e.x + platformVelocity, y: e.y });
-        });
+        // if (enemy.velocity.x) enemy.updateAction('run');
+        // else enemy.updateAction('idle');
+
+        // shift enemies as platforms move so they keep their position
+        enemy.setPosition({ x: enemy.x + platformVelocity, y: enemy.y });
 
         let collideSide: 'left' | 'right' | '' = '';
         /* handle collision */

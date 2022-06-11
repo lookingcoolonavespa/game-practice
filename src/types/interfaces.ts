@@ -65,7 +65,7 @@ export interface BaseEntityInterface extends EntityWithVelocity {
   // readonly updateDirection: (newDirection: 'left' | 'right') => void;
   readonly increaseSpriteIdx: () => void;
   readonly resetSpriteIdx: (override?: boolean) => void;
-  // readonly shootBullet: () => void;
+  readonly shoot: () => void;
   readonly updateBullets: (offsetX: number) => void;
   readonly draw: (c: CanvasRenderingContext2D) => void;
   readonly fall: () => void;
@@ -94,7 +94,6 @@ export interface PlayerInterface extends BaseEntityInterface {
   readonly jump: () => void;
   readonly rest: () => void;
   readonly run: (dir: 'left' | 'right') => void;
-  readonly shoot: () => void;
   readonly resetJump: () => void;
   readonly setSameJump: (val: boolean) => void;
   readonly setJumpNumber: (num: number) => void;

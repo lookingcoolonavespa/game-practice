@@ -7,6 +7,8 @@ import {
 import Entity from './Entity';
 import enemySprites from '../sprites/enemySprites';
 import Sprite from './Sprite';
+import Bullet from './Bullet';
+import bulletSprites from '../sprites/bulletSprites';
 import { gravity } from '../constants';
 
 export default function Enemy(position: XY, size: Size): EnemyInterface {
@@ -39,6 +41,8 @@ export function GroundEnemy(position: XY): GroundEnemyInterface {
   let lifePoints = 3;
 
   let status: 'alive' | 'dieing' | 'dead' = 'alive';
+
+  let shooting = false;
 
   return {
     get direction() {
@@ -88,6 +92,29 @@ export function GroundEnemy(position: XY): GroundEnemyInterface {
     fall() {
       entity.updateVelocity('y', entity.velocity.y + gravity);
     },
+    shoot() {
+      if (!shooting) {
+        sprite.updateAction('aim');
+        shooting = true;
+      }
+      sprite.updateAction('shoot', true);
+
+      // const { direction, width, x, y, bullets } = entity;
+
+      // const offsetX = direction === 'right' ? width : -width;
+      // const newBullet = Bullet(
+      //   {
+      //     x: x + offsetX,
+      //     y: y + 18
+      //   },
+      //   bulletSprites
+      // );
+
+      // newBullet.setVelocity('x', direction);
+      // bullets.push(newBullet);
+
+      sprite.updateAction('reload', true);
+    },
     updateAction(action: keyof typeof enemySprites.right) {
       if (sprite.currAction === 'dead') return;
       sprite.updateAction(action, sprite.currAction === 'hit');
@@ -123,6 +150,7 @@ export function GroundEnemy(position: XY): GroundEnemyInterface {
         timer = null;
       }, 2000);
     },
+
     draw(c: CanvasRenderingContext2D) {
       if (status === 'dead') return;
       const { x, y } = entity;

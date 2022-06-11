@@ -9,6 +9,33 @@ import idle06Right from '../../assets/Enemy01/Right/Idle/Enemy01_Idle_06.png';
 import idle07Right from '../../assets/Enemy01/Right/Idle/Enemy01_Idle_07.png';
 import idle08Right from '../../assets/Enemy01/Right/Idle/Enemy01_Idle_08.png';
 
+import aim01Right from '../../assets/Enemy01/Right/Aim/Enemy01_Aim_01.png';
+import aim02Right from '../../assets/Enemy01/Right/Aim/Enemy01_Aim_02.png';
+import aim03Right from '../../assets/Enemy01/Right/Aim/Enemy01_Aim_03.png';
+import aim04Right from '../../assets/Enemy01/Right/Aim/Enemy01_Aim_04.png';
+import aim05Right from '../../assets/Enemy01/Right/Aim/Enemy01_Aim_05.png';
+import aim06Right from '../../assets/Enemy01/Right/Aim/Enemy01_Aim_06.png';
+
+import reload01Right from '../../assets/Enemy01/Right/Reload/Enemy01_Reload_01.png';
+import reload02Right from '../../assets/Enemy01/Right/Reload/Enemy01_Reload_02.png';
+import reload03Right from '../../assets/Enemy01/Right/Reload/Enemy01_Reload_03.png';
+import reload04Right from '../../assets/Enemy01/Right/Reload/Enemy01_Reload_04.png';
+import reload05Right from '../../assets/Enemy01/Right/Reload/Enemy01_Reload_05.png';
+import reload06Right from '../../assets/Enemy01/Right/Reload/Enemy01_Reload_06.png';
+import reload07Right from '../../assets/Enemy01/Right/Reload/Enemy01_Reload_07.png';
+import reload08Right from '../../assets/Enemy01/Right/Reload/Enemy01_Reload_08.png';
+import reload09Right from '../../assets/Enemy01/Right/Reload/Enemy01_Reload_09.png';
+import reload10Right from '../../assets/Enemy01/Right/Reload/Enemy01_Reload_10.png';
+import reload11Right from '../../assets/Enemy01/Right/Reload/Enemy01_Reload_11.png';
+import reload12Right from '../../assets/Enemy01/Right/Reload/Enemy01_Reload_12.png';
+import reload13Right from '../../assets/Enemy01/Right/Reload/Enemy01_Reload_13.png';
+import reload14Right from '../../assets/Enemy01/Right/Reload/Enemy01_Reload_14.png';
+import reload15Right from '../../assets/Enemy01/Right/Reload/Enemy01_Reload_15.png';
+import reload16Right from '../../assets/Enemy01/Right/Reload/Enemy01_Reload_16.png';
+import reload17Right from '../../assets/Enemy01/Right/Reload/Enemy01_Reload_17.png';
+import reload18Right from '../../assets/Enemy01/Right/Reload/Enemy01_Reload_18.png';
+import reload19Right from '../../assets/Enemy01/Right/Reload/Enemy01_Reload_19.png';
+
 import hit01Right from '../../assets/Enemy01/Right/Hit/Enemy01_Hit_01.png';
 import hit02Right from '../../assets/Enemy01/Right/Hit/Enemy01_Hit_02.png';
 import hit03Right from '../../assets/Enemy01/Right/Hit/Enemy01_Hit_03.png';
@@ -103,6 +130,33 @@ import run06Left from '../../assets/Enemy01/Left/Run/Enemy01_Run_06.png';
 import run07Left from '../../assets/Enemy01/Left/Run/Enemy01_Run_07.png';
 import run08Left from '../../assets/Enemy01/Left/Run/Enemy01_Run_08.png';
 
+import aim01Left from '../../assets/Enemy01/Left/Aim/Enemy01_Aim_01.png';
+import aim02Left from '../../assets/Enemy01/Left/Aim/Enemy01_Aim_02.png';
+import aim03Left from '../../assets/Enemy01/Left/Aim/Enemy01_Aim_03.png';
+import aim04Left from '../../assets/Enemy01/Left/Aim/Enemy01_Aim_04.png';
+import aim05Left from '../../assets/Enemy01/Left/Aim/Enemy01_Aim_05.png';
+import aim06Left from '../../assets/Enemy01/Left/Aim/Enemy01_Aim_06.png';
+
+import reload01Left from '../../assets/Enemy01/Left/Reload/Enemy01_Reload_01.png';
+import reload02Left from '../../assets/Enemy01/Left/Reload/Enemy01_Reload_02.png';
+import reload03Left from '../../assets/Enemy01/Left/Reload/Enemy01_Reload_03.png';
+import reload04Left from '../../assets/Enemy01/Left/Reload/Enemy01_Reload_04.png';
+import reload05Left from '../../assets/Enemy01/Left/Reload/Enemy01_Reload_05.png';
+import reload06Left from '../../assets/Enemy01/Left/Reload/Enemy01_Reload_06.png';
+import reload07Left from '../../assets/Enemy01/Left/Reload/Enemy01_Reload_07.png';
+import reload08Left from '../../assets/Enemy01/Left/Reload/Enemy01_Reload_08.png';
+import reload09Left from '../../assets/Enemy01/Left/Reload/Enemy01_Reload_09.png';
+import reload10Left from '../../assets/Enemy01/Left/Reload/Enemy01_Reload_10.png';
+import reload11Left from '../../assets/Enemy01/Left/Reload/Enemy01_Reload_11.png';
+import reload12Left from '../../assets/Enemy01/Left/Reload/Enemy01_Reload_12.png';
+import reload13Left from '../../assets/Enemy01/Left/Reload/Enemy01_Reload_13.png';
+import reload14Left from '../../assets/Enemy01/Left/Reload/Enemy01_Reload_14.png';
+import reload15Left from '../../assets/Enemy01/Left/Reload/Enemy01_Reload_15.png';
+import reload16Left from '../../assets/Enemy01/Left/Reload/Enemy01_Reload_16.png';
+import reload17Left from '../../assets/Enemy01/Left/Reload/Enemy01_Reload_17.png';
+import reload18Left from '../../assets/Enemy01/Left/Reload/Enemy01_Reload_18.png';
+import reload19Left from '../../assets/Enemy01/Left/Reload/Enemy01_Reload_19.png';
+
 import shoot01Left from '../../assets/Enemy01/Left/Shoot/Enemy01_Shoot_01.png';
 import shoot02Left from '../../assets/Enemy01/Left/Shoot/Enemy01_Shoot_02.png';
 import shoot03Left from '../../assets/Enemy01/Left/Shoot/Enemy01_Shoot_03.png';
@@ -143,6 +197,37 @@ const shootLeft = [
   createImage(shoot06Left),
   createImage(shoot07Left),
   createImage(shoot08Left)
+];
+
+const aimLeft = [
+  createImage(aim01Left),
+  createImage(aim02Left),
+  createImage(aim03Left),
+  createImage(aim04Left),
+  createImage(aim05Left),
+  createImage(aim06Left)
+];
+
+const reloadLeft = [
+  createImage(reload01Left),
+  createImage(reload02Left),
+  createImage(reload03Left),
+  createImage(reload04Left),
+  createImage(reload05Left),
+  createImage(reload06Left),
+  createImage(reload07Left),
+  createImage(reload08Left),
+  createImage(reload09Left),
+  createImage(reload10Left),
+  createImage(reload11Left),
+  createImage(reload12Left),
+  createImage(reload13Left),
+  createImage(reload14Left),
+  createImage(reload15Left),
+  createImage(reload16Left),
+  createImage(reload17Left),
+  createImage(reload18Left),
+  createImage(reload19Left)
 ];
 
 const hitLeft = [
@@ -217,6 +302,37 @@ const shootRight = [
   createImage(shoot08Right)
 ];
 
+const aimRight = [
+  createImage(aim01Right),
+  createImage(aim02Right),
+  createImage(aim03Right),
+  createImage(aim04Right),
+  createImage(aim05Right),
+  createImage(aim06Right)
+];
+
+const reloadRight = [
+  createImage(reload01Right),
+  createImage(reload02Right),
+  createImage(reload03Right),
+  createImage(reload04Right),
+  createImage(reload05Right),
+  createImage(reload06Right),
+  createImage(reload07Right),
+  createImage(reload08Right),
+  createImage(reload09Right),
+  createImage(reload10Right),
+  createImage(reload11Right),
+  createImage(reload12Right),
+  createImage(reload13Right),
+  createImage(reload14Right),
+  createImage(reload15Right),
+  createImage(reload16Right),
+  createImage(reload17Right),
+  createImage(reload18Right),
+  createImage(reload19Right)
+];
+
 const deathRight = [
   createImage(death01Right),
   createImage(death02Right),
@@ -248,14 +364,18 @@ export default {
   right: {
     idle: idleRight,
     run: runRight,
+    aim: aimRight,
     shoot: shootRight,
+    reload: reloadRight,
     hit: hitRight,
     dead: deathRight
   },
   left: {
     idle: idleLeft,
     run: runLeft,
+    aim: aimLeft,
     shoot: shootLeft,
+    reload: reloadLeft,
     hit: hitLeft,
     dead: deathLeft
   }

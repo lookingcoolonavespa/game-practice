@@ -9,19 +9,32 @@ export default function Sprite(sheet: {
 
   let direction: 'left' | 'right' = 'right';
 
+  function resetSpriteIdx(override?: boolean) {
+    if (spriteIdx === sheet[direction][currAction].length - 1 || override)
+      spriteIdx = 0;
+  }
+
   return {
     get currSprite() {
+      console.log({
+        currSprite: sheet[direction][currAction][spriteIdx],
+        direction,
+        currAction,
+        spriteIdx
+      });
       return sheet[direction][currAction][spriteIdx];
     },
     get currAction() {
       return currAction;
     },
+    resetSpriteIdx,
     updateAction(action: Action, wait?: boolean) {
       if (!wait) {
-        if (action !== currAction) this.resetSpriteIdx(true);
+        if (action !== currAction) resetSpriteIdx(true);
         currAction = action;
       } else {
         if (spriteIdx === sheet[direction][currAction].length - 1) {
+          if (action !== currAction) resetSpriteIdx(true);
           currAction = action;
         }
       }
@@ -31,10 +44,6 @@ export default function Sprite(sheet: {
     },
     increaseSpriteIdx() {
       spriteIdx++;
-    },
-    resetSpriteIdx(override?: boolean) {
-      if (spriteIdx === sheet[direction][currAction].length - 1 || override)
-        spriteIdx = 0;
     },
     resolveAnimationEnd() {
       return spriteIdx === sheet[direction][currAction].length - 1;
