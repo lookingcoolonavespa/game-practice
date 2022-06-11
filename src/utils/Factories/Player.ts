@@ -4,6 +4,7 @@ import bulletSprites from '../sprites/bulletSprites';
 import gunSprites from '../sprites/gunSprites';
 import Entity from './Entity';
 import Sprite from './Sprite';
+import Bullet from './Bullet';
 import { jumpHeight, speed, gravity } from '../constants';
 
 export default function Player(): PlayerInterface {
@@ -11,6 +12,8 @@ export default function Player(): PlayerInterface {
 
   let sameJump = false;
   let jumpNumber = 0;
+
+  let sameShot = false;
 
   const playerSprite = Sprite(playerSprites);
   const gunSprite = Sprite(gunSprites);
@@ -96,10 +99,27 @@ export default function Player(): PlayerInterface {
       entity.updateVelocity('x', dir === 'right' ? speed : -speed);
     },
     shoot() {
-      if (!entity.sameShot) {
-        updateAction('shoot');
-        entity.shootBullet();
-      }
+      if (sameShot) return;
+
+      updateAction('shoot');
+
+      const { direction, width, x, y, bullets } = entity;
+
+      const offsetX = direction === 'right' ? width : -width;
+      const newBullet = Bullet(
+        {
+          x: x + offsetX,
+          y: y + 18
+        },
+        bulletSprites
+      );
+
+      newBullet.setVelocity('x', direction);
+      bullets.push(newBullet);
+      sameShot = true;
+      setTimeout(() => {
+        sameShot = false;
+      }, 300);
     },
     resetJump() {
       sameJump = false;

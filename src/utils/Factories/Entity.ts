@@ -15,7 +15,6 @@ export default function Entity(size: Size, position: XY) {
   };
 
   let bullets: BulletInterface[] = [];
-  let sameShot = false;
 
   let direction: 'right' | 'left' = 'right';
 
@@ -38,9 +37,6 @@ export default function Entity(size: Size, position: XY) {
     get bullets() {
       return bullets;
     },
-    get sameShot() {
-      return sameShot;
-    },
     get direction() {
       return direction;
     },
@@ -61,25 +57,6 @@ export default function Entity(size: Size, position: XY) {
     onCollideWall(axis: 'x' | 'y') {
       if (velocity[axis] < 1) return (velocity[axis] = 0);
       velocity[axis] /= 2;
-    },
-    shootBullet() {
-      if (sameShot) return;
-      const offsetX = direction === 'right' ? width : -width;
-
-      const newBullet = Bullet(
-        {
-          x: x + offsetX,
-          y: y + 18
-        },
-        bulletSprites
-      );
-
-      newBullet.setVelocity('x', direction);
-      bullets.push(newBullet);
-      sameShot = true;
-      setTimeout(() => {
-        sameShot = false;
-      }, 300);
     },
     updateBullets(offsetX: number) {
       bullets = bullets.filter((b) => {
