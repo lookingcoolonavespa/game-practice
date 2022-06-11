@@ -63,8 +63,8 @@ export function checkCollideSide(
   switch (true) {
     case moveStatus.rectOne && !moveStatus.rectTwo: {
       collideLeft =
-        rectTwo.x >= rectOne.x + rectOne.width &&
-        rectTwo.x <= rectOne.x + rectOne.width + rectOne.velocity.x;
+        rectTwo.x + rectTwo.width <= rectOne.x &&
+        rectTwo.x + rectTwo.width >= rectOne.x + rectOne.velocity.x;
 
       collideRight =
         rectTwo.x >= rectOne.x + rectOne.width &&
