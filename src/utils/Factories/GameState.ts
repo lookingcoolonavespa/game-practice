@@ -1,4 +1,5 @@
 import {
+  ExplosionInterface,
   FloorInterface,
   GameStateInterface,
   GroundEnemyInterface,
@@ -12,10 +13,12 @@ import {
   checkFallOffPlatform,
   checkCollideTop,
   checkCollideBottom,
-  checkIfInsideDiameter
+  checkIfInsideDiameter,
+  checkInLineOfSight
 } from '../checkCollision';
 import { gravity, speed } from '../constants';
 import { KeyPressType } from '../../types/types';
+import Explosion from './Explosion';
 
 export default function GameState(level: LevelInterface) {
   const player = Player();
@@ -33,7 +36,7 @@ export default function GameState(level: LevelInterface) {
   function updateEnemies() {
     enemies = enemies.filter((e) => {
       e.updatePosition();
-      e.updateBullets(platformVelocity);
+      e.updateBullets();
       e.handleDeath();
       return e.status !== 'dead';
     });
@@ -53,6 +56,8 @@ export default function GameState(level: LevelInterface) {
 
     return filtered;
   }
+
+  function onPlayerHit(collideSide: 'left' | 'right') {}
 
   return {
     get active() {
@@ -76,6 +81,7 @@ export default function GameState(level: LevelInterface) {
       enemies.forEach((e) => {
         e.resetSpriteIdx();
         e.increaseSpriteIdx();
+        e.updateBulletSprites();
       });
       player.bullets.forEach((b) => {
         b.resetSpriteIdx();
@@ -176,11 +182,14 @@ export default function GameState(level: LevelInterface) {
     handleEnemyMovement() {
       enemies.forEach((enemy) => {
         const { velocity, direction, speed, timer } = enemy;
-
+        enemy.updateDirection('left');
         const onPlatform = platforms.some((p) => checkOnPlatform(p, enemy));
         if (!onPlatform) {
           enemy.fall();
-        } else enemy.shoot();
+        } else {
+          enemy.shoot(player);
+          enemy.reload();
+        }
 
         // else if (!velocity.x && !timer) enemy.setIdleTimer();
 

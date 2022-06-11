@@ -108,7 +108,6 @@ export function draw() {
   //   drawPlatforms(c);
   platforms.forEach((p) => p.draw(c));
   player.draw(c);
-  player.bullets.forEach((b) => b.draw(c));
   enemies.forEach((e) => e.draw(c));
 }
 

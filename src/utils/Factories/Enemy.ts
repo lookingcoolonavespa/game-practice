@@ -1,6 +1,8 @@
 import {
   EnemyInterface,
+  ExplosionInterface,
   GroundEnemyInterface,
+  PlayerInterface,
   Size,
   XY
 } from '../../types/interfaces';
@@ -10,6 +12,8 @@ import Sprite from './Sprite';
 import Bullet from './Bullet';
 import bulletSprites from '../sprites/bulletSprites';
 import { gravity } from '../constants';
+import Explosion from './Explosion';
+import { checkInLineOfSight } from '../checkCollision';
 
 export default function Enemy(position: XY, size: Size): EnemyInterface {
   const entity = Entity(size, position);
@@ -29,7 +33,7 @@ export default function Enemy(position: XY, size: Size): EnemyInterface {
   });
 }
 
-export function GroundEnemy(position: XY): GroundEnemyInterface {
+export function GroundEnemy(position: XY) {
   const entity = Enemy(position, { height: 48, width: 42 });
 
   let timer: NodeJS.Timer | null;
@@ -43,6 +47,10 @@ export function GroundEnemy(position: XY): GroundEnemyInterface {
   let status: 'alive' | 'dieing' | 'dead' = 'alive';
 
   let shooting = false;
+
+  let sameShot = false;
+
+  let bullets: ExplosionInterface[] = [];
 
   return {
     get direction() {
@@ -72,16 +80,12 @@ export function GroundEnemy(position: XY): GroundEnemyInterface {
     get width() {
       return entity.width;
     },
-    get bullets() {
-      return entity.bullets;
-    },
     get type(): 'ground' {
       return 'ground';
     },
     setPosition: entity.setPosition,
     updatePosition: entity.updatePosition,
     onCollideWall: entity.onCollideWall,
-    updateBullets: entity.updateBullets,
     updateVelocity: entity.updateVelocity,
     increaseSpriteIdx: sprite.increaseSpriteIdx,
     resetSpriteIdx: sprite.resetSpriteIdx,
@@ -92,17 +96,59 @@ export function GroundEnemy(position: XY): GroundEnemyInterface {
     fall() {
       entity.updateVelocity('y', entity.velocity.y + gravity);
     },
-    shoot(playerPos: XY) {
+    shoot(player: PlayerInterface) {
       if (!shooting) {
         sprite.updateAction('aim');
         shooting = true;
       }
+
+      if (sprite.currAction === 'reload' && sprite.resolveAnimationEnd())
+        sameShot = false;
       sprite.updateAction('shoot', true);
 
-      // if player is line of sight when shoot happens, they get hit
-      // otherwise bullet explodes at max rangeg
+      if (sameShot) return;
+
+      function hitScan() {
+        const { x, y, direction, width } = entity;
+        const startX = direction === 'right' ? x + width + 13 : x - 15;
+        const endOffset = direction === 'right' ? 100 : -100;
+
+        return checkInLineOfSight(
+          {
+            y: y + 17,
+            x: {
+              start: startX,
+              end: startX + endOffset
+            }
+          },
+          player
+        );
+      }
+      const collision = hitScan();
+      if (collision) {
+        if (collision === 'right') {
+          const explosion = Explosion({
+            y: entity.y + 17,
+            x: player.x + player.width
+          });
+          bullets.push(explosion);
+        }
+      }
+      sameShot = true;
+    },
+    reload() {
+      if (sprite.currAction !== 'shoot') return;
 
       sprite.updateAction('reload', true);
+    },
+    updateBullets() {
+      bullets = bullets.filter((b) => b.status !== 'gone');
+    },
+    updateBulletSprites() {
+      bullets.forEach((b) => {
+        b.resetSpriteIdx();
+        b.increaseSpriteIdx();
+      });
     },
     updateAction(action: keyof typeof enemySprites.right) {
       if (sprite.currAction === 'dead') return;
@@ -139,11 +185,11 @@ export function GroundEnemy(position: XY): GroundEnemyInterface {
         timer = null;
       }, 2000);
     },
-
     draw(c: CanvasRenderingContext2D) {
       if (status === 'dead') return;
       const { x, y } = entity;
       c.drawImage(sprite.currSprite, x - 40, y - 47, 128, 128);
+      bullets.forEach((b) => b.draw(c));
     }
   };
 }

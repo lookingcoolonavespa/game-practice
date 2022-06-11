@@ -176,7 +176,7 @@ export function checkInLineOfSight(line: Line, rect: EntityWithVelocity) {
     line.x.end <= rect.x + rect.width && line.x.start >= rect.x + rect.width;
 
   const collideLeft = line.x.end >= rect.x && line.x.start <= rect.x;
-  console.log(collideY, collideLeft, collideRight);
+
   if (!collideY) return '';
 
   return collideLeft ? 'left' : collideRight ? 'right' : '';

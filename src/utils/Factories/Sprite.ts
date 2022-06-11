@@ -1,10 +1,13 @@
-export default function Sprite(sheet: {
-  left: { [key: string]: HTMLImageElement[] };
-  right: { [key: string]: HTMLImageElement[] };
-}) {
+export default function Sprite(
+  sheet: {
+    left: { [key: string]: HTMLImageElement[] };
+    right: { [key: string]: HTMLImageElement[] };
+  },
+  defaultAction = 'idle'
+) {
   type Action = keyof typeof sheet.right;
 
-  let currAction: Action = 'idle';
+  let currAction: Action = defaultAction;
   let spriteIdx = 0;
 
   let direction: 'left' | 'right' = 'right';

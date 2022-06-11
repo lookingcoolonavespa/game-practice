@@ -137,7 +137,7 @@ export default function Player(): PlayerInterface {
       gunSprite.resetSpriteIdx();
     },
     draw: (c: CanvasRenderingContext2D) => {
-      const { x, y, height, width } = entity;
+      const { x, y, height, width, bullets } = entity;
 
       const offsetX = {
         player: entity.direction === 'right' ? -10 : 0,
@@ -146,6 +146,8 @@ export default function Player(): PlayerInterface {
 
       c.drawImage(playerSprite.currSprite, x + offsetX.player, y, 59, height);
       c.drawImage(gunSprite.currSprite, x + offsetX.gun, y - 13, 50, 94);
+
+      bullets.forEach((b) => b.draw(c));
     }
   };
 }

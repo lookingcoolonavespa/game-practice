@@ -61,8 +61,19 @@ export interface BulletInterface extends Entity {
   readonly draw: (c: CanvasRenderingContext2D) => void;
 }
 
+export interface ExplosionInterface {
+  readonly x: number;
+  readonly y: number;
+  readonly width: number;
+  readonly height: number;
+  readonly currSprite: HTMLImageElement;
+  readonly status: 'gone' | 'disappearing';
+  increaseSpriteIdx(): void;
+  resetSpriteIdx(): void;
+  draw(c: CanvasRenderingContext2D): void;
+}
+
 export interface BaseEntityInterface extends EntityWithVelocity {
-  readonly bullets: BulletInterface[];
   // readonly sameShot: boolean;
   readonly updatePosition: () => void;
   readonly setPosition: (position: XY) => void;
@@ -73,8 +84,6 @@ export interface BaseEntityInterface extends EntityWithVelocity {
   // readonly updateDirection: (newDirection: 'left' | 'right') => void;
   readonly increaseSpriteIdx: () => void;
   readonly resetSpriteIdx: (override?: boolean) => void;
-  readonly shoot: () => void;
-  readonly updateBullets: (offsetX: number) => void;
   readonly draw: (c: CanvasRenderingContext2D) => void;
   readonly fall: () => void;
 }
@@ -89,19 +98,26 @@ export interface GroundEnemyInterface extends EnemyInterface {
   readonly type: 'ground';
   readonly timer: NodeJS.Timer | null;
   readonly status: 'alive' | 'dieing' | 'dead';
+  readonly reload: () => void;
   readonly setIdleTimer: () => void;
   readonly updateAction: (action: keyof typeof enemySprites.right) => void;
   readonly onHit: () => void;
   readonly handleDeath: () => void;
+  readonly shoot: (player: PlayerInterface) => void;
+  readonly updateBullets: () => void;
+  readonly updateBulletSprites: () => void;
 }
 
 export interface PlayerInterface extends BaseEntityInterface {
   readonly sameJump: boolean;
   readonly jumpNumber: number;
   readonly currAction: string | number;
+  readonly bullets: BulletInterface[];
+  readonly updateBullets: (offsetX: number) => void;
   readonly jump: () => void;
   readonly rest: () => void;
   readonly run: (dir: 'left' | 'right') => void;
+  readonly shoot: () => void;
   readonly resetJump: () => void;
   readonly setSameJump: (val: boolean) => void;
   readonly setJumpNumber: (num: number) => void;
