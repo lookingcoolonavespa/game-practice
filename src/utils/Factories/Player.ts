@@ -18,7 +18,13 @@ export default function Player(): PlayerInterface {
   const playerSprite = Sprite(playerSprites);
   const gunSprite = Sprite(gunSprites);
 
+  let lifePoints = 3;
+
+  let status: 'alive' | 'dieing' | 'dead' = 'alive';
+
   function updateAction(action: string) {
+    if (playerSprite.currAction === 'dieing') return;
+    if (action === 'dieing') return playerSprite.updateAction('dieing'); // so i dont have check against status in each switch case
     switch (action) {
       case 'idle': {
         playerSprite.updateAction(
@@ -46,6 +52,7 @@ export default function Player(): PlayerInterface {
       case 'hit': {
         playerSprite.updateAction('hit');
         gunSprite.updateAction('hit');
+        break;
       }
     }
   }
@@ -133,6 +140,11 @@ export default function Player(): PlayerInterface {
     },
     onHit() {
       updateAction('hit');
+      lifePoints--;
+      if (!lifePoints) {
+        updateAction('dieing');
+        status = 'dieing';
+      }
     },
     resetJump() {
       sameJump = false;
@@ -142,10 +154,12 @@ export default function Player(): PlayerInterface {
       sameJump = val;
     },
     increaseSpriteIdx() {
+      if (status === 'dieing' && playerSprite.resolveAnimationEnd()) return;
       playerSprite.increaseSpriteIdx();
       gunSprite.increaseSpriteIdx();
     },
     resetSpriteIdx: () => {
+      if (status === 'dieing' && playerSprite.resolveAnimationEnd()) return;
       playerSprite.resetSpriteIdx();
       gunSprite.resetSpriteIdx();
     },
@@ -158,8 +172,9 @@ export default function Player(): PlayerInterface {
       };
 
       c.drawImage(playerSprite.currSprite, x + offsetX.player, y, 59, height);
-      c.drawImage(gunSprite.currSprite, x + offsetX.gun, y - 13, 50, 94);
-
+      if (status === 'alive') {
+        c.drawImage(gunSprite.currSprite, x + offsetX.gun, y - 13, 50, 94);
+      }
       bullets.forEach((b) => b.draw(c));
     }
   };

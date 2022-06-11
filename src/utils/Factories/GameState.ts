@@ -181,7 +181,7 @@ export default function GameState(level: LevelInterface) {
     },
     handleEnemyMovement() {
       enemies.forEach((enemy) => {
-        const { status } = enemy;
+        const { velocity, direction, speed, timer, status } = enemy;
         if (status !== 'alive') return;
         enemy.updateDirection('left');
         const onPlatform = platforms.some((p) => checkOnPlatform(p, enemy));
