@@ -86,6 +86,7 @@ export interface BaseEntityInterface extends EntityWithVelocity {
   readonly resetSpriteIdx: (override?: boolean) => void;
   readonly draw: (c: CanvasRenderingContext2D) => void;
   readonly fall: () => void;
+  readonly onHit: () => void;
 }
 export interface EnemyInterface extends BaseEntityInterface {
   readonly direction: 'left' | 'right';
@@ -101,7 +102,6 @@ export interface GroundEnemyInterface extends EnemyInterface {
   readonly reload: () => void;
   readonly setIdleTimer: () => void;
   readonly updateAction: (action: keyof typeof enemySprites.right) => void;
-  readonly onHit: () => void;
   readonly handleDeath: () => void;
   readonly shoot: (player: PlayerInterface) => void;
   readonly updateBullets: () => void;

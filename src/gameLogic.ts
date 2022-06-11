@@ -79,6 +79,7 @@ function handleKeyUp(e: KeyboardEvent) {
   }
 }
 /* key press stuff end */
+let frameCount = 0;
 
 export function draw() {
   const c = canvas.getContext('2d');
@@ -104,8 +105,6 @@ export function draw() {
   player.draw(c);
   enemies.forEach((e) => e.draw(c));
 }
-
-let frameCount = 0;
 
 export function update() {
   /* check game over */

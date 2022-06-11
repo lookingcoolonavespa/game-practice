@@ -146,11 +146,11 @@ export function GroundEnemy(position: XY) {
           x: xPos as number
         });
         bullets.push(explosion);
+
+        if (collision) player.onHit();
       }, 200);
 
       sameShot = true;
-
-      /* hit scan */
     },
     reload() {
       if (sprite.currAction !== 'shoot') return;

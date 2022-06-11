@@ -21,21 +21,31 @@ export default function Player(): PlayerInterface {
   function updateAction(action: string) {
     switch (action) {
       case 'idle': {
-        playerSprite.updateAction(action, playerSprite.currAction === 'shoot');
-        gunSprite.updateAction(action, gunSprite.currAction === 'shoot');
+        playerSprite.updateAction(
+          action,
+          ['hit', 'shoot'].some((a) => playerSprite.currAction === a)
+        );
+        gunSprite.updateAction(
+          action,
+          ['hit', 'shoot'].some((a) => gunSprite.currAction === a)
+        );
         break;
       }
       case 'run': {
-        playerSprite.updateAction(action);
+        playerSprite.updateAction(action, playerSprite.currAction === 'hit');
         gunSprite.updateAction(action, true);
         break;
       }
       case 'shoot': {
-        gunSprite.updateAction(action);
+        gunSprite.updateAction(action, playerSprite.currAction === 'hit');
         if (playerSprite.currAction !== 'run') {
-          playerSprite.updateAction(action);
+          playerSprite.updateAction(action, playerSprite.currAction === 'hit');
         }
         break;
+      }
+      case 'hit': {
+        playerSprite.updateAction('hit');
+        gunSprite.updateAction('hit');
       }
     }
   }
@@ -120,6 +130,9 @@ export default function Player(): PlayerInterface {
       setTimeout(() => {
         sameShot = false;
       }, 300);
+    },
+    onHit() {
+      updateAction('hit');
     },
     resetJump() {
       sameJump = false;
