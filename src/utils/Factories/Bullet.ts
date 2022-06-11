@@ -56,7 +56,7 @@ export default function Bullet(
     isMaxRange() {
       return Math.abs(x - startX) >= 300;
     },
-    async stop() {
+    stop() {
       velocity.x = 0;
       velocity.y = 0;
       disappear();

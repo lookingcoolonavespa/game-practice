@@ -79,9 +79,11 @@ export interface GroundEnemyInterface extends EnemyInterface {
   readonly speed: number;
   readonly type: 'ground';
   readonly timer: NodeJS.Timer | null;
+  readonly status: 'alive' | 'dieing' | 'dead';
   readonly setIdleTimer: () => void;
   readonly updateAction: (action: keyof typeof enemySprites.right) => void;
   readonly onHit: () => void;
+  readonly handleDeath: () => void;
 }
 
 export interface PlayerInterface extends BaseEntityInterface {

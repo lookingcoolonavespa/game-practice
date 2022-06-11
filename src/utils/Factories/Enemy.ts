@@ -38,6 +38,8 @@ export function GroundEnemy(position: XY): GroundEnemyInterface {
 
   let lifePoints = 3;
 
+  let status: 'alive' | 'dieing' | 'dead' = 'alive';
+
   return {
     get direction() {
       return entity.direction;
@@ -53,6 +55,9 @@ export function GroundEnemy(position: XY): GroundEnemyInterface {
     },
     get y() {
       return entity.y;
+    },
+    get status() {
+      return status;
     },
     get velocity() {
       return entity.velocity;
@@ -90,15 +95,20 @@ export function GroundEnemy(position: XY): GroundEnemyInterface {
     onHit() {
       entity.updateVelocity('x', 0);
       lifePoints--;
-      console.log(lifePoints);
 
       // handle death
       if (!lifePoints) {
         sprite.updateAction('dead');
+        status = 'dieing';
         if (timer) {
           clearTimeout(timer); // so enemey doesnt move when theyre dead
           timer = null;
         }
+      }
+    },
+    handleDeath() {
+      if (status === 'dieing' && sprite.resolveAnimationEnd()) {
+        status = 'dead';
       }
     },
     setIdleTimer() {
@@ -114,6 +124,7 @@ export function GroundEnemy(position: XY): GroundEnemyInterface {
       }, 2000);
     },
     draw(c: CanvasRenderingContext2D) {
+      if (status === 'dead') return;
       const { x, y } = entity;
       c.drawImage(sprite.currSprite, x - 40, y - 47, 128, 128);
     }

@@ -18,7 +18,7 @@ import { KeyPressType } from '../../types/types';
 
 export default function GameState(level: LevelInterface) {
   const player = Player();
-  const { platforms, enemies } = level;
+  let { platforms, enemies } = level;
 
   let active = true;
 
@@ -27,6 +27,14 @@ export default function GameState(level: LevelInterface) {
   function setPlatformVelocity(val: number) {
     platformVelocity = val;
     level.platforms.forEach((p) => p.updateVelocityX(platformVelocity));
+  }
+
+  function updateEnemies() {
+    enemies = enemies.filter((e) => {
+      e.updatePosition();
+      e.handleDeath();
+      return e.status !== 'dead';
+    });
   }
 
   return {
@@ -180,11 +188,12 @@ export default function GameState(level: LevelInterface) {
         }
       });
     },
+
     update() {
       platforms.forEach((p) => p.updateXPosition());
       player.updatePosition();
       player.updateBullets();
-      enemies.forEach((e) => e.updatePosition());
+      updateEnemies();
     }
   };
 }
