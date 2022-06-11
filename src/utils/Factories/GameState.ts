@@ -100,8 +100,12 @@ export default function GameState(level: LevelInterface) {
               rectOne: true,
               rectTwo: true
             }) || checkIfInsideDiameter(e, b);
-          console.log(collision);
-          if (collision) b.stop();
+
+          if (collision) {
+            b.stop();
+            e.updateAction('hit');
+            e.stun();
+          }
         });
       });
     },

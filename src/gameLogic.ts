@@ -99,6 +99,14 @@ export function draw() {
   // c.fillStyle = 'black';
   // c.fillRect(0, 0, width, 160);
 
+  /* handle sprites */
+  frameCount++;
+  if (frameCount === 3) {
+    gameState.handleSprites();
+    frameCount = 0;
+  }
+  /* end handle sprites */
+
   const { player, platforms, enemies } = gameState;
   //   drawPlatforms(c);
   platforms.forEach((p) => p.draw(c));
@@ -124,14 +132,6 @@ export function update() {
     gameState.setGameOver();
   }
 
-  /* handle sprites */
-  frameCount++;
-  if (frameCount === 3) {
-    gameState.handleSprites();
-    frameCount = 0;
-  }
-  /* end handle sprites */
-
   const onPlatform = platforms.some((p) => checkOnPlatform(p, player));
   if (onPlatform) {
     player.resetJump();
@@ -142,5 +142,4 @@ export function update() {
   gameState.handleEnemyMovement();
   gameState.handleBulletCollision();
   gameState.update(); // handle all movement + bullet collision
-  console.log(player.velocity.x);
 }

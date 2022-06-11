@@ -82,7 +82,10 @@ export function GroundEnemy(position: XY): GroundEnemyInterface {
       entity.updateVelocity('y', entity.velocity.y + gravity);
     },
     updateAction(action: keyof typeof enemySprites.right) {
-      sprite.updateAction(action);
+      sprite.updateAction(action, sprite.currAction === 'hit');
+    },
+    stun() {
+      entity.updateVelocity('x', 0);
     },
     setIdleTimer() {
       timer = setTimeout(function () {

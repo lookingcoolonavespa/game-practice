@@ -9,6 +9,10 @@ import idle06Right from '../../assets/Enemy01/Right/Idle/Enemy01_Idle_06.png';
 import idle07Right from '../../assets/Enemy01/Right/Idle/Enemy01_Idle_07.png';
 import idle08Right from '../../assets/Enemy01/Right/Idle/Enemy01_Idle_08.png';
 
+import hit01Right from '../../assets/Enemy01/Right/Hit/Enemy01_Hit_01.png';
+import hit02Right from '../../assets/Enemy01/Right/Hit/Enemy01_Hit_02.png';
+import hit03Right from '../../assets/Enemy01/Right/Hit/Enemy01_Hit_03.png';
+
 import run01Right from '../../assets/Enemy01/Right/Run/Enemy01_Run_01.png';
 import run02Right from '../../assets/Enemy01/Right/Run/Enemy01_Run_02.png';
 import run03Right from '../../assets/Enemy01/Right/Run/Enemy01_Run_03.png';
@@ -35,6 +39,10 @@ import idle05Left from '../../assets/Enemy01/Left/Idle/Enemy01_Idle_05.png';
 import idle06Left from '../../assets/Enemy01/Left/Idle/Enemy01_Idle_06.png';
 import idle07Left from '../../assets/Enemy01/Left/Idle/Enemy01_Idle_07.png';
 import idle08Left from '../../assets/Enemy01/Left/Idle/Enemy01_Idle_08.png';
+
+import hit01Left from '../../assets/Enemy01/Left/Hit/Enemy01_Hit_01.png';
+import hit02Left from '../../assets/Enemy01/Left/Hit/Enemy01_Hit_02.png';
+import hit03Left from '../../assets/Enemy01/Left/Hit/Enemy01_Hit_03.png';
 
 import run01Left from '../../assets/Enemy01/Left/Run/Enemy01_Run_01.png';
 import run02Left from '../../assets/Enemy01/Left/Run/Enemy01_Run_02.png';
@@ -87,6 +95,12 @@ const shootLeft = [
   createImage(shoot08Left)
 ];
 
+const hitLeft = [
+  createImage(hit01Left),
+  createImage(hit02Left),
+  createImage(hit03Left)
+];
+
 const idleRight = [
   createImage(idle01Right),
   createImage(idle02Right),
@@ -96,6 +110,12 @@ const idleRight = [
   createImage(idle06Right),
   createImage(idle07Right),
   createImage(idle08Right)
+];
+
+const hitRight = [
+  createImage(hit01Right),
+  createImage(hit02Right),
+  createImage(hit03Right)
 ];
 
 const runRight = [
@@ -121,6 +141,6 @@ const shootRight = [
 ];
 
 export default {
-  right: { idle: idleRight, run: runRight, shoot: shootRight },
-  left: { idle: idleLeft, run: runLeft, shoot: shootLeft }
+  right: { idle: idleRight, run: runRight, shoot: shootRight, hit: hitRight },
+  left: { idle: idleLeft, run: runLeft, shoot: shootLeft, hit: hitLeft }
 };

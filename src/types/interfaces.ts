@@ -81,6 +81,7 @@ export interface GroundEnemyInterface extends EnemyInterface {
   readonly timer: NodeJS.Timer | null;
   readonly setIdleTimer: () => void;
   readonly updateAction: (action: keyof typeof enemySprites.right) => void;
+  readonly stun: () => void;
 }
 
 export interface PlayerInterface extends BaseEntityInterface {
