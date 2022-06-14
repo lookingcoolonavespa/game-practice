@@ -78,19 +78,22 @@ export function GroundEnemy(position: XY) {
     fall() {
       entity.updateVelocity('y', entity.velocity.y + GRAVITY);
     },
+    stop() {
+      entity.updateVelocity('x', 0);
+    },
     shoot(player: PlayerInterface) {
-      if (!shooting) {
-        sprite.updateAction('aim');
-        shooting = true;
-      }
-
       if (sprite.currAction === 'reload' && sprite.resolveAnimationEnd()) {
         sameShot = false;
       }
 
+      if (!shooting) {
+        sprite.updateAction('aim', true);
+        shooting = true;
+      }
+
       sprite.updateAction('shoot', true);
 
-      if (sameShot) return; //needs to be after updateAction other animation wont finish
+      if (sameShot) return; //needs to be after updateAction otherwise animation wont finish
 
       setTimeout(() => {
         //timeout so bullets dont magically teleport
@@ -135,7 +138,7 @@ export function GroundEnemy(position: XY) {
       sameShot = true;
     },
     reload() {
-      if (sprite.currAction !== 'shoot') return;
+      if (sprite.currAction !== 'shoot' && sprite.currAction !== 'aim') return;
 
       sprite.updateAction('reload', true);
     },

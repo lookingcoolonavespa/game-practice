@@ -13,7 +13,7 @@ import {
   checkCollideBottom,
   checkIfInsideDiameter
 } from '../checkCollision';
-import { SPEED } from '../constants';
+import { ENEMY_MAX_GUN_RANGE, SPEED } from '../constants';
 import { KeyPressType } from '../../types/types';
 
 export default function GameState(level: LevelInterface) {
@@ -172,19 +172,20 @@ export default function GameState(level: LevelInterface) {
       enemies.forEach((enemy) => {
         const { velocity, direction, speed, timer, status } = enemy;
         if (status !== 'alive') return;
-        enemy.updateDirection('left');
+
         const onPlatform = platforms.some((p) => checkOnPlatform(p, enemy));
         if (!onPlatform) {
           enemy.fall();
-        } else {
+        } else if (!velocity.x && !timer) enemy.setIdleTimer();
+
+        const distance = player.x - enemy.x;
+        if (Math.abs(distance) <= ENEMY_MAX_GUN_RANGE) {
+          enemy.stop();
           enemy.shoot(player);
           enemy.reload();
-        }
-
-        // else if (!velocity.x && !timer) enemy.setIdleTimer();
-
-        // if (enemy.velocity.x) enemy.updateAction('run');
-        // else enemy.updateAction('idle');
+          enemy.updateDirection(distance > 0 ? 'right' : 'left');
+        } else if (enemy.velocity.x) enemy.updateAction('run');
+        else enemy.updateAction('idle');
 
         // shift enemies as platforms move so they keep their position
         enemy.setPosition({ x: enemy.x + platformVelocity, y: enemy.y });

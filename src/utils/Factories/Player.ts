@@ -186,7 +186,7 @@ export default function Player(): PlayerInterface {
 
       if (iframes.active) {
         iframes.increaseCount();
-        if (iframes.count === 7) {
+        if (iframes.count === 13) {
           iframes.setActive(false);
           iframes.resetCount();
         }
