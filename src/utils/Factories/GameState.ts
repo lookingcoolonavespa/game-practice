@@ -80,7 +80,8 @@ export default function GameState(level: LevelInterface) {
       boundaryLeft: number,
       boundaryRight: number
     ) {
-      if (player.status !== 'alive') return player.updateVelocity('x', 0);
+      if (player.status !== 'alive') return;
+
       const { up, left, right, space } = keyPress;
 
       if (up.pressed) {

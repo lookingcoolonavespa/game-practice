@@ -6,6 +6,7 @@ import Entity from './Entity';
 import Sprite from './Sprite';
 import Bullet from './Bullet';
 import { JUMP_HEIGHT, SPEED, GRAVITY } from '../constants';
+import IFrames from './IFrames';
 
 export default function Player(): PlayerInterface {
   const entity = Entity({ height: 50, width: 45 }, { x: 100, y: 100 });
@@ -22,6 +23,8 @@ export default function Player(): PlayerInterface {
   let bullets: BulletInterface[] = [];
 
   let status: 'alive' | 'dieing' | 'dead' = 'alive';
+
+  const iframes = IFrames();
 
   function updateAction(action: string) {
     if (playerSprite.currAction === 'dieing') return;
@@ -152,11 +155,16 @@ export default function Player(): PlayerInterface {
       }, 300);
     },
     onHit() {
+      if (iframes.active) return;
+
       updateAction('hit');
       lifePoints--;
       if (!lifePoints) {
         updateAction('dieing');
         status = 'dieing';
+        entity.updateVelocity('x', 0);
+      } else {
+        iframes.setActive(true);
       }
     },
     resetJump() {
@@ -176,6 +184,14 @@ export default function Player(): PlayerInterface {
       playerSprite.increaseSpriteIdx();
       gunSprite.increaseSpriteIdx();
 
+      if (iframes.active) {
+        iframes.increaseCount();
+        if (iframes.count === 7) {
+          iframes.setActive(false);
+          iframes.resetCount();
+        }
+      }
+
       bullets.forEach((b) => {
         b.resetSpriteIdx();
         b.increaseSpriteIdx();
@@ -189,7 +205,8 @@ export default function Player(): PlayerInterface {
         gun: entity.direction === 'right' ? width - 30 : -17
       };
 
-      c.drawImage(playerSprite.currSprite, x + offsetX.player, y, 59, height);
+      if ((iframes.active && iframes.count % 2 === 0) || !iframes.active)
+        c.drawImage(playerSprite.currSprite, x + offsetX.player, y, 59, height);
       if (status === 'alive') {
         c.drawImage(gunSprite.currSprite, x + offsetX.gun, y - 13, 50, 94);
       }
