@@ -106,6 +106,7 @@ export interface GroundEnemyInterface extends EnemyInterface {
   readonly updateAction: (action: keyof typeof enemySprites.right) => void;
   readonly handleDeath: () => void;
   readonly shoot: (player: PlayerInterface) => void;
+  readonly run: () => void;
   readonly updateBullets: () => void;
   readonly handleSprites: () => void;
 }

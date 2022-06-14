@@ -13,7 +13,7 @@ import {
   checkCollideBottom,
   checkIfInsideDiameter
 } from '../checkCollision';
-import { ENEMY_MAX_GUN_RANGE, SPEED } from '../constants';
+import { ENEMY_MAX_GUN_RANGE, ENEMY_SIGHT_RANGE, SPEED } from '../constants';
 import { KeyPressType } from '../../types/types';
 
 export default function GameState(level: LevelInterface) {
@@ -184,6 +184,9 @@ export default function GameState(level: LevelInterface) {
           enemy.stop();
           enemy.shoot(player);
           enemy.reload();
+        } else if (Math.abs(distance) <= ENEMY_SIGHT_RANGE) {
+          enemy.updateDirection(distance > 0 ? 'right' : 'left');
+          enemy.run();
         } else if (enemy.velocity.x) enemy.updateAction('run');
         else enemy.updateAction('idle');
 

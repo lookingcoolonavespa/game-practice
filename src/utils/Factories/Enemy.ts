@@ -23,8 +23,9 @@ export function GroundEnemy(position: XY) {
 
   let status: 'alive' | 'dieing' | 'dead' = 'alive';
 
-  let shooting = false;
+  let collision = false;
 
+  let shooting = false;
   let sameShot = false;
 
   let bullets: ExplosionInterface[] = [];
@@ -69,14 +70,16 @@ export function GroundEnemy(position: XY) {
     },
     setPosition: entity.setPosition,
     updatePosition: entity.updatePosition,
-    onCollideWall: entity.onCollideWall,
     updateVelocity: entity.updateVelocity,
+    onCollideWall(axis: 'x' | 'y') {
+      collision = true;
+      entity.onCollideWall(axis);
+    },
     updateDirection(dir: 'left' | 'right', wait?: boolean) {
       if (!wait) {
         sprite.updateDirection(dir);
         entity.updateDirection(dir);
       } else {
-        console.log(sprite.resolveAnimationEnd());
         if (sprite.resolveAnimationEnd()) {
           sprite.updateDirection(dir);
           entity.updateDirection(dir);
@@ -149,6 +152,15 @@ export function GroundEnemy(position: XY) {
       if (sprite.currAction !== 'shoot' && sprite.currAction !== 'aim') return;
 
       sprite.updateAction('reload', true);
+    },
+    run() {
+      if (!collision) {
+        entity.updateVelocity(
+          'x',
+          entity.direction === 'right' ? speed : -speed
+        );
+        this.updateAction('run');
+      }
     },
     updateBullets() {
       bullets = bullets.filter((b) => b.status !== 'gone');

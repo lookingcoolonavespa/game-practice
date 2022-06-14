@@ -8,3 +8,4 @@ export const getBoundaryRight = (canvasWidth: number) =>
 export const BOUNDARY_LEFT = 200;
 export const MAX_GUN_RANGE = 300;
 export const ENEMY_MAX_GUN_RANGE = 300;
+export const ENEMY_SIGHT_RANGE = 600;
