@@ -180,10 +180,10 @@ export default function GameState(level: LevelInterface) {
 
         const distance = player.x - enemy.x;
         if (Math.abs(distance) <= ENEMY_MAX_GUN_RANGE) {
+          enemy.updateDirection(distance > 0 ? 'right' : 'left', true);
           enemy.stop();
           enemy.shoot(player);
           enemy.reload();
-          enemy.updateDirection(distance > 0 ? 'right' : 'left');
         } else if (enemy.velocity.x) enemy.updateAction('run');
         else enemy.updateAction('idle');
 

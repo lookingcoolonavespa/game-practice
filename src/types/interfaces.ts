@@ -89,7 +89,10 @@ export interface BaseEntityInterface extends EntityWithVelocity {
 }
 export interface EnemyInterface extends BaseEntityInterface {
   readonly direction: 'left' | 'right';
-  readonly updateDirection: (newDirection: 'left' | 'right') => void;
+  readonly updateDirection: (
+    newDirection: 'left' | 'right',
+    wait?: boolean
+  ) => void;
   readonly updateVelocity: (axis: 'x' | 'y', amount: number) => void;
 }
 

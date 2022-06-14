@@ -71,9 +71,17 @@ export function GroundEnemy(position: XY) {
     updatePosition: entity.updatePosition,
     onCollideWall: entity.onCollideWall,
     updateVelocity: entity.updateVelocity,
-    updateDirection(dir: 'left' | 'right') {
-      sprite.updateDirection(dir);
-      entity.updateDirection(dir);
+    updateDirection(dir: 'left' | 'right', wait?: boolean) {
+      if (!wait) {
+        sprite.updateDirection(dir);
+        entity.updateDirection(dir);
+      } else {
+        console.log(sprite.resolveAnimationEnd());
+        if (sprite.resolveAnimationEnd()) {
+          sprite.updateDirection(dir);
+          entity.updateDirection(dir);
+        }
+      }
     },
     fall() {
       entity.updateVelocity('y', entity.velocity.y + GRAVITY);
